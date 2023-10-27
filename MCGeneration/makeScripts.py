@@ -13,14 +13,16 @@ months = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","
 
 def makeScripts(args, dateStr):
 
-    outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + dateStr + "/S" + str(args.stage)
+    outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + dateStr + "/S" + str(args.stage) + "/"
 
     os.system("mkdir " + dateStr)
-    os.system("mkdir " + dateStr + "S" + str(args.stage))
+    os.system("mkdir " + dateStr + "/S" + str(args.stage))
 
     cmssw = stageToCMSSW[args.stage]
 
-    inDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + args.inDir
+    inDir = ""
+    if args.stage != 1:
+        inDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + args.inDir
 
     print("\nThe following directory path must exist completely for the produced scripts to successfully execute:")
     print(outDir)
@@ -33,7 +35,7 @@ def makeScripts(args, dateStr):
         inFile = inDir + "/taustarToTauTauZ_m"+args.mass+"_s" + str(args.stage - 1) + "_" + str(jobN) + ".root"
         filename = "taustarToTauTauZ_" + filebase
 
-        command = buildCommand(args)
+        command = buildCommand(args, jobN)
 
         #Executable .sh scripts
         with open(dateStr + "/S" + str(args.stage) + "/run_" + filebase + ".sh", "w+") as outFile:
@@ -53,7 +55,8 @@ def makeScripts(args, dateStr):
             outFile.write("scramv1 b ProjectRename # this handles linking the already compiled code - do NOT recompile\n")
             outFile.write("eval `scramv1 runtime -sh` # cmsenv is an alias not on the workers\n")
 
-            outFile.write("xrdcp root://cmseos.fnal.gov//" + inFile + " .\n")
+            if args.stage != 1:
+                outFile.write("xrdcp root://cmseos.fnal.gov//" + inFile + " .\n")
 
             outFile.write(command + "\n") 
             outFile.write("cmsRun " + filename + ".py\n")
@@ -75,7 +78,7 @@ def makeScripts(args, dateStr):
             outFile.write("date\n")
 
         #Job configuration files
-        with open(dateStr+"/S" + args.stage + "/jobConfig_" + filebase + ".jdl", "w") as jdlFile:
+        with open(dateStr+"/S" + str(args.stage) + "/jobConfig_" + filebase + ".jdl", "w") as jdlFile:
             jdlFile.write('universe = vanilla\n')
             jdlFile.write("Executable = run_" + filebase + ".sh\n")
             jdlFile.write('should_transfer_files = YES\n')
@@ -140,7 +143,7 @@ if __name__ == "__main__":
     tod = date.today()
     dateStr = str(tod.day) + months[tod.month] + str(tod.year)
     with open("./scriptCreation.log", "a+") as logFile:
-        logFile.write("Creating jobs in directory " + dateStr + "\n")
+        logFile.write("Creating job configs and excecution scripts in directory " + dateStr + "/S" + str(args.stage) + "\n")
         logFile.write("paseArgs returned the following parameters: " + str(args) + "\n\n")
     
         makeScripts(args, dateStr)
