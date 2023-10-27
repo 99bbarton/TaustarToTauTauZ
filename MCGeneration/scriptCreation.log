@@ -1,0 +1,15 @@
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=100, nJobs=1, stage=1, year='2018')
+
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=100, nJobs=1, stage=1, year='2018')
+
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S1/', mass='3000', nEvents=10, nJobs=1, stage=2, year='2018')
+
+Creating job configs and excecution scripts in directory 27Oct2023S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 27Oct2023/S1
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=1000, nJobs=10, stage=1, year='2018')
+
