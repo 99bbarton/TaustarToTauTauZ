@@ -42,6 +42,8 @@ def makeScripts(args, dateStr):
             outFile.write("#!/bin/bash\n")
             outFile.write("set -x\n")
             outFile.write("OUTDIR="+ outDir + "\n")
+            outFile.write("export HOME=$_CONDOR_SCRATCH_DIR \n") # Needed for dasgoclient to be able to access dasMaps for DAS dataet access in S3
+            outFile.write('echo "HOME = " $HOME \n')
 
             outFile.write('echo "Starting job on " `date` #Date/time of start of job\n')
             outFile.write('echo "Running on: `uname -a`" #Condor job is running on this node\n')
@@ -88,6 +90,7 @@ def makeScripts(args, dateStr):
             jdlFile.write('Log = condor_MCGen_s' + str(args.stage) + '_$(Cluster)_$(Process).log\n')
             jdlFile.write('Queue 1\n')
 
+    return command
 ##----------------------------------------------------------------------------------------------------------------------------------
 
 def buildCommand(args, jobN):
@@ -144,8 +147,10 @@ if __name__ == "__main__":
     dateStr = str(tod.day) + months[tod.month] + str(tod.year)
     with open("./scriptCreation.log", "a+") as logFile:
         logFile.write("Creating job configs and excecution scripts in directory " + dateStr + "/S" + str(args.stage) + "\n")
-        logFile.write("paseArgs returned the following parameters: " + str(args) + "\n\n")
+        logFile.write("paseArgs returned the following parameters: " + str(args) + "\n")
     
-        makeScripts(args, dateStr)
+        command = makeScripts(args, dateStr)
+        logFile.write("The cmsDriver command of the last job was: \n")
+        logFile.write(command + "\n\n")
 
 ##----------------------------------------------------------------------------------------------------------------------------------

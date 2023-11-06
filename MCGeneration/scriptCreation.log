@@ -13,3 +13,58 @@ paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mas
 Creating job configs and excecution scripts in directory 27Oct2023/S1
 paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=1000, nJobs=10, stage=1, year='2018')
 
+Creating job configs and excecution scripts in directory 27Oct2023/S2
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S1', mass='3000', nEvents=1000, nJobs=10, stage=2, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "root://cmsxrootd.fnal.gov///Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:root://cmsxrootd.fnal.gov///Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:root://xrootd.unl.edu//Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=1000, nJobs=10, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_10.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_10.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_10.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
