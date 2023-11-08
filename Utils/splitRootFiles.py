@@ -3,7 +3,9 @@
 
 import os
 import argparse
-from ROOT import TFile, TTree
+import ROOT 
+
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # Extract command line arguments and check inputs for validity
@@ -13,7 +15,8 @@ def parseArgs():
     argparser.add_argument("-d", "--directory", type=str, help="A directory path where every ROOT file will be split. Must be in NFS (not EOS)")
     argparser.add_argument("-e", "--nEvents", type=int, help="The number of events to move to each output file")
     argparser.add_argument("-n", "--nFiles", type=int, help="The number of output files to split each input file into")
-    argparser.add_argument("-t", "--trees", type=str, action="append", help="The name of the TTree(s) to copy between input and output files")
+    argparser.add_argument("-t", "--trees", type=str, action="append", required=True, help="The name of the TTree(s) to split copy between input and output files")
+    argparser.add_argument("-a", "--alsoCopy", type=str, action="append", help="The names of trees to copy but not split from input to output files")
     argparser.add_argument("-o", "--outpath", type=str, default="./", help="A directory path to write output files to (NFS not EOS)")
     argparser.add_argument("--test", action="store_true", help="If provided, will print copy commands but not execute them")
     #argparser.add_argument("-c", "--cuts", type=str, "A set of cuts to use to select which events are copied to output files") #Need compatibility checks with -e/-n args if implemented
@@ -35,7 +38,7 @@ def parseArgs():
     if args.file and not os.path.isfile(args.file):
         print("ERROR: File " + args.file + " could not be found")
         exit(2)
-    if args.directory and os.path.exists():
+    if args.directory and os.path.exists(args.directory):
         fileList = os.listdir(args.directory)
         validFiles = False
         if len(fileList) > 0:
@@ -46,7 +49,7 @@ def parseArgs():
         if not validFiles:
             print("No valid ROOT files (files ending with .root) could be found in the provided directory: " + args.directory)
             exit(2)
-    else:
+    elif args.directory:
         print("Directory " + args.directory + " could not be found")
         exit(2)
 
@@ -84,7 +87,7 @@ def splitFiles(args):
     for inFilename in inFileList:
         fileBase = inFilename[:inFilename.rfind("_")] + "_"
 
-        inFile = TFile.Open(inFilename, "READ")
+        inFile = ROOT.TFile.Open(inFilename, "READ")
 
         aTree = inFile.Get(args.trees[0])
         nEntries = aTree.GetEntries()
@@ -121,13 +124,20 @@ def splitFiles(args):
                     permitAll = True
 
             for tree in args.trees:
-                command = "rooteventselector -f " + str(startIdx) + " -l " + str(endIdx) + inFilename + ":" + tree + " " + outFileName          
+                command = "rooteventselector -f " + str(startIdx) + " -l " + str(endIdx) + " " + inFilename + ":" + tree + " " + outFileName          
                 print(command)
                 if not args.test:
                     os.system(command)
 
             startIdx += nEvents
             endIdx += nEvents
+
+            if args.alsoCopy:
+                for alsoTree in args.alsoCopy:
+                    command = "rooteventselector " + inFilename + ":" + alsoTree + " " + outFileName
+                    print(command)
+                    if not args.test:
+                        os.system(command)
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
