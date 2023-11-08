@@ -1,5 +1,6 @@
 # A script to split a specific ROOT file or all of the ROOT files in a directory into smaller files
 # Build around the command-line utility rooteventselector which ships with root
+# WARNING : Assumes a file format of filebase_job#.root
 
 import os
 import argparse
@@ -68,6 +69,7 @@ def parseArgs():
 #Split each input file into smaller output files according to the extracted command line arguments in args
 #Builds and executes commands using rooteventselector
 #Run "rooteventselector -h" in the terminal to see its argument details
+#WARNING : Assumes a file format of filebase_job#.root
 def splitFiles(args):
 
     if args.test:
@@ -85,7 +87,11 @@ def splitFiles(args):
         inFileList.append(args.file)
 
     for inFilename in inFileList:
+        
         fileBase = inFilename[:inFilename.rfind("_")] + "_"
+        oldJobN = int(inFilename[inFilename.rfind("_")+1:inFilename.rfind(".")])
+        newJobNBase = (oldJobN - 1) * 10
+        
 
         inFile = ROOT.TFile.Open(inFilename, "READ")
 
@@ -111,7 +117,7 @@ def splitFiles(args):
         endIdx = nEvents
         permitAll = False
         for outFileN in range(1, nFiles + 1):
-            outFileName = args.outpath + fileBase + str(outFileN) + ".root"
+            outFileName = args.outpath + fileBase + str(newJobNBase + outFileN) + ".root"
 
             #If action will overwrite existing file get permission from the user for this file/all files
             if os.path.isfile(outFileName) and not permitAll and not args.test: 
