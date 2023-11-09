@@ -13,10 +13,12 @@ months = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","
 
 def makeScripts(args, dateStr):
 
-    outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + dateStr + "/S" + str(args.stage) + "/"
+    outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + dateStr + "/S" + str(args.stage) + "/" + args.outDir
 
     os.system("mkdir " + dateStr)
     os.system("mkdir " + dateStr + "/S" + str(args.stage))
+    if len(args.outDir) > 1:
+        os.system("mkdir " + dateStr + "/S" + str(args.stage) + "/" + args.outDir)
 
     cmssw = stageToCMSSW[args.stage]
 
@@ -38,7 +40,7 @@ def makeScripts(args, dateStr):
         command = buildCommand(args, jobN)
 
         #Executable .sh scripts
-        with open(dateStr + "/S" + str(args.stage) + "/run_" + filebase + ".sh", "w+") as outFile:
+        with open(dateStr + "/S" + str(args.stage) + "/" + args.outDir + "run_" + filebase + ".sh", "w+") as outFile:
             outFile.write("#!/bin/bash\n")
             outFile.write("set -x\n")
             outFile.write("OUTDIR="+ outDir + "\n")
@@ -80,9 +82,11 @@ def makeScripts(args, dateStr):
             outFile.write("date\n")
 
         #Job configuration files
-        with open(dateStr+"/S" + str(args.stage) + "/jobConfig_" + filebase + ".jdl", "w") as jdlFile:
+        with open(dateStr+"/S" + str(args.stage) + "/" + args.outDir + "jobConfig_" + filebase + ".jdl", "w") as jdlFile:
             jdlFile.write('universe = vanilla\n')
             jdlFile.write("Executable = run_" + filebase + ".sh\n")
+            if args.memory:
+                jdlFile.write('request_memory = ' + args.memory +'\n')
             jdlFile.write('should_transfer_files = YES\n')
             jdlFile.write('when_to_transfer_output = ON_EXIT\n')
             jdlFile.write('Output = condor_MCGen_s' + str(args.stage) + '_$(Cluster)_$(Process).stdout\n')
@@ -129,12 +133,17 @@ def parseArgs():
     argparser.add_argument("-i","--inDir", type=str, help="A directory in /store/user/bbarton/TaustarToTauTauZ/SignalMC/ to find input files. Required if stage > 1")
     argparser.add_argument("-n","--nEvents", type=int, default=100, help="How many events per job to process")
     argparser.add_argument("-j", "--nJobs", type=int, default=1, help="How many jobs to create scripts for" )
+    argparser.add_argument("-o", "--outDir", type=str, default="./", help="A directory within the stage# directory to put output scripts and eventual job output rootfiles")
+    argparser.add_argument("--memory", help="The amount of RAM to request per job in MB (condor default is 2100). Larger requests will get lower queue priority")
 
     args = argparser.parse_args()
 
     if args.stage > 1 and not args.inDir:
         print("If stage > 1, a directory containing input files must be passed via the -i/--inDir argument")
         exit(-1)
+
+    if not args.outDir.endswith("/"):
+        args.outDir = args.outDir + "/"
 
     return args
 
@@ -146,7 +155,7 @@ if __name__ == "__main__":
     tod = date.today()
     dateStr = str(tod.day) + months[tod.month] + str(tod.year)
     with open("./scriptCreation.log", "a+") as logFile:
-        logFile.write("Creating job configs and excecution scripts in directory " + dateStr + "/S" + str(args.stage) + "\n")
+        logFile.write("Creating job configs and excecution scripts in directory " + dateStr + "/S" + str(args.stage) + "/" + args.outDir + "\n")
         logFile.write("paseArgs returned the following parameters: " + str(args) + "\n")
     
         command = makeScripts(args, dateStr)
