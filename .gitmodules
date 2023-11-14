@@ -1,0 +1,3 @@
+[submodule "NanoAOD-tools"]
+	path = NanoAOD-tools
+	url = https://github.com/99bbarton/TaustarToTauTauZ_nanoAOD-tools
