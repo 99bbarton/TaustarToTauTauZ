@@ -5,8 +5,8 @@
 import os
 
 #Taustar masses
-masses = ["3000"]
-#masses = ["2500","2750", "3000", "3250", "3500", "3750", "4000", "4250", "4500", "4750", "5000", "5250", "5500", "5750", "6000"]
+#masses = ["500", "1000", "3000", "5000"]
+masses = ["250", "500", "750", "1000", "1250", "1500", "1750", "2000", "2250", "2500", "2750", "3000", "3250", "3500", "3750", "4000", "4250", "4500", "4750", "5000", "5250", "5500", "5750", "6000"]
 
 #Allowed decay modes in terms of PDG IDs
 allowedDecays = []
@@ -55,4 +55,4 @@ for mass in masses:
             fragmentFile.write("                        parameterSets = cms.vstring('pythia8CommonSettings',\n")
             fragmentFile.write("                                                    'pythia8CP5Settings',\n")
             fragmentFile.write("                                                    'processParameters',\n")
-            fragmentFile.write("                                                    )\n")
+            fragmentFile.write("                                                    )))\n")
