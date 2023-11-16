@@ -129,7 +129,7 @@ def parseArgs():
     argparser = argparse.ArgumentParser(description="Tool to make the .sh and .jdl scripts necessary to produce Taustar->TauTauZ signal MC via Condor")
     argparser.add_argument("-s","--stage", required=True, choices=[1,2,3,4,5,6,7], type=int, help="Which stage of generation to produce scripts for")
     argparser.add_argument("-y", "--year", required=True, choices=["2015","2016","2017","2018"], type=str, help="The year to produce MC for")
-    argparser.add_argument("-m", "--mass", required=True, choices=["3000"], help="The taustar mass to produce scripts for")
+    argparser.add_argument("-m", "--mass", required=True, choices=["250", "500", "750", "1000", "1250", "1500", "1750", "2000", "2250", "2500", "2750", "3000", "3250", "3500", "3750", "4000", "4250", "4500", "4750", "5000", "5250", "5500", "5750", "6000"], help="The taustar mass to produce scripts for")
     argparser.add_argument("-i","--inDir", type=str, help="A directory in /store/user/bbarton/TaustarToTauTauZ/SignalMC/ to find input files. Required if stage > 1")
     argparser.add_argument("-n","--nEvents", type=int, default=100, help="How many events per job to process")
     argparser.add_argument("-j", "--nJobs", type=int, default=1, help="How many jobs to create scripts for" )
