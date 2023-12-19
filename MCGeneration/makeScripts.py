@@ -15,10 +15,10 @@ def makeScripts(args, dateStr):
 
     outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/" + dateStr + "/S" + str(args.stage) + "/" + args.outDir
 
-    os.system("mkdir " + dateStr)
-    os.system("mkdir " + dateStr + "/S" + str(args.stage))
+    os.system("mkdir CondorScripts/" + dateStr)
+    os.system("mkdir CondorScripts/" + dateStr + "/S" + str(args.stage))
     if len(args.outDir) > 1:
-        os.system("mkdir " + dateStr + "/S" + str(args.stage) + "/" + args.outDir)
+        os.system("mkdir CondorScripts/" + dateStr + "/S" + str(args.stage) + "/" + args.outDir)
 
     cmssw = stageToCMSSW[args.year][args.stage]
 
