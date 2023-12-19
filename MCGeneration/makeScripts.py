@@ -40,7 +40,7 @@ def makeScripts(args, dateStr):
         command = buildCommand(args, jobN)
 
         #Executable .sh scripts
-        with open(dateStr + "/S" + str(args.stage) + "/" + args.outDir + "run_" + filebase + ".sh", "w+") as outFile:
+        with open("CondorScripts/" + dateStr + "/S" + str(args.stage) + "/" + args.outDir + "run_" + filebase + ".sh", "w+") as outFile:
             outFile.write("#!/bin/bash\n")
             outFile.write("set -x\n")
             outFile.write("OUTDIR="+ outDir + "\n")
@@ -82,7 +82,7 @@ def makeScripts(args, dateStr):
             outFile.write("date\n")
 
         #Job configuration files
-        with open(dateStr+"/S" + str(args.stage) + "/" + args.outDir + "jobConfig_" + filebase + ".jdl", "w") as jdlFile:
+        with open("CondorScripts/" + dateStr+"/S" + str(args.stage) + "/" + args.outDir + "jobConfig_" + filebase + ".jdl", "w") as jdlFile:
             jdlFile.write('universe = vanilla\n')
             jdlFile.write("Executable = run_" + filebase + ".sh\n")
             if args.memory:
