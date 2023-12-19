@@ -6,7 +6,7 @@ import argparse
 
 ##----------------------------------------------------------------------------------------------------------------------------------
 
-stageToCMSSW = ["","CMSSW_10_6_30_patch1","CMSSW_10_6_17_patch1","CMSSW_10_6_17_patch1","CMSSW_10_2_16_UL","CMSSW_10_6_17_patch1","CMSSW_10_6_20","CMSSW_10_6_26"]
+stageToCMSSW = {"2017" : ["","CMSSW_10_6_30_patch1","CMSSW_10_6_17_patch1","CMSSW_10_6_17_patch1","CMSSW_9_4_14_UL_patch1","CMSSW_10_6_17_patch1","CMSSW_10_6_20","CMSSW_10_6_26"] ,"2018" : ["","CMSSW_10_6_30_patch1","CMSSW_10_6_17_patch1","CMSSW_10_6_17_patch1","CMSSW_10_2_16_UL","CMSSW_10_6_17_patch1","CMSSW_10_6_20","CMSSW_10_6_26"]}
 months = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 ##----------------------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ def makeScripts(args, dateStr):
     if len(args.outDir) > 1:
         os.system("mkdir " + dateStr + "/S" + str(args.stage) + "/" + args.outDir)
 
-    cmssw = stageToCMSSW[args.stage]
+    cmssw = stageToCMSSW[args.year][args.stage]
 
     inDir = ""
     if args.stage != 1:
@@ -100,25 +100,39 @@ def makeScripts(args, dateStr):
 def buildCommand(args, jobN):
     command = ""
     if args.stage == 1:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m"+ args.mass + ".py --python_filename taustarToTauTauZ_m"+ args.mass+"_s1_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m"+args.mass+"_s1_"+str(jobN)+".root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m"+ args.mass + ".py --python_filename taustarToTauTauZ_m"+ args.mass+"_s1_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m"+args.mass+"_s1_"+str(jobN)+".root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n " + str(args.nEvents)
     elif args.stage == 2:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s2_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s2_"+str(jobN)+".root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s1_"+str(jobN)+".root --era Run2_2017 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s2_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s2_"+str(jobN)+".root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s1_"+str(jobN)+".root --era Run2_2018 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
     elif args.stage == 3:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = 'cmsDriver.py --python_filename taustarToTauTauZ_m'+args.mass+'_s3_'+str(jobN)+'.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m'+args.mass+'_s3_'+str(jobN)+'.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX" --conditions 106X_mc2017_realistic_v6 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m'+args.mass+'_s2_'+str(jobN)+'.root --datamix PreMix --era Run2_2017 --runUnscheduled --no_exec --mc -n ' + str(args.nEvents)
+        elif args.year == "2018":
             command = 'cmsDriver.py --python_filename taustarToTauTauZ_m'+args.mass+'_s3_'+str(jobN)+'.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m'+args.mass+'_s3_'+str(jobN)+'.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m'+args.mass+'_s2_'+str(jobN)+'.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n ' + str(args.nEvents)
     elif args.stage == 4:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".root --conditions 94X_mc2017_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2e34v40 --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s3_"+str(jobN)+".root --era Run2_2017 --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s3_"+str(jobN)+".root --era Run2_2018 --no_exec --mc -n " + str(args.nEvents)
     elif args.stage == 5:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".root --conditions 106X_mc2017_realistic_v6 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".root --era Run2_2017 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s4_"+str(jobN)+".root --era Run2_2018 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
     elif args.stage == 6:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".root --conditions 106X_mc2017_realistic_v9 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".root --era Run2_2017 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m"+args.mass+"_s5_"+str(jobN)+".root --era Run2_2018 --runUnscheduled --no_exec --mc -n " + str(args.nEvents)
     elif args.stage == 7:
-        if args.year == "2018":
+        if args.year == "2017":
+            command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s7_"+str(jobN)+".py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s7_"+str(jobN)+".root --conditions 106X_mc2017_realistic_v9 --step NANO --filein file:taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".root --era Run2_2017,run2_nanoAOD_106Xv2 --no_exec --mc -n " + str(args.nEvents)
+        elif args.year == "2018":
             command = "cmsDriver.py --python_filename taustarToTauTauZ_m"+args.mass+"_s7_"+str(jobN)+".py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m"+args.mass+"_s7_"+str(jobN)+".root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m"+args.mass+"_s6_"+str(jobN)+".root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n " + str(args.nEvents)
 
     return command
