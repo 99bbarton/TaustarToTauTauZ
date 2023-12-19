@@ -7,7 +7,7 @@ import os
 
 
 
-with open("branchList.csv", "w+") as outFile:
+with open("../branchList.csv", "w+") as outFile:
     outFile.write("Branch Name, Type, Description, Source\n")
     print("\n")
     print("{:<20}".format("Branch Name") + " | " + "{:^4}".format("Type") + " | " + "{:<80}".format("Description") + " | " + "{:<20}".format("Source File"))
