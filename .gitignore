@@ -2,9 +2,4 @@
 *.root
 *~
 
-MCGeneration/27Oct2023/
-MCGeneration/30Oct2023/
-MCGeneration/6Nov2023/
-MCGeneration/7Nov2023/
-MCGeneration/9Nov2023/
-MCGeneration/10Nov2023/
+MCGeneration/CondorScripts/
