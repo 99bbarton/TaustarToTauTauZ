@@ -1,5 +1,6 @@
 
 *.root
 *~
+*.pyc
 
 MCGeneration/CondorScripts/
