@@ -2,5 +2,6 @@
 *.root
 *~
 *.pyc
+*.png
 
 MCGeneration/CondorScripts/

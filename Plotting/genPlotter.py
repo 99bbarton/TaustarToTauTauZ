@@ -77,9 +77,9 @@ def plotDR(args):
 
         for year in years:
             
-            inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+"_Skim.root", "READ")
+            inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
-                print("ERROR: Could not read file " + args.inDir + "/taustarToTauZ_m"+mass+"_"+year+"_Skim.root")
+                print("ERROR: Could not read file " + args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root")
                 continue
             tree = inFile.Get("Events")
             

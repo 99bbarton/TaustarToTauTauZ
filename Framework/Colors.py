@@ -8,7 +8,9 @@ colors = {
     "line" : [2, 4, 6, 7, 415, 32, 36, 634],
     "stack" : [595, 602, 434, 411, 426, 419, 597, 414, 402, 797, 626, 634, 610, 618, 619],
     "cool" : [884, 874, 881, 876, 890, 855, 852, 867, 835, 844, 419, 413],
-    "line_cool" : [884, 881, 852, 876]
+    "line_cool" : [884, 881, 852, 876, 419],
+    "warm" : [635, 633, 626, 904, 616],
+    "line_warm" : [636, 633, 619, 613, 802]
 
 }
 
@@ -44,7 +46,7 @@ def getColor(palette, num):
         return 1
     pal = colors[palette]
     if num >= len(pal):
-        print("ERROR: Palette does not have " + str(num) + " colors.")
+        print("ERROR: Palette does not have " + str(num + 1) + " colors.")
         return 1
     
     return pal[num]
