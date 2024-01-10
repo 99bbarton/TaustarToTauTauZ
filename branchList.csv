@@ -1,0 +1,12 @@
+Branch Name, Type, Description, Source
+Gen_tsIdx, I, Idx to last copy of taustar in GenPart, GenProducer.py
+Gen_tsTauIdx, I, Idx to the last copy of the tau decay product of the taustar in GenPart, GenProducer.py
+Gen_tauIdx, I, Idx to the last copy of the tau produced alongside the taustar in GenPart, GenProducer.py
+Gen_zIdx, I, Idx to the last copy of the Z from the taustar decay in GenPart, GenProducer.py
+Gen_zDau1Idx, I, Idx to the first daughter of the Z at zIdx in GenPart, GenProducer.py
+Gen_zDau2Idx, I, Idx to the second daughter of the Z at zIdx in GenPart, GenProducer.py
+Gen_zDM, I, 0 = hadronic, 1=electrons, 2=muons, 3=taus, GenProducer.py
+Gen_dr_tsTauTau, F, DeltaR between tsTau and Tau, GenProducer.py
+Gen_dr_tsTauZ, F, DeltaR between tsTau and Z, GenProducer.py
+Gen_dr_tauZ, F, DeltaR between tau and Z, GenProducer.py
+Gen_dr_zDaus, F, DeltaR between the two Z daughters, GenProducer.py

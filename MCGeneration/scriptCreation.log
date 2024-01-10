@@ -1,0 +1,1015 @@
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=100, nJobs=1, stage=1, year='2018')
+
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=100, nJobs=1, stage=1, year='2018')
+
+Creating jobs in directory 27Oct2023
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S1/', mass='3000', nEvents=10, nJobs=1, stage=2, year='2018')
+
+Creating job configs and excecution scripts in directory 27Oct2023S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 27Oct2023/S1
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', nEvents=1000, nJobs=10, stage=1, year='2018')
+
+Creating job configs and excecution scripts in directory 27Oct2023/S2
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S1', mass='3000', nEvents=1000, nJobs=10, stage=2, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 30Oct2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2', mass='3000', nEvents=10, nJobs=1, stage=3, year='2018')
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "root://cmsxrootd.fnal.gov///Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:root://cmsxrootd.fnal.gov///Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:root://xrootd.unl.edu//Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=100, nJobs=1, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 6Nov2023/S3
+paseArgs returned the following parameters: Namespace(inDir='27Oct2023/S2/', mass='3000', nEvents=1000, nJobs=10, stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_10.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_10.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_10.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 7Nov2023/S4
+paseArgs returned the following parameters: Namespace(inDir='6Nov2023/S3', mass='3000', nEvents=1000, nJobs=10, stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s4_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m3000_s4_10.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s3_10.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 7Nov2023/S5
+paseArgs returned the following parameters: Namespace(inDir='7Nov2023/S4/', mass='3000', nEvents=1000, nJobs=10, stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_10.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5
+paseArgs returned the following parameters: Namespace(inDir='7Nov2023/S4/SplitFiles', mass='3000', nEvents=100, nJobs=100, stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_100.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_100.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_100.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_2.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_2.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_2.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 500
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, outDir='TestSplitFiles/', stage=5, year='2018')
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, outDir='TestSplitFiles/', stage=5, year='2018')
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, outDir='TestSplitFiles/', stage=5, year='2018')
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, outDir='TestSplitFiles/', stage=5, year='2018')
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=500, nJobs=2, outDir='TestSplitFiles/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_2.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_2.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_2.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 500
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSmallerN/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/S4/SplitFiles/', mass='3000', nEvents=50, nJobs=1, outDir='TestSmallerN/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 50
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSmallerN/
+paseArgs returned the following parameters: Namespace(inDir='7Nov2023/S4/SplitFiles/', mass='3000', nEvents=50, nJobs=1, outDir='TestSmallerN/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 50
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=100, nJobs=1, outDir='TestSplitFiles/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestSplitFiles/
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/TestSplitFiles/', mass='3000', nEvents=100, nJobs=1, outDir='TestSplitFiles/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 100
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/TestLargerMem/
+paseArgs returned the following parameters: Namespace(inDir='7Nov2023/S4/', mass='3000', memory='4200', nEvents=1000, nJobs=1, outDir='TestLargerMem/', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 9Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='7Nov2023/S4/', mass='3000', memory='4200', nEvents=1000, nJobs=10, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_10.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 10Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='9Nov2023/S5/', mass='3000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s6_10.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m3000_s6_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s5_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 10Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='10Nov2023/S6/', mass='3000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s7_10.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m3000_s7_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m3000_s6_10.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='500', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m500.py --python_filename taustarToTauTauZ_m500_s1_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m500_s1_10.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='5000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m5000.py --python_filename taustarToTauTauZ_m5000_s1_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m5000_s1_10.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m3000.py --python_filename taustarToTauTauZ_m3000_s1_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m3000_s1_40.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='500', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m500.py --python_filename taustarToTauTauZ_m500_s1_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m500_s1_10.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='5000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m5000.py --python_filename taustarToTauTauZ_m5000_s1_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m5000_s1_10.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m3000.py --python_filename taustarToTauTauZ_m3000_s1_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m3000_s1_40.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S1', mass='3000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s2_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m3000_s2_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s1_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S1', mass='500', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s2_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m500_s2_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s1_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 16Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S1', mass='5000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s2_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m5000_s2_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s1_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S2', mass='500', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s3_10.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m500_s3_10.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s2_10.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S2', mass='5000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s3_10.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m5000_s3_10.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s2_10.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='16Nov2023/S2', mass='3000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s3_40.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3000_s3_40.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s2_40.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S3', mass='3000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s4_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m3000_s4_40.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s3_40.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S3', mass='5000', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s4_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m5000_s4_10.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s3_10.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S3', mass='500', memory=None, nEvents=1000, nJobs=10, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s4_10.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m500_s4_10.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s3_10.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S4', mass='500', memory='4200', nEvents=1000, nJobs=10, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s5_10.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m500_s5_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s4_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S4', mass='5000', memory='4200', nEvents=1000, nJobs=10, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s5_10.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m5000_s5_10.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s4_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S4', mass='3000', memory='4200', nEvents=1000, nJobs=40, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s5_40.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3000_s5_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s4_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S5/', mass='500', memory=None, nEvents=10000, nJobs=10, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s6_10.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m500_s6_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s5_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S5/', mass='5000', memory=None, nEvents=10000, nJobs=10, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s6_10.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m5000_s6_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s5_10.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='21Nov2023/S5/', mass='3000', memory=None, nEvents=10000, nJobs=40, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s6_40.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m3000_s6_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m3000_s5_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S6/', mass='3000', memory=None, nEvents=10000, nJobs=40, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3000_s7_40.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m3000_s7_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m3000_s6_40.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S6/', mass='500', memory=None, nEvents=10000, nJobs=10, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s7_10.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m500_s7_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m500_s6_10.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S6/', mass='5000', memory=None, nEvents=10000, nJobs=10, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s7_10.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m5000_s7_10.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m5000_s6_10.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 10000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m500.py --python_filename taustarToTauTauZ_m500_s1_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m500_s1_40.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m5000.py --python_filename taustarToTauTauZ_m5000_s1_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m5000_s1_40.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S1', mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s2_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m5000_s2_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s1_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 22Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S1', mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s2_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m500_s2_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s1_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 24Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S2', mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s3_40.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m500_s3_40.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s2_40.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 24Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='22Nov2023/S2', mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s3_40.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m5000_s3_40.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s2_40.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 24Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='24Nov2023/S3', mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s4_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m5000_s4_40.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s3_40.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 24Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='24Nov2023/S3', mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s4_40.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m500_s4_40.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s3_40.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 25Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='24Nov2023/S4', mass='500', memory='4200', nEvents=1000, nJobs=40, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s5_40.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m500_s5_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s4_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 25Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='24Nov2023/S4', mass='5000', memory='4200', nEvents=1000, nJobs=40, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s5_40.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m5000_s5_40.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s4_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='25Nov2023/S5', mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s6_40.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m500_s6_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s5_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='25Nov2023/S5', mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s6_40.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m5000_s6_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m5000_s5_40.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S6', mass='5000', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m5000_s7_40.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m5000_s7_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m5000_s6_40.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S6', mass='500', memory=None, nEvents=1000, nJobs=40, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s7_40.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m500_s7_40.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m500_s6_40.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m1000.py --python_filename taustarToTauTauZ_m1000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m1000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m2000.py --python_filename taustarToTauTauZ_m2000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m2000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S1', mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m2000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m2000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S1', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m1000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m1000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S2', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m1000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m1000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Nov2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='26Nov2023/S2', mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m2000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m2000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 28Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='27Nov2023/S3', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m1000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m1000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 28Nov2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='27Nov2023/S3', mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m2000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m2000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 29Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='28Nov2023/S4', mass='1000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m1000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m1000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 29Nov2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='28Nov2023/S4', mass='2000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m2000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m2000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 29Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='29Nov2023/S5', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m1000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m1000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 29Nov2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='29Nov2023/S5', mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m2000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m2000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='29Nov2023/S6', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m1000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m1000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='29Nov2023/S6', mass='2000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m2000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m2000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m250.py --python_filename taustarToTauTauZ_m250_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m250_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m4000.py --python_filename taustarToTauTauZ_m4000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m4000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='30Nov2023/S1', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m250_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 30Nov2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='30Nov2023/S1', mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m4000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m4000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 2Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='30Nov2023/S2', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m250_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 2Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='30Nov2023/S2', mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m4000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m4000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 2Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='2Dec2023/S3', mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m4000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m4000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 2Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='2Dec2023/S3', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m250_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='2Dec2023/S4', mass='250', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m250_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='2Dec2023/S4', mass='4000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m4000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m4000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='3Dec2023/S5', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m250_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='3Dec2023/S5', mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m4000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m4000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='5Dec2023/S6', mass='4000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m4000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m4000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='5Dec2023/S6', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m250_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m250_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m3500.py --python_filename taustarToTauTauZ_m3500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m3500_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m4500.py --python_filename taustarToTauTauZ_m4500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m4500_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='6Dec2023/S1', mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m4500_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m4500_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='6Dec2023/S1', mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m3500_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m3500_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='6Dec2023/S2', mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m3500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m3500_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='6Dec2023/S2', mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m4500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m4500_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 11Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='8Dec2023/S3', mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m3500_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m3500_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 11Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='8Dec2023/S3', mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m4500_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m4500_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 12Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='11Dec2023/S4', mass='4500', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m4500_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m4500_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 12Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='11Dec2023/S4', mass='3500', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m3500_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m3500_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 12Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='12Dec2023/S5', mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m3500_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m3500_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 12Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='12Dec2023/S5', mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m4500_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m4500_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='12Dec2023/S6', mass='4500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m4500_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m4500_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m4500_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='12Dec2023/S6', mass='3500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m3500_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m3500_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m3500_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m2500.py --python_filename taustarToTauTauZ_m2500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m2500_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m1500.py --python_filename taustarToTauTauZ_m1500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m1500_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m750.py --python_filename taustarToTauTauZ_m750_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m750_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S1', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m750_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S1', mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m1500_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m1500_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 13Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S1', mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m2500_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m2500_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 15Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S2', mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m2500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m2500_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 15Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S2', mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m1500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m1500_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 15Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='13Dec2023/S2', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m750_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 17Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='15Dec2023/S3', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m750_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 17Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='15Dec2023/S3', mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m1500_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m1500_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 17Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='15Dec2023/S3', mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m2500_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauTauZ_m2500_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 18Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='17Dec2023/S4', mass='2500', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m2500_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m2500_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 18Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='17Dec2023/S4', mass='1500', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m1500_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m1500_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 18Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='17Dec2023/S4', mass='750', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m750_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='18Dec2023/S5', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m750_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='18Dec2023/S5', mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m2500_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m2500_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='18Dec2023/S5', mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m1500_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m1500_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S6', mass='1500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m1500_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m1500_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m1500_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S6', mass='2500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m2500_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m2500_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m2500_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S6', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m750_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauTauZ_m750_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='250', memory=None, nEvents=10, nJobs=1, outDir='./', stage=1, year='2017')
+Creating job configs and excecution scripts in directory 19Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='250', memory=None, nEvents=10, nJobs=1, outDir='./', stage=1, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m250.py --python_filename taustarToTauTauZ_m250_s1_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m250_s1_1.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S1/Test2017/
+paseArgs returned the following parameters: Namespace(inDir=None, mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=1, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m250.py --python_filename taustarToTauTauZ_m250_s1_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m250_s1_1.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S2/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S1/Test2017', mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=2, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s2_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m250_s2_1.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s1_1.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S3/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S2/Test2017', mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=3, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m250_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX" --conditions 106X_mc2017_realistic_v6 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s2_1.root --datamix PreMix --era Run2_2017 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S4/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S3/Test2017', mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=4, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s4_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m250_s4_1.root --conditions 94X_mc2017_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2e34v40 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s3_1.root --era Run2_2017 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S5/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S4/Test2017', mass='250', memory='4200', nEvents=10, nJobs=1, outDir='Test2017/', stage=5, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m250_s5_1.root --conditions 106X_mc2017_realistic_v6 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s4_1.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S6/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S5/Test2017', mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=6, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s6_1.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m250_s6_1.root --conditions 106X_mc2017_realistic_v9 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s5_1.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S7/Test2017/
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S6/Test2017', mass='250', memory=None, nEvents=10, nJobs=1, outDir='Test2017/', stage=7, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s7_1.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m250_s7_1.root --conditions 106X_mc2017_realistic_v9 --step NANO --filein file:taustarToTauTauZ_m250_s6_1.root --era Run2_2017,run2_nanoAOD_106Xv2 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 19Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m250.py --python_filename taustarToTauTauZ_m250_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m250_s1_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m500.py --python_filename taustarToTauTauZ_m500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m500_s1_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 19Dec2023/S1/./
+paseArgs returned the following parameters: Namespace(inDir=None, mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauTauZ_m750.py --python_filename taustarToTauTauZ_m750_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauTauZ_m750_s1_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN --geometry DB:Extended --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 20Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S1', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m750_s2_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s1_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 20Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S1', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m250_s2_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s1_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 20Dec2023/S2/./
+paseArgs returned the following parameters: Namespace(inDir='19Dec2023/S1', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauTauZ_m500_s2_50.root --conditions 106X_mc2017_realistic_v6 --beamspot Realistic25ns13TeVEarly2017Collision --step SIM --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s1_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='20Dec2023/S2', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX" --conditions 106X_mc2017_realistic_v6 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s2_50.root --datamix PreMix --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='20Dec2023/S2', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m250_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX" --conditions 106X_mc2017_realistic_v6 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s2_50.root --datamix PreMix --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 21Dec2023/S3/./
+paseArgs returned the following parameters: Namespace(inDir='20Dec2023/S2', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauTauZ_m750_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX" --conditions 106X_mc2017_realistic_v6 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s2_50.root --datamix PreMix --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 23Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Dec2023/S3', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m750_s4_50.root --conditions 94X_mc2017_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2e34v40 --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s3_50.root --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 23Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Dec2023/S3', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m250_s4_50.root --conditions 94X_mc2017_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2e34v40 --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s3_50.root --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 23Dec2023/S4/./
+paseArgs returned the following parameters: Namespace(inDir='21Dec2023/S3', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauTauZ_m500_s4_50.root --conditions 94X_mc2017_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2e34v40 --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s3_50.root --era Run2_2017 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='23Dec2023/S4', mass='500', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m500_s5_50.root --conditions 106X_mc2017_realistic_v6 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s4_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='23Dec2023/S4', mass='250', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m250_s5_50.root --conditions 106X_mc2017_realistic_v6 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s4_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 26Dec2023/S5/./
+paseArgs returned the following parameters: Namespace(inDir='23Dec2023/S4', mass='750', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauTauZ_m750_s5_50.root --conditions 106X_mc2017_realistic_v6 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s4_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='26Dec2023/S5', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m750_s6_50.root --conditions 106X_mc2017_realistic_v9 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m750_s5_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='26Dec2023/S5', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m250_s6_50.root --conditions 106X_mc2017_realistic_v9 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m250_s5_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S6/./
+paseArgs returned the following parameters: Namespace(inDir='26Dec2023/S5', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauTauZ_m500_s6_50.root --conditions 106X_mc2017_realistic_v9 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauTauZ_m500_s5_50.root --era Run2_2017 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='27Dec2023/S6', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m500_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m500_s7_50.root --conditions 106X_mc2017_realistic_v9 --step NANO --filein file:taustarToTauTauZ_m500_s6_50.root --era Run2_2017,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='27Dec2023/S6', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m250_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m250_s7_50.root --conditions 106X_mc2017_realistic_v9 --step NANO --filein file:taustarToTauTauZ_m250_s6_50.root --era Run2_2017,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 27Dec2023/S7/./
+paseArgs returned the following parameters: Namespace(inDir='27Dec2023/S6', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2017')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauTauZ_m750_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauTauZ_m750_s7_50.root --conditions 106X_mc2017_realistic_v9 --step NANO --filein file:taustarToTauTauZ_m750_s6_50.root --era Run2_2017,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m3000.py --python_filename taustarToTauWNu_m3000_s1_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m3000_s1_1.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S1', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s2_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m3000_s2_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s1_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTau"+decay+"_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTau"+decay+"_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTau"+decay+"_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTau"+decay+"_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTau"+decay+"_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTau"+decay+"_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTau"+decay+"_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTau"+decay+"_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTau"+decay+"_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s3_1.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m3000_s3_1.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s2_1.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S3', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s4_1.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m3000_s4_1.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s3_1.root --era Run2_2018 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S5/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S4', mass='3000', memory='4200', nEvents=10, nJobs=1, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s5_1.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauWNu_m3000_s5_1.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s4_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S6/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S5', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s6_1.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauWNu_m3000_s6_1.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s5_1.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S7/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S6', mass='3000', memory=None, nEvents=10, nJobs=1, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s7_1.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauWNu_m3000_s7_1.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauWNu_m3000_s6_1.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 10
+
+Creating job configs and excecution scripts in directory 3Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m3000.py --python_filename taustarToTauWNu_m3000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m3000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m1000.py --python_filename taustarToTauWNu_m1000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m1000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m5000.py --python_filename taustarToTauWNu_m5000_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m5000_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S1', mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m5000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m5000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S1', mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m3000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 3Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S1', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m1000_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m1000_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m1000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m1000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m3000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 5Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='3Jan2024/S2', mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m5000_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m5000_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='5Jan2024/S3', mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m5000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m5000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='5Jan2024/S3', mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m3000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 6Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='5Jan2024/S3', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m1000_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m1000_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 7Jan2024/S5/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='6Jan2024/S4', mass='1000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauWNu_m1000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauWNu_m1000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 7Jan2024/S5/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='6Jan2024/S4', mass='3000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauWNu_m3000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 7Jan2024/S5/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='6Jan2024/S4', mass='5000', memory='4200', nEvents=1000, nJobs=50, outDir='./', stage=5, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s5_50.py --eventcontent AODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier AODSIM --fileout file:taustarToTauWNu_m5000_s5_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended --filein file:taustarToTauWNu_m5000_s4_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S6/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='7Jan2024/S5', mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauWNu_m5000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauWNu_m5000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S6/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='7Jan2024/S5', mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauWNu_m3000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauWNu_m3000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S6/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='7Jan2024/S5', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=6, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s6_50.py --eventcontent MINIAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier MINIAODSIM --fileout file:taustarToTauWNu_m1000_s6_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step PAT --procModifiers run2_miniAOD_UL --geometry DB:Extended --filein file:taustarToTauWNu_m1000_s5_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S7/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S6', mass='1000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m1000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauWNu_m1000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauWNu_m1000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S7/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S6', mass='3000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m3000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauWNu_m3000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauWNu_m3000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S7/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S6', mass='5000', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=7, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m5000_s7_50.py --eventcontent NANOAODSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAODSIM --fileout file:taustarToTauWNu_m5000_s7_50.root --conditions 106X_upgrade2018_realistic_v16_L1v1 --step NANO --filein file:taustarToTauWNu_m5000_s6_50.root --era Run2_2018,run2_nanoAOD_106Xv2 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m250.py --python_filename taustarToTauWNu_m250_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m250_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m500.py --python_filename taustarToTauWNu_m500_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m500_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S1/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir=None, mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=1, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py Configuration/GenProduction/python/taustarToTauWNu_m750.py --python_filename taustarToTauWNu_m750_s1_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN --fileout file:taustarToTauWNu_m750_s1_50.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S1', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m750_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m750_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m750_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S1', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m250_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m250_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m250_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 8Jan2024/S2/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S1', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=2, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m500_s2_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:taustarToTauWNu_m500_s2_50.root --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision --step SIM --geometry DB:Extended --filein file:taustarToTauWNu_m500_s1_50.root --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 9Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S2', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m500_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m500_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m500_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 9Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S2', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m250_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m250_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m250_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 9Jan2024/S3/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='8Jan2024/S2', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=3, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m750_s3_50.py --eventcontent PREMIXRAW --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-DIGI --fileout file:taustarToTauWNu_m750_s3_50.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL18_106X_upgrade2018_realistic_v11_L1v1-v2/PREMIX" --conditions 106X_upgrade2018_realistic_v11_L1v1 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --geometry DB:Extended --filein file:taustarToTauWNu_m750_s2_50.root --datamix PreMix --era Run2_2018 --runUnscheduled --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 10Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='9Jan2024/S3', mass='750', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m750_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m750_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m750_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 10Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='9Jan2024/S3', mass='250', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m250_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m250_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m250_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
+Creating job configs and excecution scripts in directory 10Jan2024/S4/./
+paseArgs returned the following parameters: Namespace(decay='W', inDir='9Jan2024/S3', mass='500', memory=None, nEvents=1000, nJobs=50, outDir='./', stage=4, year='2018')
+The cmsDriver command of the last job was: 
+cmsDriver.py --python_filename taustarToTauWNu_m500_s4_50.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:taustarToTauWNu_m500_s4_50.root --conditions 102X_upgrade2018_realistic_v15 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:2018v32 --geometry DB:Extended --filein file:taustarToTauWNu_m500_s3_50.root --era Run2_2018 --no_exec --mc -n 1000
+
