@@ -1,12 +1,12 @@
 Branch Name, Type, Description, Source
-Z_dm, I, 0 = hadronic, 1=electrons, 2=muons, 3=taus. -1 by default, ZProducer.py
-Z_d1Idx, I, Idx to first daughter of Z in either Muons or Electrons collection (if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
-Z_d2Idx, I, Idx to second daughter of Z in either Muons or Electrons collection (depending on if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
-Z_dauDR, F, DeltaR(zDau1, zDau2). 0 default, ZProducer.py
-Z_mass, F, Mass of ee or mumu pair if either Z_dm == 1 or Z_dm == 2 or jet if Z_dm =0. 0 default, ZProducer.py
-Z_pt, F, Pt of ee or mumu pair or jet. 0 default, ZProducer.py
-Z_jetIdxDT, I, Idx to FatJet collection of the most Z-like jet determined using deepTag score. if Z_dm=0, ZProducer.py
-Z_jetIdxPN, I, Idx to FatJet collection of the most Z-like jet determined using particle net score. if Z_dm=0, ZProducer.py
+GenW_tsIdx, I, Idx to last copy of taustar in GenPart, GenProducerWNu.py
+GenW_tauIdx, I, Idx to the last copy of the tau produced alongside the taustar in GenPart, GenProducerWNu.py
+GenW_wIdx, I, Idx to the last copy of the W from the taustar decay in GenPart, GenProducerWNu.py
+GenW_wDM, I, Decay mode of W. 0 = hadronic, 1=electron, 2=muon, 3=tau. -1 default, GenProducerWNu.py
+GenW_wDau1Idx, I, Idx to GenPart of the higher pT daughter of the W if wDM==0 or the charged lepton if wDM>0. -1 default, GenProducerWNu.py
+GenW_wDau2Idx, I, Idx to GenPart of the lower pT daughter of the W if wDM!=0 or the nu if wDM>0. -1 default, GenProducerWNu.py
+GenW_wGenAK8Idx, I, Idx to GenJetAK8 collection jet matching the W from taustar if wDM == 0, GenProducerWNu.py
+GenW_dr_tauW, F, DeltaR between tau and W, GenProducerWNu.py
 Gen_tsIdx, I, Idx to last copy of taustar in GenPart, GenProducerZTau.py
 Gen_tsTauIdx, I, Idx to the last copy of the tau decay product of the taustar in GenPart, GenProducerZTau.py
 Gen_tauIdx, I, Idx to the last copy of the tau produced alongside the taustar in GenPart, GenProducerZTau.py
@@ -19,3 +19,11 @@ Gen_dr_tsTauZ, F, DeltaR between tsTau and Z, GenProducerZTau.py
 Gen_dr_tauZ, F, DeltaR between tau and Z, GenProducerZTau.py
 Gen_dr_zDaus, F, DeltaR between the two Z daughters, GenProducerZTau.py
 Gen_zGenAK8Idx, I, Idx to GenJetAK8 collection jet matching the Z from taustar if zDM == 0, GenProducerZTau.py
+Z_dm, I, 0 = hadronic, 1=electrons, 2=muons, 3=taus. -1 by default, ZProducer.py
+Z_d1Idx, I, Idx to first daughter of Z in either Muons or Electrons collection (if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
+Z_d2Idx, I, Idx to second daughter of Z in either Muons or Electrons collection (depending on if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
+Z_dauDR, F, DeltaR(zDau1, zDau2). 0 default, ZProducer.py
+Z_mass, F, Mass of ee or mumu pair if either Z_dm == 1 or Z_dm == 2 or jet if Z_dm =0. 0 default, ZProducer.py
+Z_pt, F, Pt of ee or mumu pair or jet. 0 default, ZProducer.py
+Z_jetIdxDT, I, Idx to FatJet collection of the most Z-like jet determined using deepTag score. if Z_dm=0, ZProducer.py
+Z_jetIdxPN, I, Idx to FatJet collection of the most Z-like jet determined using particle net score. if Z_dm=0, ZProducer.py
