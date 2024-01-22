@@ -20,12 +20,15 @@ def parseArgs():
     argparser.add_argument("-r","--deltaR", action="store_true", help="Plot DeltaR between GEN particles")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-
+    argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau")
+    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018"], default="ALL", help="Which year's data to plot")
     args = argparser.parse_args()
 
     if not args.masses:
         args.masses = ["250", "1000", "3000", "5000"]
 
+    if "ALL" in args.years:
+        args.years = ["2018"]
 
     return args
 
@@ -59,7 +62,10 @@ def plotDR_TauZ(args):
 
     #What to plot
     masses = args.masses
-    years = ["2018"]
+    cuts =""
+    if args.dm:
+        cuts += "Gen_zDM==" + args.dm
+
 
     #Graphics/plotting params
     if len(masses) > 1:
@@ -88,7 +94,7 @@ def plotDR_TauZ(args):
         hs_dr_tauZ.append(TH1F("h_dr_tauZ_"+mass,"GEN: #DeltaR(#tau , Z);#DeltaR;Events", nBins, binLowEdge, binHighEdge))
         hs_dr_zDaus.append(TH1F("h_dr_zDaus_"+mass,"GEN: #DeltaR(Z_{d1} , Z_{d2});#DeltaR;Events", nBins, binLowEdge, binHighEdge))
 
-        for year in years:
+        for year in args.years:
             
             inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -101,10 +107,10 @@ def plotDR_TauZ(args):
             h_dr_tauZ_yr = TH1F("h_dr_tauZ_"+mass+"_"+year,"GEN: #DeltaR(#tau, Z);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
             h_dr_zDaus_yr = TH1F("h_dr_zDaus_"+mass+"_"+year,"GEN: #DeltaR(#Z_d1, #Z_d2);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
 
-            tree.Draw("Gen_dr_tsTauTau>>+h_dr_tsTauTau_"+mass+"_"+year)
-            tree.Draw("Gen_dr_tsTauZ>>+h_dr_tsTauZ_"+mass+"_"+year)
-            tree.Draw("Gen_dr_tauZ>>+h_dr_tauZ_"+mass+"_"+year)
-            tree.Draw("Gen_dr_zDaus>>+h_dr_zDaus_"+mass+"_"+year)
+            tree.Draw("Gen_dr_tsTauTau>>+h_dr_tsTauTau_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_dr_tsTauZ>>+h_dr_tsTauZ_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_dr_tauZ>>+h_dr_tauZ_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_dr_zDaus>>+h_dr_zDaus_"+mass+"_"+year, cuts)
 
             hs_dr_tsTauTau[massN].Add(h_dr_tsTauTau_yr)
             hs_dr_tsTauZ[massN].Add(h_dr_tsTauZ_yr)
@@ -190,7 +196,9 @@ def plotDR_WNu(args):
 
     #What to plot
     masses = args.masses
-    years = ["2018"]
+    cuts =""
+    if args.dm:
+        cuts += "Gen_zDM==" + args.dm
 
     #Graphics/plotting params
     if len(masses) > 1:
@@ -213,7 +221,7 @@ def plotDR_WNu(args):
     for massN, mass in enumerate(masses):
         hs_dr_tauW.append(TH1F("h_dr_tauW_"+mass,"GEN: #DeltaR(#tau , W);#DeltaR;Events", nBins, binLowEdge, binHighEdge))
 
-        for year in years:
+        for year in args.years:
             
             inFile = TFile.Open(args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -223,7 +231,7 @@ def plotDR_WNu(args):
             
             h_dr_tauW_yr = TH1F("h_dr_tauW_"+mass+"_"+year,"GEN: #DeltaR(#tau, W);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
 
-            tree.Draw("GenW_dr_tauW>>+h_dr_tauW_"+mass+"_"+year)
+            tree.Draw("GenW_dr_tauW>>+h_dr_tauW_"+mass+"_"+year, cuts)
 
             hs_dr_tauW[massN].Add(h_dr_tauW_yr)
 
@@ -267,7 +275,9 @@ def plotGenPartVar_TauZ(args):
 
     #What to plot
     masses = args.masses
-    years = ["2018"]
+    cuts = ""
+    if args.dm:
+        cuts += "Gen_zDM==" + args.dm
 
     #Graphics/plotting params
     if len(masses) > 1:
@@ -322,7 +332,7 @@ def plotGenPartVar_TauZ(args):
         h_tau = TH1F("h_tau_"+mass,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
         h_Z = TH1F("h_Z_"+mass,"GEN: Z;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
 
-        for year in years:
+        for year in args.years:
             
             inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -334,9 +344,9 @@ def plotGenPartVar_TauZ(args):
             h_tau_yr = TH1F("h_tau_"+mass+"_"+year,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
             h_Z_yr = TH1F("h_Z_"+mass+"_"+year,"GEN: Z;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
 
-            tree.Draw("GenPart_"+args.genVar+"[Gen_tsTauIdx]>>+h_tsTau_"+mass+"_"+year)
-            tree.Draw("GenPart_"+args.genVar+"[Gen_tauIdx]>>+h_tau_"+mass+"_"+year)
-            tree.Draw("GenPart_"+args.genVar+"[Gen_zIdx]>>+h_Z_"+mass+"_"+year)
+            tree.Draw("GenPart_"+args.genVar+"[Gen_tsTauIdx]>>+h_tsTau_"+mass+"_"+year, cuts)
+            tree.Draw("GenPart_"+args.genVar+"[Gen_tauIdx]>>+h_tau_"+mass+"_"+year, cuts)
+            tree.Draw("GenPart_"+args.genVar+"[Gen_zIdx]>>+h_Z_"+mass+"_"+year, cuts)
 
             h_tsTau.Add(h_tsTau_yr)
             h_tau.Add(h_tau_yr)
@@ -392,7 +402,9 @@ def plotGenPartVar_WNu(args):
 
     #What to plot
     masses = args.masses
-    years = ["2018"]
+    cuts = ""
+    if args.dm:
+        cuts += "Gen_zDM==" + args.dm
 
     #Graphics/plotting params
     if len(masses) > 1:
@@ -445,7 +457,7 @@ def plotGenPartVar_WNu(args):
         h_tau = TH1F("h_tau_"+mass,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
         h_w = TH1F("h_w_"+mass,"GEN: W;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
 
-        for year in years:
+        for year in args.years:
             
             inFile = TFile.Open(args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -456,8 +468,8 @@ def plotGenPartVar_WNu(args):
             h_tau_yr = TH1F("h_tau_"+mass+"_"+year,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
             h_w_yr = TH1F("h_w_"+mass+"_"+year,"GEN: W;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
 
-            tree.Draw("GenPart_"+args.genVar+"[GenW_tauIdx]>>+h_tau_"+mass+"_"+year)
-            tree.Draw("GenPart_"+args.genVar+"[GenW_wIdx]>>+h_w_"+mass+"_"+year)
+            tree.Draw("GenPart_"+args.genVar+"[GenW_tauIdx]>>+h_tau_"+mass+"_"+year, cuts)
+            tree.Draw("GenPart_"+args.genVar+"[GenW_wIdx]>>+h_w_"+mass+"_"+year, cuts)
 
             h_tau.Add(h_tau_yr)
             h_w.Add(h_w_yr)
