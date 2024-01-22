@@ -15,6 +15,7 @@ import Colors as cols
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Script to plot GEN-level variables")
     argparser.add_argument("-i", "--inDir", required=True, action="store", help="A directory to find the input root files")
+    argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="Whether to plot WNu or ZTau GEN-level parameters")
     argparser.add_argument("-g", "--genVar", choices=["pt", "eta", "phi"], help="A variable in the GenPart collection to plot")
     argparser.add_argument("-r","--deltaR", action="store_true", help="Plot DeltaR between GEN particles")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
@@ -33,14 +34,21 @@ def parseArgs():
 def main(args):
 
     if args.deltaR:
-        plotDR(args)
+        if args.decay == "Z":
+            plotDR_TauZ(args)
+        else:
+            plotDR_WNu(args)
     if args.genVar:
-        plotGenPartVar(args)
+        if args.decay == "Z":
+            plotGenPartVar_TauZ(args)
+        else:
+            plotGenPartVar_WNu(args)
+    
     return 0
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-def plotDR(args):
+def plotDR_TauZ(args):
     print("Plotting DeltaR of interesting GEN particles...")
 
     if args.palette:
@@ -163,14 +171,98 @@ def plotDR(args):
 
     resp = raw_input("Hit ENTER to close plot and save...")
 
-    canv.SaveAs("Plots/GenPlots/deltaR.png")
+    canv.SaveAs("Plots/GenPlots/deltaR_TauZ.png")
 
     print("... done plotting DeltaR")
     #END plotDR()
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-def plotGenPartVar(args):
+
+def plotDR_WNu(args):
+    print("Plotting DeltaR of interesting GEN particles...")
+
+    if args.palette:
+        palette = args.palette
+    else:
+        palette = "line"
+
+
+    #What to plot
+    masses = args.masses
+    years = ["2018"]
+
+    #Graphics/plotting params
+    if len(masses) > 1:
+        gStyle.SetOptStat(0)
+    canv = TCanvas("drCanv", "DeltaR Plots", 800, 600)
+    leg = None
+    if len(masses) < 4:
+        leg = TLegend(0.7, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+    else:
+        leg = TLegend(0.7, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+    leg.SetTextSize(0.04)
+
+    nBins = 25
+    binLowEdge = 0
+    binHighEdge = 5
+    
+    #Lists to collect histograms of each mass
+    hs_dr_tauW = []
+    
+    for massN, mass in enumerate(masses):
+        hs_dr_tauW.append(TH1F("h_dr_tauW_"+mass,"GEN: #DeltaR(#tau , W);#DeltaR;Events", nBins, binLowEdge, binHighEdge))
+
+        for year in years:
+            
+            inFile = TFile.Open(args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root", "READ")
+            if inFile == "None":
+                print("ERROR: Could not read file " + args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root")
+                continue
+            tree = inFile.Get("Events")
+            
+            h_dr_tauW_yr = TH1F("h_dr_tauW_"+mass+"_"+year,"GEN: #DeltaR(#tau, W);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
+
+            tree.Draw("GenW_dr_tauW>>+h_dr_tauW_"+mass+"_"+year)
+
+            hs_dr_tauW[massN].Add(h_dr_tauW_yr)
+
+            inFile.Close()
+            #END year loop
+        
+        hs_dr_tauW[massN].SetLineColor(cols.getColor(palette, massN))
+
+        hs_dr_tauW[massN].SetLineWidth(3)
+        #END mass loop
+    
+    #Make the plots
+    maxs = [0]
+    canv.Divide(2, 2)
+    for i in range(len(masses)):
+        maxs[0] = max(maxs[0], hs_dr_tauW[i].GetMaximum())
+
+        if i == 0:
+            hs_dr_tauW[0].Draw("HIST")
+        else:
+            hs_dr_tauW[i].Draw("HIST SAME")
+
+        leg.AddEntry(hs_dr_tauW[i], masses[i], "L")
+        
+    hs_dr_tauW[0].SetMaximum(maxs[0] * 1.1)
+    leg.Draw()
+
+    canv.Update()
+
+    resp = raw_input("Hit ENTER to close plot and save...")
+
+    canv.SaveAs("Plots/GenPlots/deltaR_WNu.png")
+
+    print("... done plotting DeltaR")
+    #END plotDR()
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+def plotGenPartVar_TauZ(args):
     print("Plotting " + args.genVar + " of interesting GEN particles...")
 
     #What to plot
@@ -184,7 +276,7 @@ def plotGenPartVar(args):
         palette = args.palette
     else:
         palette = "line"
-    canv = TCanvas("genCanv", "GEN Plots", 1200, 1000)
+    canv = TCanvas("genCanv", "GEN Plots", 1600, 1000)
     leg = None
     if args.genVar == "phi":
         if len(masses) < 4:
@@ -194,9 +286,9 @@ def plotGenPartVar(args):
             leg.SetNColumns(2)
     else:
         if len(masses) < 4:
-            leg = TLegend(0.7, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+            leg = TLegend(0.6, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
         else:
-            leg = TLegend(0.7, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+            leg = TLegend(0.6, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
     leg.SetTextSize(0.04)
 
     #Settings per variable
@@ -287,7 +379,120 @@ def plotGenPartVar(args):
 
     resp = raw_input("Hit ENTER to close plot and save...")
 
-    canv.SaveAs("Plots/GenPlots/"+args.genVar+".png")
+    canv.SaveAs("Plots/GenPlots/"+args.genVar+"_TauZ.png")
+
+    print("... done plotting " + args.genVar)
+    #END plotGenPartVar()
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+
+def plotGenPartVar_WNu(args):
+    print("Plotting " + args.genVar + " of interesting GEN particles...")
+
+    #What to plot
+    masses = args.masses
+    years = ["2018"]
+
+    #Graphics/plotting params
+    if len(masses) > 1:
+        gStyle.SetOptStat(0)
+    if args.palette:
+        palette = args.palette
+    else:
+        palette = "line"
+    canv = TCanvas("genCanv", "GEN Plots", 1200, 600)
+    leg = None
+    if args.genVar == "phi":
+        if len(masses) < 4:
+            leg = TLegend(0.5, 0.15, 0.9, 0.35, "#tau* Mass [GeV]")
+        else:
+            leg = TLegend(0.5, 0.15, 0.9, 0.35, "#tau* Mass [GeV]")
+            leg.SetNColumns(2)
+    else:
+        if len(masses) < 4:
+            leg = TLegend(0.6, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+        else:
+            leg = TLegend(0.6, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+    leg.SetTextSize(0.04)
+
+    #Settings per variable
+    nBins = 0
+    binLowEdge = 0
+    binHighEdge = 0
+    xLabel = ""
+    if args.genVar == "pt":
+        nBins = 70
+        binLowEdge = 0
+        binHighEdge = 3500
+        xLabel = "pT [GeV]"
+    elif args.genVar == "eta":
+        nBins = 25
+        binLowEdge = -2.5
+        binHighEdge = 2.5
+        xLabel = "#eta"
+    elif args.genVar == "phi":
+        nBins = 16
+        binLowEdge = 0
+        binHighEdge = pi
+        xLabel = "#phi"
+    
+    #Lists to collect histograms of each mass
+    hs_tau= THStack("hs_tau","GEN: #tau;"+xLabel+";Events" )
+    hs_w = THStack("hs_w","GEN: W;"+xLabel+";Events" )
+
+    for massN, mass in enumerate(masses):
+        h_tau = TH1F("h_tau_"+mass,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
+        h_w = TH1F("h_w_"+mass,"GEN: W;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
+
+        for year in years:
+            
+            inFile = TFile.Open(args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root", "READ")
+            if inFile == "None":
+                print("ERROR: Could not read file " + args.inDir + "/taustarToWNu_m"+mass+"_"+year+".root")
+                continue
+            tree = inFile.Get("Events")
+
+            h_tau_yr = TH1F("h_tau_"+mass+"_"+year,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
+            h_w_yr = TH1F("h_w_"+mass+"_"+year,"GEN: W;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
+
+            tree.Draw("GenPart_"+args.genVar+"[GenW_tauIdx]>>+h_tau_"+mass+"_"+year)
+            tree.Draw("GenPart_"+args.genVar+"[GenW_wIdx]>>+h_w_"+mass+"_"+year)
+
+            h_tau.Add(h_tau_yr)
+            h_w.Add(h_w_yr)
+
+            inFile.Close()
+            #END year loop
+
+        h_tau.SetLineColor(cols.getColor(palette, massN))
+        h_w.SetLineColor(cols.getColor(palette, massN))
+        
+        h_tau.SetLineWidth(3)
+        h_w.SetLineWidth(3)
+
+        hs_tau.Add(h_tau)
+        hs_w.Add(h_w)
+
+        leg.AddEntry(h_w, mass, "L")
+        #END mass loop
+    
+    #Make the plots
+    canv.Divide(2, 1)
+    canv.cd(1)
+    hs_tau.Draw("NOSTACK")
+    hs_tau.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(2)
+    hs_w.Draw("NOSTACK")
+    hs_w.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+
+    canv.Update()
+
+    resp = raw_input("Hit ENTER to close plot and save...")
+
+    canv.SaveAs("Plots/GenPlots/"+args.genVar+"_WNu.png")
 
     print("... done plotting " + args.genVar)
     #END plotGenPartVar()
