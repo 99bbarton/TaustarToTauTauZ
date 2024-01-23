@@ -1,6 +1,7 @@
 
 
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gPad, TGraph
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gROOT, TGraph, PyConfig
+PyConfig.IgnoreCommandLineOptions = False
 import os
 import sys
 import argparse
