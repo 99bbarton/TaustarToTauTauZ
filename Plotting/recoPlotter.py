@@ -1,7 +1,7 @@
 
 
 from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gROOT, TGraph, PyConfig
-PyConfig.IgnoreCommandLineOptions = False
+PyConfig.IgnoreCommandLineOptions = True
 import os
 import sys
 import argparse
@@ -20,15 +20,16 @@ def parseArgs():
     argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="The particle to plot/calculate RECO related params for")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("-y", "--years", choices=["ALL", "2018"], default="ALL")
+    argparser.add_argument("-y", "--years", choices=["ALL", "2018"], type=str, default=["ALL"], action="append")
 
     args = argparser.parse_args()
 
     if not args.masses:
-        args.masses = ["250", "1000", "3000", "5000"]
+        args.masses = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"]
 
-    if args.years == "ALL":
+    if "ALL" in args.years:
         args.years = ["2018"] #TODO Update this as more years are processed
+
 
     return args
 
@@ -91,7 +92,6 @@ def recoEffs_Z(args):
         nMuCorrectReco.append(0)
         nTauCorrectReco.append(0)
 
-
         for year in args.years:
             inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -127,14 +127,14 @@ def recoEffs_Z(args):
 
         effs_ee.append(float(nElCorrectReco[-1]) / nElDecays[-1] * 100.0)
         effs_mumu.append(float(nMuCorrectReco[-1]) / nMuDecays[-1] * 100.0)
-        effs_tautau.append(nTauCorrectReco[-1] / nTauDecays[-1])
+        effs_tautau.append(float(nTauCorrectReco[-1]) / nTauDecays[-1])
         effs_had_pn.append(float(hadDecaysMatch_pn[-1]) / hadDecaysMatch[-1] * 100.0)
         effs_had_dt.append(float(hadDecaysMatch_dt[-1]) / hadDecaysMatch[-1] * 100.0)
 
     #Print out is done for masses * years cumulative
     print("\n=============  Z RECO parameters: =============")
     print("years = " + str(args.years))
-    print("mass = " + str(args.massses))
+    print("mass = " + str(args.masses))
     print("----------------- Z->ee -----------------------")
     print("Num Events (MC Truth): " + str(nElDecays))
     print("Decay mode choice eff: {:.2f}%".format(float(sum(elDecaysMatch)) / sum(nElDecays) * 100.0))
@@ -153,7 +153,7 @@ def recoEffs_Z(args):
     #print("Daughter 1 match eff:  {:.2f}%" + str(tauD1DecaysMatch / tauDecaysMatch))
     #print("Daughter 2 match eff:  {:.2f}%" + str(tauD2DecaysMatch / tauDecaysMatch))
     #print("Total Z->ee reco eff:  {:.2f}%" + str(nTauCorrectReco / nTauDecays)) 
-    print("----------------- Z->jets -----------------------")
+    print("----------------- Z->had -----------------------")
     print("Num Events (MC Truth): " + str(nHadDecays))
     print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
     print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
@@ -161,12 +161,17 @@ def recoEffs_Z(args):
     
     print("=================================================\n")
 
+    fltMasses = []
+    for mass in args.masses:
+        fltMasses.append(float(mass))
+
+    nPts = len(fltMasses)
     #Now make plots
-    g_ee = TGraph(array("f", args.masses), array("f", effs_ee))
-    g_mumu = TGraph(array("f", args.masses), array("f", effs_mumu))
-    g_tautau = TGraph(array("f", args.masses), array("f", effs_tautau))
-    g_had_pn = TGraph(array("f", args.masses), array("f", effs_had_pn))
-    g_had_dt = TGraph(array("f", args.masses), array("f", effs_had_dt))
+    g_ee = TGraph(nPts, array("f", fltMasses), array("f", effs_ee))
+    g_mumu = TGraph(nPts, array("f", fltMasses), array("f", effs_mumu))
+    g_tautau = TGraph(nPts, array("f", fltMasses), array("f", effs_tautau))
+    g_had_pn = TGraph(nPts, array("f", fltMasses), array("f", effs_had_pn))
+    g_had_dt = TGraph(nPts, array("f", fltMasses), array("f", effs_had_dt))
 
     g_ee.SetMaximum(105)
     g_mumu.SetMaximum(105)
@@ -188,19 +193,38 @@ def recoEffs_Z(args):
     g_had_pn.SetTitle("RECO Eff (PN ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
     g_had_dt.SetTitle("RECO Eff (DT ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
 
+    g_ee.SetMarkerStyle(5)
+    g_mumu.SetMarkerStyle(5)
+    g_tautau.SetMarkerStyle(5)
+    g_had_pn.SetMarkerStyle(5)
+    g_had_dt.SetMarkerStyle(5)
+
+    g_ee.SetMarkerSize(3)
+    g_mumu.SetMarkerSize(3)
+    g_tautau.SetMarkerSize(3)
+    g_had_pn.SetMarkerSize(3)
+    g_had_dt.SetMarkerSize(3)
+
+    g_ee.SetLineWidth(2)
+    g_mumu.SetLineWidth(2)
+    g_tautau.SetLineWidth(2)
+    g_had_pn.SetLineWidth(2)
+    g_had_dt.SetLineWidth(2)
+
+    drawStyle = "AP"
     gStyle.SetOptStat(0)
     canv = TCanvas("zCanv", "Z RECO Plots", 1800, 1000)
     canv.Divide(3,2)
     canv.cd(1)
-    g_ee.Draw("ALP")
+    g_ee.Draw(drawStyle)
     canv.cd(2)
-    g_mumu.Draw("ALP")
+    g_mumu.Draw(drawStyle)
     canv.cd(3)
-    g_tautau.Draw("ALP")
+    #g_tautau.Draw(drawStyle)
     canv.cd(4)
-    g_had_pn.Draw("ALP")
+    g_had_pn.Draw(drawStyle)
     canv.cd(5)
-    g_had_dt.Draw("ALP")
+    g_had_dt.Draw(drawStyle)
 
     resp = raw_input("Hit ENTER to save and close plot... ")
     canv.SaveAs("Plots/recoEffs_Z.png")
