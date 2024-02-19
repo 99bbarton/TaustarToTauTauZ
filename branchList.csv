@@ -20,6 +20,9 @@ Gen_totMET_phi, F, MET from W decay, spectator tau decay, and nu, GenProducerWNu
 Gen_dr_tauW, F, DeltaR between tau and W, GenProducerWNu.py
 Gen_dr_tauTotMET, F, DeltaR between the spectator tau and the total MET, GenProducerWNu.py
 Gen_dr_wTotMET, F, DeltaR between the the W and the total MET, GenProducerWNu.py
+Gen_dr_tauNuMETTotMET, F, DeltaR between the MET from the spectator tau + nu and the total MET, GenProducerWNu.py
+SelTaus_n, I, The number of taus which passed basic requirements, TauProducer.py
+SelTaus_idxs, i, List of length SelTaus_n of indices to Tau collection of taus passing basic requirements, TauProducer.py
 Gen_tsIdx, I, Idx to last copy of taustar in GenPart, GenProducerZTau.py
 Gen_tsTauIdx, I, Idx to the last copy of the tau decay product of the taustar in GenPart, GenProducerZTau.py
 Gen_tsTauDM, I, Decay mode of the ts tau:  0=had, 1=e, 2=muon, GenProducerZTau.py
