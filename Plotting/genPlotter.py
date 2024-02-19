@@ -1,7 +1,7 @@
 #Generator level plotting
 
 
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gPad
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gPad, TH2F
 import os
 import sys
 import argparse
@@ -396,7 +396,6 @@ def plotGenPartVar_TauZ(args):
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-
 def plotGenPartVar_WNu(args):
     print("Plotting " + args.genVar + " of interesting GEN particles...")
 
@@ -508,6 +507,141 @@ def plotGenPartVar_WNu(args):
 
     print("... done plotting " + args.genVar)
     #END plotGenPartVar()
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+def plotMET_TauZ(args):
+    print("Plotting " + args.genVar + " of interesting GEN particles...")
+
+    #What to plot
+    masses = args.masses
+    cuts = ""
+    if args.dm:
+        cuts += "Gen_zDM==" + args.dm
+
+    #Graphics/plotting params
+    if len(masses) > 1:
+        gStyle.SetOptStat(0)
+    if args.palette:
+        palette = args.palette
+    else:
+        palette = "line"
+    leg = None
+    if len(masses) < 4:
+        leg = TLegend(0.6, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+    else:
+        leg = TLegend(0.6, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+    leg.SetTextSize(0.04)
+
+    canv = TCanvas("metCanv_tauZ","GEN-Level MET Plots: TauZ", 1600, 1000)
+
+    hs_tausMET_pt = THStack("hs_tausMET_pt", "MET from Taus: pT; pT [GeV];Events")
+    hs_tausMET_eta = THStack("hs_tausMET_eta", "MET from Taus: #eta; #eta;Events")
+    hS_tausMET_phi = THStack("hs_tausMET_phi", "MET from Taus: #phi; #phi;Events")
+    hs_totMET_pt = THStack("hs_totMET_pt", "Total MET from Taus + Z: pT; pT [GeV];Events")
+    hs_totMET_eta = THStack("hs_totMET_eta", "Total MET from Taus + Z: #eta; #eta;Events")
+    hS_totMET_phi = THStack("hs_totMET_phi", "Total MET from Taus + Z: #phi; #phi;Events")
+
+
+    for massN, mass in enumerate(masses):
+        h_tausMET_pt = THStack("h_tausMET_pt_" + mass, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
+        h_tausMET_eta = THStack("h_tausMET_eta_" + mass, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
+        h_tausMET_phi = THStack("h_tausMET_phi_" + mass, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+        h_totMET_pt = THStack("h_totMET_pt_" + mass, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
+        h_totMET_eta = THStack("h_totMET_eta_" + mass, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
+        h_totMET_phi = THStack("h_totMET_phi_" + mass, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+
+        for year in args.years:
+
+            inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
+            if inFile == "None":
+                print("ERROR: Could not read file " + args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root")
+                continue
+            tree = inFile.Get("Events")
+
+            h_tausMET_pt_yr = THStack("h_tausMET_pt_"+mass+"_"+year, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
+            h_tausMET_eta_yr = THStack("h_tausMET_eta_"+mass+"_"+year, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
+            h_tausMET_phi_yr = THStack("h_tausMET_phi_"+mass+"_"+year, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+            h_totMET_pt_yr = THStack("h_totMET_pt_"+mass+"_"+year, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
+            h_totMET_eta_yr = THStack("h_totMET_eta_"+mass+"_"+year, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
+            h_totMET_phi_yr = THStack("h_totMET_phi_"+mass+"_"+year, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+
+            tree.Draw("Gen_tausMET_pt>>+h_tausMET_pt_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_tausMET_eta>>+h_tausMET_eta_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_tausMET_phi>>+h_tausMET_phi_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_totMET_pt>>+h_totMET_pt_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_totMET_eta>>+h_totMET_eta_"+mass+"_"+year, cuts)
+            tree.Draw("Gen_totMET_phi>>+h_totMET_phi_"+mass+"_"+year, cuts)
+
+            h_tausMET_pt.Add(h_tausMET_pt_yr)
+            h_tausMET_eta.Add(h_tausMET_eta_yr)
+            h_tausMET_phi.Add(h_tausMET_phi_yr)
+            h_totMET_pt.Add(h_totMET_pt_yr)
+            h_totMET_eta.Add(h_totMET_eta_yr)
+            h_totMET_phi.Add(h_totMET_phi_yr)
+
+            del h_tausMET_pt_yr
+            del h_tausMET_eta_yr
+            del h_tausMET_phi_yr
+            del h_totMET_pt_yr
+            del h_totMET_eta_yr
+            del h_totMET_phi_yr
+
+            inFile.Close()
+            #END year loop
+
+        h_tausMET_pt.SetLineColor(cols.getColor(palette, massN))
+        h_tausMET_eta.SetLineColor(cols.getColor(palette, massN))
+        h_tausMET_phi.SetLineColor(cols.getColor(palette, massN))
+        h_totMET_pt.SetLineColor(cols.getColor(palette, massN))
+        h_totMET_eta.SetLineColor(cols.getColor(palette, massN))
+        h_totMET_phi.SetLineColor(cols.getColor(palette, massN))
+
+        h_tausMET_pt.SetLineWidth(3)
+        h_tausMET_eta.SetLineWidth(3)
+        h_tausMET_phi.SetLineWidth(3)
+        h_totMET_pt.SetLineWidth(3)
+        h_totMET_eta.SetLineWidth(3)
+        h_totMET_phi.SetLineWidth(3)
+
+        hs_tausMET_pt.Add(h_tausMET_pt)
+        hs_tausMET_eta.Add(h_tausMET_eta)
+        hS_tausMET_phi.Add(h_tausMET_phi)
+        hs_totMET_pt.Add(h_totMET_pt)
+        hs_totMET_eta.Add(h_totMET_eta)
+        hS_totMET_phi.Add(h_totMET_phi)
+
+
+        leg.AddEntry(h_tausMET_pt, mass, "L")
+        #END mass loop
+    
+    #Make the plots
+    canv.Divide(3, 2)
+    canv.cd(1)
+    hs_tausMET_pt.Draw("NOSTACK")
+    hs_tausMET_pt.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(2)
+    hs_tausMET_eta.Draw("NOSTACK")
+    hs_tausMET_eta.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(3)
+    hS_tausMET_phi.Draw("NOSTACK")
+    hS_tausMET_phi.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(4)
+    hs_totMET_pt.Draw("NOSTACK")
+    hs_totMET_pt.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(5)
+    hs_totMET_eta.Draw("NOSTACK")
+    hs_totMET_eta.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(6)
+    hS_totMET_phi.Draw("NOSTACK")
+    hS_totMET_phi.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
