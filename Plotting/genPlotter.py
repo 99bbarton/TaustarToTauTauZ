@@ -1,5 +1,7 @@
 #Generator level plotting
 
+from ROOT import PyConfig
+PyConfig.IgnoreCommandLineOptions = True
 
 from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gPad, TH2F
 import os
@@ -18,10 +20,11 @@ def parseArgs():
     argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="Whether to plot WNu or ZTau GEN-level parameters")
     argparser.add_argument("-g", "--genVar", choices=["pt", "eta", "phi"], help="A variable in the GenPart collection to plot")
     argparser.add_argument("-r","--deltaR", action="store_true", help="Plot DeltaR between GEN particles")
+    argparser.add_argument("--met", action="store_true", help="Plot MET quantities")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
     argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau")
-    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018"], default="ALL", help="Which year's data to plot")
+    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018"], default=["ALL"], help="Which year's data to plot")
     args = argparser.parse_args()
 
     if not args.masses:
@@ -46,6 +49,9 @@ def main(args):
             plotGenPartVar_TauZ(args)
         else:
             plotGenPartVar_WNu(args)
+    if args.met:
+        if args.decay == "Z":
+            plotMET_TauZ(args)
     
     return 0
 
@@ -511,7 +517,7 @@ def plotGenPartVar_WNu(args):
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def plotMET_TauZ(args):
-    print("Plotting " + args.genVar + " of interesting GEN particles...")
+    print("Plotting MET parameters of interesting GEN particles...")
 
     #What to plot
     masses = args.masses
@@ -544,12 +550,12 @@ def plotMET_TauZ(args):
 
 
     for massN, mass in enumerate(masses):
-        h_tausMET_pt = THStack("h_tausMET_pt_" + mass, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
-        h_tausMET_eta = THStack("h_tausMET_eta_" + mass, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
-        h_tausMET_phi = THStack("h_tausMET_phi_" + mass, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
-        h_totMET_pt = THStack("h_totMET_pt_" + mass, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
-        h_totMET_eta = THStack("h_totMET_eta_" + mass, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
-        h_totMET_phi = THStack("h_totMET_phi_" + mass, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+        h_tausMET_pt = TH1F("h_tausMET_pt_" + mass, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
+        h_tausMET_eta = TH1F("h_tausMET_eta_" + mass, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
+        h_tausMET_phi = TH1F("h_tausMET_phi_" + mass, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+        h_totMET_pt = TH1F("h_totMET_pt_" + mass, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
+        h_totMET_eta = TH1F("h_totMET_eta_" + mass, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
+        h_totMET_phi = TH1F("h_totMET_phi_" + mass, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
 
         for year in args.years:
 
@@ -559,12 +565,12 @@ def plotMET_TauZ(args):
                 continue
             tree = inFile.Get("Events")
 
-            h_tausMET_pt_yr = THStack("h_tausMET_pt_"+mass+"_"+year, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
-            h_tausMET_eta_yr = THStack("h_tausMET_eta_"+mass+"_"+year, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
-            h_tausMET_phi_yr = THStack("h_tausMET_phi_"+mass+"_"+year, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
-            h_totMET_pt_yr = THStack("h_totMET_pt_"+mass+"_"+year, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
-            h_totMET_eta_yr = THStack("h_totMET_eta_"+mass+"_"+year, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
-            h_totMET_phi_yr = THStack("h_totMET_phi_"+mass+"_"+year, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+            h_tausMET_pt_yr = TH1F("h_tausMET_pt_"+mass+"_"+year, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
+            h_tausMET_eta_yr = TH1F("h_tausMET_eta_"+mass+"_"+year, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
+            h_tausMET_phi_yr = TH1F("h_tausMET_phi_"+mass+"_"+year, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+            h_totMET_pt_yr = TH1F("h_totMET_pt_"+mass+"_"+year, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
+            h_totMET_eta_yr = TH1F("h_totMET_eta_"+mass+"_"+year, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
+            h_totMET_phi_yr = TH1F("h_totMET_phi_"+mass+"_"+year, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
 
             tree.Draw("Gen_tausMET_pt>>+h_tausMET_pt_"+mass+"_"+year, cuts)
             tree.Draw("Gen_tausMET_eta>>+h_tausMET_eta_"+mass+"_"+year, cuts)
@@ -641,6 +647,13 @@ def plotMET_TauZ(args):
     hS_totMET_phi.Draw("NOSTACK")
     hS_totMET_phi.GetXaxis().SetTitleSize(0.04)
     leg.Draw()
+
+    resp = raw_input("Hit ENTER to close plot and save...")
+
+    canv.SaveAs("Plots/GenPlots/met_TauZ.png")
+
+    print("... done plotting TauZ MET")
+    #END plotMET_TauZ()
 
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
