@@ -77,7 +77,7 @@ def makeScripts(args, dateStr):
             outFile.write('echo "xrdcp output for condor to "\n')
             outFile.write("echo $OUTDIR\n")
 
-            outFile.write("xrdcp " + filename + ".root " + "root://cmseos.fnal.gov/${OUTDIR}\n")
+            outFile.write("xrdcp -f" + filename + ".root " + "root://cmseos.fnal.gov/${OUTDIR}\n")
             outFile.write("XRDEXIT=$?\n")
             outFile.write("if [[ $XRDEXIT -ne 0 ]]; then\n")
             outFile.write('echo "exit code $XRDEXIT, failure in xrdcp"\n')
