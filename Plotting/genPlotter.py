@@ -23,7 +23,7 @@ def parseArgs():
     argparser.add_argument("--met", action="store_true", help="Plot MET quantities")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau")
+    argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3", "4"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau, 4=invisible")
     argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018"], default=["ALL"], help="Which year's data to plot")
     args = argparser.parse_args()
 
@@ -532,12 +532,18 @@ def plotMET_TauZ(args):
         palette = args.palette
     else:
         palette = "line"
+
     leg = None
+    phiLeg = None
     if len(masses) < 4:
-        leg = TLegend(0.6, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+        leg = TLegend(0.67, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+        phiLeg = TLegend(0.67, 0.2, 0.9, 0.5, "#tau* Mass [GeV]")
     else:
-        leg = TLegend(0.6, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+        leg = TLegend(0.67, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+        phiLeg = TLegend(0.5, 0.15, 0.9, 0.4, "#tau* Mass [GeV]")
+        phiLeg.SetNColumns(2)
     leg.SetTextSize(0.04)
+    phiLeg.SetTextSize(0.04)
 
     canv = TCanvas("metCanv_tauZ","GEN-Level MET Plots: TauZ", 1600, 1000)
 
@@ -552,10 +558,10 @@ def plotMET_TauZ(args):
     for massN, mass in enumerate(masses):
         h_tausMET_pt = TH1F("h_tausMET_pt_" + mass, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
         h_tausMET_eta = TH1F("h_tausMET_eta_" + mass, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
-        h_tausMET_phi = TH1F("h_tausMET_phi_" + mass, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+        h_tausMET_phi = TH1F("h_tausMET_phi_" + mass, "MET from Taus: #phi; #phi;Events;", 8, 0, pi)
         h_totMET_pt = TH1F("h_totMET_pt_" + mass, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
         h_totMET_eta = TH1F("h_totMET_eta_" + mass, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
-        h_totMET_phi = TH1F("h_totMET_phi_" + mass, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+        h_totMET_phi = TH1F("h_totMET_phi_" + mass, "Total MET from Taus + Z: #phi; #phi;Events;", 8, 0, pi)
 
         for year in args.years:
 
@@ -567,10 +573,10 @@ def plotMET_TauZ(args):
 
             h_tausMET_pt_yr = TH1F("h_tausMET_pt_"+mass+"_"+year, "MET from Taus: pT; pT [GeV];Events;", 40, 0, 2000 )
             h_tausMET_eta_yr = TH1F("h_tausMET_eta_"+mass+"_"+year, "MET from Taus: #eta; #eta;Events;", 25,-2.5, 2.5)
-            h_tausMET_phi_yr = TH1F("h_tausMET_phi_"+mass+"_"+year, "MET from Taus: #phi; #phi;Events;", 16, 0, pi)
+            h_tausMET_phi_yr = TH1F("h_tausMET_phi_"+mass+"_"+year, "MET from Taus: #phi; #phi;Events;", 8, 0, pi)
             h_totMET_pt_yr = TH1F("h_totMET_pt_"+mass+"_"+year, "Total MET from Taus + Z: pT; pT [GeV];Events;", 40, 0, 2000 )
             h_totMET_eta_yr = TH1F("h_totMET_eta_"+mass+"_"+year, "Total MET from Taus + Z: #eta; #eta;Events;", 25,-2.5, 2.5)
-            h_totMET_phi_yr = TH1F("h_totMET_phi_"+mass+"_"+year, "Total MET from Taus + Z: #phi; #phi;Events;", 16, 0, pi)
+            h_totMET_phi_yr = TH1F("h_totMET_phi_"+mass+"_"+year, "Total MET from Taus + Z: #phi; #phi;Events;", 8, 0, pi)
 
             tree.Draw("Gen_tausMET_pt>>+h_tausMET_pt_"+mass+"_"+year, cuts)
             tree.Draw("Gen_tausMET_eta>>+h_tausMET_eta_"+mass+"_"+year, cuts)
@@ -617,8 +623,8 @@ def plotMET_TauZ(args):
         hs_totMET_eta.Add(h_totMET_eta)
         hS_totMET_phi.Add(h_totMET_phi)
 
-
         leg.AddEntry(h_tausMET_pt, mass, "L")
+        phiLeg.AddEntry(h_tausMET_phi, mass, "L")
         #END mass loop
     
     #Make the plots
@@ -629,24 +635,26 @@ def plotMET_TauZ(args):
     leg.Draw()
     canv.cd(2)
     hs_tausMET_eta.Draw("NOSTACK")
-    hs_tausMET_eta.GetXaxis().SetTitleSize(0.04)
+    hs_tausMET_eta.GetXaxis().SetTitleSize(0.05)
     leg.Draw()
     canv.cd(3)
     hS_tausMET_phi.Draw("NOSTACK")
-    hS_tausMET_phi.GetXaxis().SetTitleSize(0.04)
-    leg.Draw()
+    hS_tausMET_phi.GetXaxis().SetTitleSize(0.05)
+    phiLeg.Draw()
     canv.cd(4)
     hs_totMET_pt.Draw("NOSTACK")
     hs_totMET_pt.GetXaxis().SetTitleSize(0.04)
     leg.Draw()
     canv.cd(5)
     hs_totMET_eta.Draw("NOSTACK")
-    hs_totMET_eta.GetXaxis().SetTitleSize(0.04)
+    hs_totMET_eta.GetXaxis().SetTitleSize(0.05)
     leg.Draw()
     canv.cd(6)
     hS_totMET_phi.Draw("NOSTACK")
-    hS_totMET_phi.GetXaxis().SetTitleSize(0.04)
-    leg.Draw()
+    hS_totMET_phi.GetXaxis().SetTitleSize(0.05)
+    phiLeg.Draw()
+
+    canv.Update()
 
     resp = raw_input("Hit ENTER to close plot and save...")
 

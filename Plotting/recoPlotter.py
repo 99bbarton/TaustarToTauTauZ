@@ -153,11 +153,11 @@ def recoEffs_Z(args):
     #print("Daughter 1 match eff:  {:.2f}%" + str(tauD1DecaysMatch / tauDecaysMatch))
     #print("Daughter 2 match eff:  {:.2f}%" + str(tauD2DecaysMatch / tauDecaysMatch))
     #print("Total Z->ee reco eff:  {:.2f}%" + str(nTauCorrectReco / nTauDecays)) 
-    print("----------------- Z->had -----------------------")
-    print("Num Events (MC Truth): " + str(nHadDecays))
-    print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
-    print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
-    print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
+    #print("----------------- Z->had -----------------------")
+    #print("Num Events (MC Truth): " + str(nHadDecays))
+    #print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
+    #print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
+    #print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
     
     print("=================================================\n")
 
