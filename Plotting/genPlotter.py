@@ -8,6 +8,7 @@ import os
 import sys
 import argparse
 from math import pi
+from array import array
 
 sys.path.append("../Framework/")
 import Colors as cols
@@ -57,13 +58,14 @@ def main(args):
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
+#Plots gen-level DeltaR and DeltaPhi for TauZ final state
 def plotDR_TauZ(args):
     print("Plotting DeltaR of interesting GEN particles...")
 
     if args.palette:
         palette = args.palette
     else:
-        palette = "line"
+        palette = "line_cool"
 
 
     #What to plot
@@ -77,28 +79,42 @@ def plotDR_TauZ(args):
     if len(masses) > 1:
         gStyle.SetOptStat(0)
     canv = TCanvas("drCanv", "DeltaR Plots", 1200, 1000)
+    canv_dPhi = TCanvas("canv_dPhi", "DeltaPhi of tsTau and Tau", 800, 600)
     leg = None
+    leg_dPhi = None
     if len(masses) < 4:
         leg = TLegend(0.7, 0.7, 0.9, 0.9, "#tau* Mass [GeV]")
+        leg_dPhi = TLegend(0.4, 0.7, 0.6, 0.9, "#tau* Mass [GeV]")
     else:
         leg = TLegend(0.7, 0.5, 0.9, 0.9, "#tau* Mass [GeV]")
+        leg_dPhi = TLegend(0.4, 0.6, 0.7, 0.9, "#tau* Mass [GeV]")
+        leg_dPhi.SetNColumns(2)
     leg.SetTextSize(0.04)
-
+    leg_dPhi.SetTextSize(0.04)
+    
+    #DeltaR binning
     nBins = 25
     binLowEdge = 0
     binHighEdge = 5
     
+    #DeltaPhi binning
+    #phiBins = array("f", [0, 0.0872665, pi/8.0, pi/4.0, 3*pi/8.0, pi/2.0, 5*pi/8.0, 3*pi/4, pi, 3*pi/2]) #first bin is [0, 5deg)
+    #print(phiBins)
+
     #Lists to collect histograms of each mass
     hs_dr_tsTauTau = []
     hs_dr_tsTauZ = []
     hs_dr_tauZ = []
     hs_dr_zDaus = []
+    hs_dPhi = []
     
     for massN, mass in enumerate(masses):
         hs_dr_tsTauTau.append(TH1F("h_dr_tsTauTau_"+mass,"GEN: #DeltaR(#tau_{#tau*} , #tau);#DeltaR;Events", nBins,binLowEdge, binHighEdge))
         hs_dr_tsTauZ.append(TH1F("h_dr_tsTauZ_"+mass,"GEN: #DeltaR(#tau_{#tau*} , Z);#DeltaR;Events",nBins, binLowEdge, binHighEdge))
         hs_dr_tauZ.append(TH1F("h_dr_tauZ_"+mass,"GEN: #DeltaR(#tau , Z);#DeltaR;Events", nBins, binLowEdge, binHighEdge))
         hs_dr_zDaus.append(TH1F("h_dr_zDaus_"+mass,"GEN: #DeltaR(Z_{d1} , Z_{d2});#DeltaR;Events", nBins, binLowEdge, binHighEdge))
+        hs_dPhi.append(TH1F("h_dPhi_"+mass, "GEN: cos^2(#Delta#phi(#tau_{#tau*} , #tau));cos^2(#Delta#phi);Fraction of Events", 50, 0, 1))
+
 
         for year in args.years:
             
@@ -112,16 +128,19 @@ def plotDR_TauZ(args):
             h_dr_tsTauZ_yr = TH1F("h_dr_tsTauZ_"+mass+"_"+year,"GEN: #DeltaR(#{tau_{tau*}}, Z);#DeltaR;Events",nBins, binLowEdge, binHighEdge)
             h_dr_tauZ_yr = TH1F("h_dr_tauZ_"+mass+"_"+year,"GEN: #DeltaR(#tau, Z);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
             h_dr_zDaus_yr = TH1F("h_dr_zDaus_"+mass+"_"+year,"GEN: #DeltaR(#Z_d1, #Z_d2);#DeltaR;Events", nBins, binLowEdge, binHighEdge)
+            h_dPhi_yr = TH1F("h_dPhi_"+mass+"_"+year, "GEN: #Delta#phi(#tau_{#tau*} , #tau);cos^2(#Delta#phi);Fraction of Events", 50, 0, 1)
 
             tree.Draw("Gen_dr_tsTauTau>>+h_dr_tsTauTau_"+mass+"_"+year, cuts)
             tree.Draw("Gen_dr_tsTauZ>>+h_dr_tsTauZ_"+mass+"_"+year, cuts)
             tree.Draw("Gen_dr_tauZ>>+h_dr_tauZ_"+mass+"_"+year, cuts)
             tree.Draw("Gen_dr_zDaus>>+h_dr_zDaus_"+mass+"_"+year, cuts)
+            tree.Draw("TMath::Cos(GenPart_phi[Gen_tsTauIdx]-GenPart_phi[Gen_tauIdx])*TMath::Cos(GenPart_phi[Gen_tsTauIdx]-GenPart_phi[Gen_tauIdx])>>+h_dPhi_"+mass+"_"+year, cuts)
 
             hs_dr_tsTauTau[massN].Add(h_dr_tsTauTau_yr)
             hs_dr_tsTauZ[massN].Add(h_dr_tsTauZ_yr)
             hs_dr_tauZ[massN].Add(h_dr_tauZ_yr)
             hs_dr_zDaus[massN].Add(h_dr_zDaus_yr)
+            hs_dPhi[massN].Add(h_dPhi_yr)
 
             inFile.Close()
             #END year loop
@@ -130,21 +149,27 @@ def plotDR_TauZ(args):
         hs_dr_tsTauZ[massN].SetLineColor(cols.getColor(palette, massN))
         hs_dr_tauZ[massN].SetLineColor(cols.getColor(palette, massN))
         hs_dr_zDaus[massN].SetLineColor(cols.getColor(palette, massN))
+        hs_dPhi[massN].SetLineColor(cols.getColor(palette, massN))
 
         hs_dr_tsTauTau[massN].SetLineWidth(3)
         hs_dr_tsTauZ[massN].SetLineWidth(3)
         hs_dr_tauZ[massN].SetLineWidth(3)
         hs_dr_zDaus[massN].SetLineWidth(3)
+        hs_dPhi[massN].SetLineWidth(3)
+
+        hs_dPhi[massN].Scale(1.0/hs_dPhi[massN].GetEntries())
+
         #END mass loop
     
     #Make the plots
-    maxs = [0, 0, 0, 0]
+    maxs = [0, 0, 0, 0, 0]
     canv.Divide(2, 2)
     for i in range(len(masses)):
         maxs[0] = max(maxs[0], hs_dr_tsTauTau[i].GetMaximum())
         maxs[1] = max(maxs[1], hs_dr_tsTauZ[i].GetMaximum())
         maxs[2] = max(maxs[2], hs_dr_tauZ[i].GetMaximum())
         maxs[3] = max(maxs[3], hs_dr_zDaus[i].GetMaximum())
+        maxs[4] = max(maxs[4], hs_dPhi[i].GetMaximum())
 
         if i == 0:
             canv.cd(1)
@@ -155,6 +180,8 @@ def plotDR_TauZ(args):
             hs_dr_tauZ[0].Draw("HIST")
             canv.cd(4)
             hs_dr_zDaus[0].Draw("HIST")
+            canv_dPhi.cd()
+            hs_dPhi[0].Draw("HIST")
         else:
             canv.cd(1)
             hs_dr_tsTauTau[i].Draw("HIST SAME")
@@ -164,8 +191,11 @@ def plotDR_TauZ(args):
             hs_dr_tauZ[i].Draw("HIST SAME")
             canv.cd(4)
             hs_dr_zDaus[i].Draw("HIST SAME")
+            canv_dPhi.cd()
+            hs_dPhi[i].Draw("HIST SAME")
 
         leg.AddEntry(hs_dr_tsTauTau[i], masses[i], "L")
+        leg_dPhi.AddEntry(hs_dPhi[i], masses[i], "L")
         
     canv.cd(1)
     hs_dr_tsTauTau[0].SetMaximum(maxs[0] * 1.1)
@@ -181,11 +211,18 @@ def plotDR_TauZ(args):
     leg.Draw()
     canv.Update()
 
+    canv_dPhi.cd()
+    hs_dPhi[0].SetMaximum(maxs[4] * 1.1)
+    leg_dPhi.Draw()
+    canv_dPhi.Update()
+
     resp = raw_input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/deltaR_TauZ.png")
+    canv_dPhi.SaveAs("Plots/GenPlots/deltaPhi_tsTauTau.png")
+    
 
-    print("... done plotting DeltaR")
+    print("... done plotting DeltaR and DeltaPhi")
     #END plotDR()
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
