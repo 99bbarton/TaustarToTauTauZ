@@ -96,10 +96,6 @@ def plotDR_TauZ(args):
     nBins = 25
     binLowEdge = 0
     binHighEdge = 5
-    
-    #DeltaPhi binning
-    #phiBins = array("f", [0, 0.0872665, pi/8.0, pi/4.0, 3*pi/8.0, pi/2.0, 5*pi/8.0, 3*pi/4, pi, 3*pi/2]) #first bin is [0, 5deg)
-    #print(phiBins)
 
     #Lists to collect histograms of each mass
     hs_dr_tsTauTau = []
@@ -366,11 +362,13 @@ def plotGenPartVar_TauZ(args):
         xLabel = "#phi"
     
     #Lists to collect histograms of each mass
-    hs_tsTau = THStack("hs_tsTau","GEN: #tau_{#tau*};"+xLabel+";Events")
+    hs_ts = THStack("hs_ts","GEN: #tau*;"+xLabel+";Events" )
     hs_tau= THStack("hs_tau","GEN: #tau;"+xLabel+";Events" )
+    hs_tsTau = THStack("hs_tsTau","GEN: #tau_{#tau*};"+xLabel+";Events")
     hs_Z = THStack("hs_Z","GEN: Z;"+xLabel+";Events" )
 
     for massN, mass in enumerate(masses):
+        h_ts = TH1F("h_ts_"+mass,"GEN: #tau*;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
         h_tsTau = TH1F("h_tsTau_"+mass,"GEN: #tau_{#tau*};"+xLabel+";Events", nBins,binLowEdge, binHighEdge)
         h_tau = TH1F("h_tau_"+mass,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
         h_Z = TH1F("h_Z_"+mass,"GEN: Z;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
@@ -383,14 +381,17 @@ def plotGenPartVar_TauZ(args):
                 continue
             tree = inFile.Get("Events")
 
+            h_ts_yr = TH1F("h_ts_"+mass+"_"+year,"GEN: #tau*;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
             h_tsTau_yr = TH1F("h_tsTau_"+mass+"_"+year,"GEN: #tau_{#tau*};"+xLabel+";Events", nBins,binLowEdge, binHighEdge)
             h_tau_yr = TH1F("h_tau_"+mass+"_"+year,"GEN: #tau;"+xLabel+";Events",nBins, binLowEdge, binHighEdge)
             h_Z_yr = TH1F("h_Z_"+mass+"_"+year,"GEN: Z;"+xLabel+";Events", nBins, binLowEdge, binHighEdge)
 
+            tree.Draw("GenPart_"+args.genVar+"[Gen_tsIdx]>>+h_ts_"+mass+"_"+year, cuts)
             tree.Draw("GenPart_"+args.genVar+"[Gen_tsTauIdx]>>+h_tsTau_"+mass+"_"+year, cuts)
             tree.Draw("GenPart_"+args.genVar+"[Gen_tauIdx]>>+h_tau_"+mass+"_"+year, cuts)
             tree.Draw("GenPart_"+args.genVar+"[Gen_zIdx]>>+h_Z_"+mass+"_"+year, cuts)
 
+            h_ts.Add(h_ts_yr)
             h_tsTau.Add(h_tsTau_yr)
             h_tau.Add(h_tau_yr)
             h_Z.Add(h_Z_yr)
@@ -398,14 +399,17 @@ def plotGenPartVar_TauZ(args):
             inFile.Close()
             #END year loop
 
+        h_ts.SetLineColor(cols.getColor(palette, massN))
         h_tsTau.SetLineColor(cols.getColor(palette, massN))
         h_tau.SetLineColor(cols.getColor(palette, massN))
         h_Z.SetLineColor(cols.getColor(palette, massN))
         
+        h_ts.SetLineWidth(3)
         h_tsTau.SetLineWidth(3)
         h_tau.SetLineWidth(3)
         h_Z.SetLineWidth(3)
 
+        hs_ts.Add(h_ts)
         hs_tsTau.Add(h_tsTau)
         hs_tau.Add(h_tau)
         hs_Z.Add(h_Z)
@@ -416,17 +420,23 @@ def plotGenPartVar_TauZ(args):
     #Make the plots
     canv.Divide(2, 2)
     canv.cd(1)
-    hs_tsTau.Draw("NOSTACK")
-    hs_tsTau.GetXaxis().SetTitleSize(0.04)
+    hs_ts.Draw("NOSTACK")
+    hs_ts.GetXaxis().SetTitleSize(0.04)
     leg.Draw()
     canv.cd(2)
     hs_tau.Draw("NOSTACK")
     hs_tau.GetXaxis().SetTitleSize(0.04)
     leg.Draw()
     canv.cd(3)
+    hs_tsTau.Draw("NOSTACK")
+    hs_tsTau.GetXaxis().SetTitleSize(0.04)
+    leg.Draw()
+    canv.cd(4)
     hs_Z.Draw("NOSTACK")
     hs_Z.GetXaxis().SetTitleSize(0.04)
     leg.Draw()
+
+    
 
     canv.Update()
 
