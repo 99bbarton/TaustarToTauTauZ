@@ -1,4 +1,9 @@
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gROOT, TGraph, PyConfig
+
+
+#-t HLT_PFMET200_NotCleaned -t HLT_PFMET200_HBHE_BeamHaloCleaned -t HLT_CaloMET250_NotCleaned -t HLT_CaloMET250_HBHECleaned -t (HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)
+
+
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gROOT, TGraph, PyConfig, TCut
 PyConfig.IgnoreCommandLineOptions = True
 import os
 import sys
@@ -37,16 +42,34 @@ def main(args):
 
 def trigEffsPerMass(args):
 
+    canv = None
     canv = TCanvas("canv", "Trigger Efficiencies Per Taustar Mass", 800, 800)
+    #if len(args.triggers) == 1:
+    #    canv = TCanvas("canv", "Trigger Efficiencies Per Taustar Mass", 800, 800)
+    #elif len(args.triggers) < 2:
+    #    canv = TCanvas("canv", "Trigger Efficiencies Per Taustar Mass", 1200, 800)
+    #else:
+    #    canv = TCanvas("canv", "Trigger Efficiencies Per Taustar Mass", 1200, 1000)
+        
     gStyle.SetOptStat(0)
 
     #For now, base cuts use gen info and just require z->ee/mumu/had + etau/mutau/tautau
-    baseCuts = "(Gen_zDM > 0 && Gen_zDM < 3) && (Gen_tsTauDM == 0 || Gen_tauDM == 0)"
+    baseCuts = "(Gen_zDM >= 0 && Gen_zDM < 3) && (Gen_tsTauDM == 0 || Gen_tauDM == 0)"
 
-    for trigger in args.triggers:
+    #graphs = {}
+    print("\nTrigger efficiencies:")
+    print("year : mass : trigger : nPassing : nTotal : efficiency")
+    for trigN, trigger in enumerate(args.triggers):
+        #graphs[trigN] = []
+    
+        if trigger == "(HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)":
+            triggerName = "tau2018"
+        else:
+            triggerName = trigger
+        
         for year in args.years:
             intMasses = []
-            efficienies = []
+            efficiencies = []
             for mass in args.masses:
                 intMasses.append(int(mass))
 
@@ -56,20 +79,31 @@ def trigEffsPerMass(args):
                     continue
                 tree = inFile.Get("Events")
                 denEvents = tree.GetEntries(baseCuts)
-                efficienies.append(tree.GetEntries(baseCuts + trigger))
-                efficienies[-1] /= float(denEvents)
+                efficiencies.append(tree.GetEntries(baseCuts + " && " + trigger))
+                print(year + " : " + mass + " : " + triggerName + " : " + str(efficiencies[-1]) + " : " + str(denEvents) + " : " + str(round(efficiencies[-1]/float(denEvents), 2)))
+                efficiencies[-1] /= float(denEvents)
 
                 inFile.Close()
             
-            graph = TGraph(len(intMasses), array("f", intMasses), array("f", efficienies))
-            graph.SetTitle(trigger + ";Taustar Mass [GeV]; Overall Efficiency")
-            graph.GetYaxis().SetMaximum(1.0)
+            graph = TGraph(len(intMasses), array("f", intMasses), array("f", efficiencies))
+            graph.SetTitle(triggerName + ";Taustar Mass [GeV]; Overall Efficiency")
+            graph.SetMaximum(1.0)
+            graph.SetMinimum(0.0)
             graph.SetMarkerStyle(5)
+            graph.SetMarkerSize(3)
 
+            #graphs[trigN].append(graph)
+
+            #if len(args.triggers) == 1:
             canv.cd()
-            graph.Draw("ALP")
-            wait = input("Hit ENTER to continue...")
-            canv.SaveAs("Plots/TrigPlots/effPerMass_"+ year + "_" + trigger + ".png")
+            graph.Draw("AP")
+            if len(args.triggers) == 1:
+                wait = input("Hit ENTER to continue...")
+            canv.SaveAs("Plots/TrigPlots/effPerMass_"+ year + "_" + triggerName + ".png")
+
+
+    #if len(args.triggers) > 1:
+     #   for trigN, trigger in enumerate(args.triggers):
             
 
 # -----------------------------------------------------------------------------------------------------------------------------
