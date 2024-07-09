@@ -10,8 +10,8 @@ import os
 with open("../branchList.csv", "w+") as outFile:
     outFile.write("Branch Name, Type, Description, Source\n")
     print("\n")
-    print("{:<20}".format("Branch Name") + " | " + "{:^4}".format("Type") + " | " + "{:<80}".format("Description") + " | " + "{:<20}".format("Source File"))
-    print("-"*130)
+    print("{:<22}".format("Branch Name") + " | " + "{:^4}".format("Type") + " | " + "{:<120}".format("Description") + " | " + "{:<20}".format("Source File"))
+    print("-"*182)
 
     for filename in os.listdir("../NanoAOD-tools/python/postprocessing/modules/"):
         if not filename.endswith(".py"):
@@ -25,13 +25,18 @@ with open("../branchList.csv", "w+") as outFile:
                     strtIdx = strtIdx + 16
                     subStr = line[strtIdx:]
                     quoteIdxs = [i for i in range(len(subStr)) if subStr.startswith('"', i)] # Find indices of a ll " in line
-                    if len(quoteIdxs) != 6: 
+                    if len(quoteIdxs) == 6:
+                        var = subStr[quoteIdxs[0]+1:quoteIdxs[1]]
+                        varType = subStr[quoteIdxs[2]+1:quoteIdxs[3]]
+                        varDesc = subStr[quoteIdxs[4]+1:quoteIdxs[5]]
+                    elif len(quoteIdxs) == 8: #Arrays have an extra "" for the lenVar param
+                        var = subStr[quoteIdxs[0]+1:quoteIdxs[1]]
+                        varType = subStr[quoteIdxs[2]+1:quoteIdxs[3]]
+                        varDesc = subStr[quoteIdxs[6]+1:quoteIdxs[7]]
+                    else:
                         print('WARNING: Unrecognized line format. Number of " found was not 6. Skipping...')
                         print("Line was: " + subStr)
                         continue
-                    var = subStr[quoteIdxs[0]+1:quoteIdxs[1]]
-                    varType = subStr[quoteIdxs[2]+1:quoteIdxs[3]]
-                    varDesc = subStr[quoteIdxs[4]+1:quoteIdxs[5]]
                     outFile.write(var + ", " + varType + ", " + varDesc + ", " + filename + "\n")
-                    print("{:<20}".format(var) + " | " + "{:^4}".format(varType) + " | " + "{:<80}".format(varDesc) + " | " + "{:<20}".format(filename))
-    print("-"*130 + "\n")
+                    print("{:<22}".format(var) + " | " + "{:^4}".format(varType) + " | " + "{:<120}".format(varDesc) + " | " + "{:<20}".format(filename))
+    print("-"*182 + "\n")
