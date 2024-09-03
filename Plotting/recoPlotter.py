@@ -17,18 +17,21 @@ import Colors as cols
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Script to plot GEN-level variables")
     argparser.add_argument("-i", "--inDir", required=True, action="store", help="A directory to find the input root files")
-    argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="The particle to plot/calculate RECO related params for")
+    argparser.add_argument("-d", "--decay", required=False, choices=["Z", "W"], default="Z", help="The particle to plot/calculate RECO related params for")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("-y", "--years", choices=["ALL", "2018"], type=str, default=["ALL"], action="append")
+    argparser.add_argument("-y", "--years", required=True, choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, action="append")
 
     args = argparser.parse_args()
 
     if not args.masses:
         args.masses = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"]
 
+    #TODO Update this as more years are processed
     if "ALL" in args.years:
-        args.years = ["2018"] #TODO Update this as more years are processed
+        args.years = ["2018", "2022", "2022post", "2023", "2023post"]
+    if "RUN3" in args.years:
+        args.years = ["2022", "2022post", "2023", "2023post"]
 
 
     return args
@@ -100,7 +103,7 @@ def recoEffs_Z(args):
             tree = inFile.Get("Events")
 
             #Do some efficiency calculations
-            print("Parameters for Z reconstruction:")
+            #print("Parameters for Z reconstruction:")
 
             nHadDecays[-1] += tree.GetEntries("Gen_zDM==0")
             nElDecays[-1] += tree.GetEntries("Gen_zDM==1")
@@ -226,7 +229,7 @@ def recoEffs_Z(args):
     canv.cd(5)
     g_had_dt.Draw(drawStyle)
 
-    resp = raw_input("Hit ENTER to save and close plot... ")
+    resp = input("Hit ENTER to save and close plot... ")
     canv.SaveAs("Plots/recoEffs_Z.png")
 
 

@@ -2,6 +2,7 @@
 
 #-t HLT_PFMET200_NotCleaned -t HLT_PFMET200_HBHE_BeamHaloCleaned -t HLT_CaloMET250_NotCleaned -t HLT_CaloMET250_HBHECleaned -t (HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)
 
+#
 
 from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gROOT, TGraph, PyConfig, TCut
 PyConfig.IgnoreCommandLineOptions = True
@@ -12,6 +13,7 @@ from array import array
 
 sys.path.append("../Framework/")
 import Colors as cols
+from trigDef import trig_run3_gen, trig_run2_gen
 
 #Take in command line arguments and return a dictionary of settings to use for calculations/plotting
 def parseArgs():
@@ -20,15 +22,18 @@ def parseArgs():
     argparser.add_argument("-t", "--triggers", required=True, action="append", help="A trigger string to test")
     #argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("-y", "--years", choices=["ALL", "2018"], type=str, default=["ALL"], action="append")
+    argparser.add_argument("-y", "--years", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, action="append", help="What years to plot")
 
     args = argparser.parse_args()
 
     if not args.masses:
         args.masses = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"]
 
+    #TODO update as more years are processed
     if "ALL" in args.years:
-        args.years = ["2018"] #TODO Update this as more years are processed
+        args.years = ["2018", "2022", "2022post", "2023", "2023post"]
+    if "RUN3" in args.years:
+        args.years = ["2022", "2022post", "2023", "2023post"]
 
     return args
 
@@ -62,8 +67,17 @@ def trigEffsPerMass(args):
     for trigN, trigger in enumerate(args.triggers):
         #graphs[trigN] = []
     
-        if trigger == "(HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)":
-            triggerName = "tau2018"
+        #if trigger == "(HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)":
+         #   triggerName = "tau2018"
+            #trigger = "((HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg && Gen_tsTauDM == && Gen_tauDM == 0 && GenPart[Gen_tsTauIdx].pt > 40 && GenPart[Gen_tsTauIdx].eta < 2.1 && GenPart[Gen_tauIdx].pt > 40 && GenPart[Gen_tauIdx].eta < 2.1)"
+            #trigger += " && (HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1 && ((Gen_tsTauDM == 0 && Gen_tauDM == 0) || (Gen_tsTauDM == 0 && Gen_tauDM == 0)) )"
+        if trigger in trig_run2_gen.keys():
+            triggerName = trigger
+            trigger = trig_run2_gen[triggerName]
+        elif trigger in trig_run3_gen.keys():
+            triggerName = trigger
+            trigger = trig_run3_gen[triggerName]
+        
         else:
             triggerName = trigger
         
