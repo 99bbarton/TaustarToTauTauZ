@@ -15,22 +15,28 @@ import Colors as cols
 
 #Take in command line arguments and return a dictionary of settings to use for calculations/plotting
 def parseArgs():
-    argparser = argparse.ArgumentParser(description="Script to plot GEN-level variables")
+    argparser = argparse.ArgumentParser(description="Script to plot reco related variables")
     argparser.add_argument("-i", "--inDir", required=True, action="store", help="A directory to find the input root files")
-    argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="The particle to plot/calculate RECO related params for")
+    argparser.add_argument("-d", "--decay", required=False, choices=["Z", "W"], default="Z", help="The particle to plot/calculate RECO related params for")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("-y", "--years", choices=["ALL", "2018"], type=str, default=["ALL"], action="append")
+    argparser.add_argument("-y", "--years", required=True, choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, action="append")
+    argparser.add_argument("-n", "--noPlot", action="store_true", help="If specified, will skip the plot making step and just print the table")
 
     args = argparser.parse_args()
 
     if not args.masses:
         args.masses = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"]
 
+    #TODO Update this as more years are processed
     if "ALL" in args.years:
-        args.years = ["2018"] #TODO Update this as more years are processed
+        args.years = ["2018", "2022", "2022post", "2023", "2023post"]
+    if "RUN3" in args.years:
+        args.years = ["2022", "2022post", "2023", "2023post"]
 
-
+    if args.inDir.startswith("/store"):
+        args.inDir = os.environ["ROOTURL"] + args.inDir
+        
     return args
 
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -44,11 +50,16 @@ def main(args):
 
 #Calculate the Z RECO efficiency for each decay mode using MCTruth info from GenProducerTauZ.py and RECO info from ZProducer.py
 def recoEffs_Z(args):
-
+  
+    
     nElDecays = []
+    nEls = []
+    nEE = []
     elDecaysMatch = []
     nMuDecays = []
+    nMuMu = []
     muDecaysMatch = []
+    nEE_MuMu = []
     nTauDecays = []
     tauDecaysMatch = []
     nHadDecays = []
@@ -70,12 +81,17 @@ def recoEffs_Z(args):
     effs_tautau = []
     effs_had_pn = []
     effs_had_dt = []
-
+    
+    
     for mass in args.masses:
         nElDecays.append(0)
+        nEE.append(0)
+        nEls.append(0)
         elDecaysMatch.append(0)
         nMuDecays.append(0)
+        nMuMu.append(0)
         muDecaysMatch.append(0)
+        nEE_MuMu.append(0)
         nTauDecays.append(0)
         tauDecaysMatch.append(0)
         nHadDecays.append(0)
@@ -100,29 +116,33 @@ def recoEffs_Z(args):
             tree = inFile.Get("Events")
 
             #Do some efficiency calculations
-            print("Parameters for Z reconstruction:")
-
+            #print("Parameters for Z reconstruction:")
+            
             nHadDecays[-1] += tree.GetEntries("Gen_zDM==0")
-            nElDecays[-1] += tree.GetEntries("Gen_zDM==1")
-            nMuDecays[-1] += tree.GetEntries("Gen_zDM==2")
+            nElDecays[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20")
+            nMuDecays[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15")
             nTauDecays[-1] += tree.GetEntries("Gen_zDM==3")
+            nEE[-1] += tree.GetEntries("Z_nEE>=1")
+            nEls[-1] += tree.GetEntries("nElectron>=2")
+            nMuMu[-1] += tree.GetEntries("Z_nMuMu>=1")
+            nEE_MuMu[-1] += tree.GetEntries("Z_nEE>=1 && Z_nMuMu>=1")
             hadDecaysMatch[-1] += tree.GetEntries("Gen_zDM==0 && Z_dm==0")
-            elDecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Z_dm==1")
-            muDecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Z_dm==2")
+            elDecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1")
+            muDecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2")
             tauDecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3")
 
             hadDecaysMatch_pn[-1] += tree.GetEntries("Z_jetIdxPN > 0 && Gen_zDM==0 && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxPN]==Gen_zGenAK8Idx")
             hadDecaysMatch_dt[-1] += tree.GetEntries("Z_jetIdxDT > 0 && Gen_zDM==0 && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxDT]==Gen_zGenAK8Idx")
 
-            elD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
-            muD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
+            elD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
+            muD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
             tauD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
-            elD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Z_dm==1 && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            muD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Z_dm==2 && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            elD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && Z_dm==1 && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            muD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && Z_dm==2 && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
             tauD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
 
-            nElCorrectReco[-1] +=  tree.GetEntries("Gen_zDM==1 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            nMuCorrectReco[-1] += tree.GetEntries("Gen_zDM==2 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            nElCorrectReco[-1] +=  tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            nMuCorrectReco[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
             nTauCorrectReco[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Tau_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
 
         effs_ee.append(float(nElCorrectReco[-1]) / nElDecays[-1] * 100.0)
@@ -136,30 +156,39 @@ def recoEffs_Z(args):
     print("years = " + str(args.years))
     print("mass = " + str(args.masses))
     print("----------------- Z->ee -----------------------")
-    print("Num Events (MC Truth): " + str(nElDecays))
+    print("Num Events (MC Truth)     : " + str(nElDecays))
+    
+    print("Num Events with Z_nEE >=1 : " + str(nEE) )
     print("Decay mode choice eff: {:.2f}%".format(float(sum(elDecaysMatch)) / sum(nElDecays) * 100.0))
     print("Daughter 1 match eff:  {:.2f}%".format(float(sum(elD1DecaysMatch)) / sum(elDecaysMatch) * 100.0))
     print("Daughter 2 match eff:  {:.2f}%".format(float(sum(elD2DecaysMatch)) / sum(elDecaysMatch) * 100.0))
     print("Total Z->ee reco eff:  {:.2f}%".format(float(sum(nElCorrectReco)) / sum(nElDecays) * 100.0)) 
     print("---------------- Z->mumu ----------------------")
-    print("Num Events (MC Truth): " + str(nMuDecays))
+    print("Num Events (MC Truth)       : " + str(nMuDecays))
+    print("Num Events with Z_nMuMu >=1 : " + str(nMuMu) )
     print("Decay mode choice eff: {:.2f}%".format(float(sum(muDecaysMatch)) / sum(nMuDecays) * 100.0))
     print("Daughter 1 match eff:  {:.2f}%".format(float(sum(muD1DecaysMatch)) / sum(muDecaysMatch) * 100.0))
     print("Daughter 2 match eff:  {:.2f}%".format(float(sum(muD2DecaysMatch)) / sum(muDecaysMatch) * 100.0))
-    print("Total Z->mumu reco eff: {:.2f}%".format(float(sum(nMuCorrectReco)) / sum(nMuDecays) * 100.0)) 
+    print("Total Z->mumu reco eff: {:.2f}%".format(float(sum(nMuCorrectReco)) / sum(nMuDecays) * 100.0))
+    print("-----------------------------------------------")
+    print("Events with both nEE>=1 and nMuMu>=1: = " + str(nEE_MuMu))
     #print("--------------- Z->tautau ---------------------")
     #print("Num Events (MC Truth): {:.2f}%" + str(nTauDecays))
     #print("Decay mode choice eff: {:.2f}%" + str(tauDecaysMatch / nTauDecays))
     #print("Daughter 1 match eff:  {:.2f}%" + str(tauD1DecaysMatch / tauDecaysMatch))
     #print("Daughter 2 match eff:  {:.2f}%" + str(tauD2DecaysMatch / tauDecaysMatch))
     #print("Total Z->ee reco eff:  {:.2f}%" + str(nTauCorrectReco / nTauDecays)) 
-    #print("----------------- Z->had -----------------------")
-    #print("Num Events (MC Truth): " + str(nHadDecays))
-    #print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
-    #print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
-    #print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
+    print("----------------- Z->had -----------------------")
+    print("Num Events (MC Truth): " + str(nHadDecays))
+    print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
+    print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
+    print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
     
     print("=================================================\n")
+    
+
+    if args.noPlot:
+        return 0
 
     fltMasses = []
     for mass in args.masses:
@@ -226,7 +255,7 @@ def recoEffs_Z(args):
     canv.cd(5)
     g_had_dt.Draw(drawStyle)
 
-    resp = raw_input("Hit ENTER to save and close plot... ")
+    resp = input("Hit ENTER to save and close plot... ")
     canv.SaveAs("Plots/recoEffs_Z.png")
 
 

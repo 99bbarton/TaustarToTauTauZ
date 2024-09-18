@@ -18,22 +18,26 @@ import Colors as cols
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Script to plot GEN-level variables")
     argparser.add_argument("-i", "--inDir", required=True, action="store", help="A directory to find the input root files")
-    argparser.add_argument("-d", "--decay", required=True, choices=["Z", "W"], help="Whether to plot WNu or ZTau GEN-level parameters")
+    argparser.add_argument("-d", "--decay", required=False, choices=["Z", "W"], default="Z", help="Whether to plot WNu or ZTau GEN-level parameters")
     argparser.add_argument("-g", "--genVar", choices=["pt", "eta", "phi"], help="A variable in the GenPart collection to plot")
     argparser.add_argument("-r","--deltaR", action="store_true", help="Plot DeltaR between GEN particles")
     argparser.add_argument("--met", action="store_true", help="Plot MET quantities")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
     argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3", "4"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau, 4=invisible")
-    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018"], default=["ALL"], help="Which year's data to plot")
+    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     args = argparser.parse_args()
 
     if not args.masses:
         args.masses = ["250", "1000", "3000", "5000"]
 
     if "ALL" in args.years:
-        args.years = ["2018"]
+        args.years = ["2018", "2022", "2022post", "2023", "2023post"]
+    if "RUN3" in args.years:
+        args.years = ["2022", "2022post", "2023", "2023post"]
 
+
+    print(args.years)
     return args
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -212,7 +216,7 @@ def plotDR_TauZ(args):
     leg_dPhi.Draw()
     canv_dPhi.Update()
 
-    resp = raw_input("Hit ENTER to close plot and save...")
+    resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/deltaR_TauZ.png")
     canv_dPhi.SaveAs("Plots/GenPlots/deltaPhi_tsTauTau.png")
@@ -300,7 +304,7 @@ def plotDR_WNu(args):
 
     canv.Update()
 
-    resp = raw_input("Hit ENTER to close plot and save...")
+    resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/deltaR_WNu.png")
 
@@ -324,7 +328,7 @@ def plotGenPartVar_TauZ(args):
     if args.palette:
         palette = args.palette
     else:
-        palette = "line"
+        palette = "line_cool"
     canv = TCanvas("genCanv", "GEN Plots", 1600, 1000)
     leg = None
     if args.genVar == "phi":
@@ -440,7 +444,7 @@ def plotGenPartVar_TauZ(args):
 
     canv.Update()
 
-    resp = raw_input("Hit ENTER to close plot and save...")
+    resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/"+args.genVar+"_TauZ.png")
 
@@ -554,7 +558,7 @@ def plotGenPartVar_WNu(args):
 
     canv.Update()
 
-    resp = raw_input("Hit ENTER to close plot and save...")
+    resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/"+args.genVar+"_WNu.png")
 
@@ -703,7 +707,7 @@ def plotMET_TauZ(args):
 
     canv.Update()
 
-    resp = raw_input("Hit ENTER to close plot and save...")
+    resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/met_TauZ.png")
 
