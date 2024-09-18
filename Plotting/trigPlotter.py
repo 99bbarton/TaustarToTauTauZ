@@ -35,6 +35,9 @@ def parseArgs():
     if "RUN3" in args.years:
         args.years = ["2022", "2022post", "2023", "2023post"]
 
+    if args.inDir.startswith("/store"):
+        args.inDir = os.environ["ROOTURL"] + args.inDir
+    
     return args
 
 # -----------------------------------------------------------------------------------------------------------------------------

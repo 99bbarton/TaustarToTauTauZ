@@ -13,7 +13,19 @@ with open("../branchList.csv", "w+") as outFile:
     print("{:<22}".format("Branch Name") + " | " + "{:^4}".format("Type") + " | " + "{:<120}".format("Description") + " | " + "{:<20}".format("Source File"))
     print("-"*182)
 
-    for filename in os.listdir("../NanoAOD-tools/python/postprocessing/modules/"):
+    fileList = os.listdir("../NanoAOD-tools/python/postprocessing/modules/")
+    sortedFileList = []
+    for fil in fileList:
+        if fil.startswith("Gen"):
+            sortedFileList.append(fil)
+    for fil in fileList:
+        if fil.startswith("Trig"):
+            sortedFileList.append(fil)
+    for fil in fileList:
+        if fil not in sortedFileList:
+            sortedFileList.append(fil)
+    
+    for filename in sortedFileList:
         if not filename.endswith(".py"):
             continue
 
