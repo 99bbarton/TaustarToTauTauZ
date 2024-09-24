@@ -22,6 +22,7 @@ def parseArgs():
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
     argparser.add_argument("-y", "--years", required=True, choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, action="append")
     argparser.add_argument("-n", "--noPlot", action="store_true", help="If specified, will skip the plot making step and just print the table")
+    argparser.add_argument("--zDauID", action="store_true", help="If specified, will require Z_dauID to be True." )
 
     args = argparser.parse_args()
 
@@ -108,6 +109,12 @@ def recoEffs_Z(args):
         nMuCorrectReco.append(0)
         nTauCorrectReco.append(0)
 
+
+        if args.zDauID:
+            zDauID = " && Z_dauID"
+        else:
+            zDauID = ""
+        
         for year in args.years:
             inFile = TFile.Open(args.inDir + "/taustarToTauZ_m"+mass+"_"+year+".root", "READ")
             if inFile == "None":
@@ -118,36 +125,36 @@ def recoEffs_Z(args):
             #Do some efficiency calculations
             #print("Parameters for Z reconstruction:")
             
-            nHadDecays[-1] += tree.GetEntries("Gen_zDM==0")
-            nElDecays[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20")
-            nMuDecays[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15")
-            nTauDecays[-1] += tree.GetEntries("Gen_zDM==3")
+            nHadDecays[-1] += tree.GetEntries("Gen_zDM==0 && Gen_isCand")
+            nElDecays[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand")
+            nMuDecays[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand")
+            nTauDecays[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand")
             nEE[-1] += tree.GetEntries("Z_nEE>=1")
             nEls[-1] += tree.GetEntries("nElectron>=2")
             nMuMu[-1] += tree.GetEntries("Z_nMuMu>=1")
             nEE_MuMu[-1] += tree.GetEntries("Z_nEE>=1 && Z_nMuMu>=1")
             hadDecaysMatch[-1] += tree.GetEntries("Gen_zDM==0 && Z_dm==0")
-            elDecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1")
-            muDecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2")
-            tauDecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3")
+            elDecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand && Z_dm==1" + zDauID)
+            muDecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand && Z_dm==2" + zDauID)
+            #tauDecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand && Z_dm==3")
 
-            hadDecaysMatch_pn[-1] += tree.GetEntries("Z_jetIdxPN > 0 && Gen_zDM==0 && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxPN]==Gen_zGenAK8Idx")
-            hadDecaysMatch_dt[-1] += tree.GetEntries("Z_jetIdxDT > 0 && Gen_zDM==0 && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxDT]==Gen_zGenAK8Idx")
+            hadDecaysMatch_pn[-1] += tree.GetEntries("Z_jetIdxPN > 0 && Gen_zDM==0 && Gen_isCand && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxPN]==Gen_zGenAK8Idx")
+            hadDecaysMatch_dt[-1] += tree.GetEntries("Z_jetIdxDT > 0 && Gen_zDM==0 && Gen_isCand && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxDT]==Gen_zGenAK8Idx")
 
-            elD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
-            muD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
-            tauD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d1Idx]==Gen_zDau1Idx")
-            elD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && Z_dm==1 && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            muD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && Z_dm==2 && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            tauD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            elD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand && Z_dm==1 && Z_d1Idx==Gen_zD1RecIdx" + zDauID)
+            muD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand && Z_dm==2 && Z_d1Idx==Gen_zD1RecIdx" + zDauID)
+            #tauD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand && Z_dm==3 && Z_d1Idx==Gen_zD1RecIdx")
+            elD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand && Z_dm==1 && Z_d2Idx==Gen_zD2RecIdx" + zDauID)
+            muD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand && Z_dm==2 && Z_d2Idx==Gen_zD2RecIdx" + zDauID)
+            #tauD2DecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand && Z_dm==3 && Z_d2Idx==Gen_zD2RecIdx")
 
-            nElCorrectReco[-1] +=  tree.GetEntries("Gen_zDM==1 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 20 && GenPart_pt[Gen_zDau2Idx] > 20 && Z_dm==1 && Electron_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Electron_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            nMuCorrectReco[-1] += tree.GetEntries("Gen_zDM==2 && Gen_zDauFid && GenPart_pt[Gen_zDau1Idx] > 15 && GenPart_pt[Gen_zDau2Idx] > 15 && Z_dm==2 && Muon_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Muon_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
-            nTauCorrectReco[-1] += tree.GetEntries("Gen_zDM==3 && Z_dm==3 && Tau_genPartIdx[Z_d1Idx]==Gen_zDau1Idx && Tau_genPartIdx[Z_d2Idx]==Gen_zDau2Idx")
+            nElCorrectReco[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand && Z_dm==1 && Z_d1Idx==Gen_zD1RecIdx && Z_d2Idx==Gen_zD2RecIdx" + zDauID)
+            nMuCorrectReco[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand && Z_dm==2 && Z_d1Idx==Gen_zD1RecIdx && Z_d2Idx==Gen_zD2RecIdx" + zDauID)
+            #nTauCorrectReco[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand && Z_dm==3 && Z_d1Idx==Gen_zD1RecIdx && Z_d2Idx==Gen_zD2RecIdx")
 
         effs_ee.append(float(nElCorrectReco[-1]) / nElDecays[-1] * 100.0)
         effs_mumu.append(float(nMuCorrectReco[-1]) / nMuDecays[-1] * 100.0)
-        effs_tautau.append(float(nTauCorrectReco[-1]) / nTauDecays[-1])
+        #effs_tautau.append(float(nTauCorrectReco[-1]) / nTauDecays[-1])
         effs_had_pn.append(float(hadDecaysMatch_pn[-1]) / hadDecaysMatch[-1] * 100.0)
         effs_had_dt.append(float(hadDecaysMatch_dt[-1]) / hadDecaysMatch[-1] * 100.0)
 
@@ -198,18 +205,18 @@ def recoEffs_Z(args):
     #Now make plots
     g_ee = TGraph(nPts, array("f", fltMasses), array("f", effs_ee))
     g_mumu = TGraph(nPts, array("f", fltMasses), array("f", effs_mumu))
-    g_tautau = TGraph(nPts, array("f", fltMasses), array("f", effs_tautau))
+    #g_tautau = TGraph(nPts, array("f", fltMasses), array("f", effs_tautau))
     g_had_pn = TGraph(nPts, array("f", fltMasses), array("f", effs_had_pn))
     g_had_dt = TGraph(nPts, array("f", fltMasses), array("f", effs_had_dt))
 
     g_ee.SetMaximum(105)
     g_mumu.SetMaximum(105)
-    g_tautau.SetMaximum(105)
+    #g_tautau.SetMaximum(105)
     g_had_pn.SetMaximum(105)
     g_had_dt.SetMaximum(105)
     g_ee.SetMinimum(0)
     g_mumu.SetMinimum(0)
-    g_tautau.SetMinimum(0)
+    #g_tautau.SetMinimum(0)
     g_had_pn.SetMinimum(0)
     g_had_dt.SetMinimum(0)
 
@@ -218,41 +225,42 @@ def recoEffs_Z(args):
         specTitle += " " + args.years[0]
     g_ee.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow ee;#tau* Mass [GeV]; Efficiency [%]")
     g_mumu.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow #mu#mu;#tau* Mass [GeV]; Efficiency [%]")
-    g_tautau.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow#tau#tau;#tau* Mass [GeV]; Efficiency [%]")
+    #g_tautau.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow#tau#tau;#tau* Mass [GeV]; Efficiency [%]")
     g_had_pn.SetTitle("RECO Eff (PN ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
     g_had_dt.SetTitle("RECO Eff (DT ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
 
     g_ee.SetMarkerStyle(5)
     g_mumu.SetMarkerStyle(5)
-    g_tautau.SetMarkerStyle(5)
+    #g_tautau.SetMarkerStyle(5)
     g_had_pn.SetMarkerStyle(5)
     g_had_dt.SetMarkerStyle(5)
 
     g_ee.SetMarkerSize(3)
     g_mumu.SetMarkerSize(3)
-    g_tautau.SetMarkerSize(3)
+    #g_tautau.SetMarkerSize(3)
     g_had_pn.SetMarkerSize(3)
     g_had_dt.SetMarkerSize(3)
 
     g_ee.SetLineWidth(2)
     g_mumu.SetLineWidth(2)
-    g_tautau.SetLineWidth(2)
+    #g_tautau.SetLineWidth(2)
     g_had_pn.SetLineWidth(2)
     g_had_dt.SetLineWidth(2)
 
     drawStyle = "AP"
     gStyle.SetOptStat(0)
     canv = TCanvas("zCanv", "Z RECO Plots", 1800, 1000)
-    canv.Divide(3,2)
+    canv.Divide(2,2)
     canv.cd(1)
     g_ee.Draw(drawStyle)
     canv.cd(2)
     g_mumu.Draw(drawStyle)
     canv.cd(3)
     #g_tautau.Draw(drawStyle)
-    canv.cd(4)
+    #canv.cd(4)
     g_had_pn.Draw(drawStyle)
-    canv.cd(5)
+    canv.cd(4)
+    #canv.cd(5)
     g_had_dt.Draw(drawStyle)
 
     resp = input("Hit ENTER to save and close plot... ")
