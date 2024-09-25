@@ -12,9 +12,13 @@ Gen_tauFid             |  O   | True if the tau passes fiducial cuts            
 Gen_zIdx               |  I   | Idx to the last copy of the Z from the taustar decay in GenPart                                                          | GenProducerZTau.py  
 Gen_zDau1Idx           |  I   | Idx to the first daughter of the Z at zIdx in GenPart                                                                    | GenProducerZTau.py  
 Gen_zDau2Idx           |  I   | Idx to the second daughter of the Z at zIdx in GenPart                                                                   | GenProducerZTau.py  
-Gen_zDauFid            |  O   | True if the Z daughters pass the appropriate fiducial cuts                                                               | GenProducerZTau.py  
+Gen_zDauFid            |  O   | True if the (gen) Z daughters pass the appropriate fiducial cuts                                                         | GenProducerZTau.py  
+Gen_zD1RecIdx          |  I   | The idx of the matching Electron/Muon matching to the zDau1Idx GenPart if zDM==1/2                                       | GenProducerZTau.py  
+Gen_zD2RecIdx          |  I   | The idx of the matching Electron/Muon matching to the zDau2Idx GenPart if zDM==1/2                                       | GenProducerZTau.py  
 Gen_zDM                |  I   | 0 = hadronic, 1=electrons, 2=muons, 3=taus, 4=invisible                                                                  | GenProducerZTau.py  
 Gen_zGenAK8Idx         |  I   | Idx to GenJetAK8 collection jet matching the Z from taustar if zDM == 0                                                  | GenProducerZTau.py  
+Gen_isCand             |  O   | True if event could be reco'd i.e. z,tau,tsTau DMs good, all fiducial, etc                                               | GenProducerZTau.py  
+Gen_ch                 |  I   | 0=tautau, 1=etau, 2=mutau. -1 otherwise                                                                                  | GenProducerZTau.py  
 Gen_tausMET_pt         |  F   | pT of MET from the spectator tau and taustar tau                                                                         | GenProducerZTau.py  
 Gen_tausMET_eta        |  F   | eta of MET from the spectator tau and taustar tau                                                                        | GenProducerZTau.py  
 Gen_tausMET_phi        |  F   | phi of MET from the spectator tau and taustar tau                                                                        | GenProducerZTau.py  
@@ -46,6 +50,7 @@ SelTaus_nProngs        |  I   | List if len SelTaus_n of the number of prongs in
 Z_dm                   |  I   | 0 = hadronic, 1=electrons, 2=muons, 3=taus. -1 by default                                                                | ZProducer.py        
 Z_d1Idx                |  I   | Idx to first daughter of Z in either Muons or Electrons collection (if Z_dm == 1 or Z_dm == 2). -1 default               | ZProducer.py        
 Z_d2Idx                |  I   | Idx to second daughter of Z in either Muons or Electrons collection (depending on if Z_dm == 1 or Z_dm == 2). -1 default | ZProducer.py        
+Z_dauID                |  O   | For Z_dm=1 or 2, True if both Z daughter candidates pass the appropriate ID                                              | ZProducer.py        
 Z_dauDR                |  F   | DeltaR(zDau1, zDau2). 0 default                                                                                          | ZProducer.py        
 Z_mass                 |  F   | Mass of ee or mumu pair if either Z_dm == 1 or Z_dm == 2 or jet if Z_dm =0. 0 default                                    | ZProducer.py        
 Z_pt                   |  F   | Pt of ee or mumu pair or jet. 0 default                                                                                  | ZProducer.py        
