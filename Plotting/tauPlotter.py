@@ -43,6 +43,8 @@ def main(args):
     if args.nTaus:
         plotNTaus(args)
     if args.kinematics:
+        print("KINEMATICS NOT YET IMPLEMENTED")
+        exit(0)
         plotTauKinematics(args)
 
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -69,8 +71,11 @@ def plotNTaus(args):
 
         canv.cd()
         hist.Draw("hist")
+        canv.Update()
+        wait = input("Hit ENTER to save and continue...")
         canv.SaveAs("Plots/Taus/nTaus_" + filename.split("/")[-1][0:-5] + ".png")
         del hist
+        inFile.Close()
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -98,8 +103,7 @@ def plotTauKinematics(args):
         h_eta = TH1F("h_eta", "Selected Taus: #eta; #eta; Events", 24, -2.4, 2.4)
 
         #TODO Need to add kinematics for each tau (leading, subleading, etc??)
-
-
+             
 # -----------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":

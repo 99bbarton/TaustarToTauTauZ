@@ -112,6 +112,7 @@ def recoEffs_Z(args):
 
         if args.zDauID:
             zDauID = " && Z_dauID"
+            #zDauID = " && Muon_looseId[Z_d1Idx] && Muon_looseId[Z_d2Idx]"
         else:
             zDauID = ""
         
@@ -139,7 +140,7 @@ def recoEffs_Z(args):
             #tauDecaysMatch[-1] += tree.GetEntries("Gen_zDM==3 && Gen_isCand && Z_dm==3")
 
             hadDecaysMatch_pn[-1] += tree.GetEntries("Z_jetIdxPN > 0 && Gen_zDM==0 && Gen_isCand && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxPN]==Gen_zGenAK8Idx")
-            hadDecaysMatch_dt[-1] += tree.GetEntries("Z_jetIdxDT > 0 && Gen_zDM==0 && Gen_isCand && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxDT]==Gen_zGenAK8Idx")
+            #hadDecaysMatch_dt[-1] += tree.GetEntries("Z_jetIdxDT > 0 && Gen_zDM==0 && Gen_isCand && Z_dm==0 && FatJet_genJetAK8Idx[Z_jetIdxDT]==Gen_zGenAK8Idx")
 
             elD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==1 && Gen_isCand && Z_dm==1 && Z_d1Idx==Gen_zD1RecIdx" + zDauID)
             muD1DecaysMatch[-1] += tree.GetEntries("Gen_zDM==2 && Gen_isCand && Z_dm==2 && Z_d1Idx==Gen_zD1RecIdx" + zDauID)
@@ -189,7 +190,7 @@ def recoEffs_Z(args):
     print("Num Events (MC Truth): " + str(nHadDecays))
     print("Decay mode choice eff: {:.2f}%".format(float(sum(hadDecaysMatch)) / sum(nHadDecays) * 100.0))
     print("ParticleNet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_pn)) / sum(hadDecaysMatch) * 100.0))
-    print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
+    #print("DeepBoostedJet match eff:  {:.2f}%".format(float(sum(hadDecaysMatch_dt)) / sum(hadDecaysMatch) * 100.0))
     
     print("=================================================\n")
     
@@ -207,18 +208,18 @@ def recoEffs_Z(args):
     g_mumu = TGraph(nPts, array("f", fltMasses), array("f", effs_mumu))
     #g_tautau = TGraph(nPts, array("f", fltMasses), array("f", effs_tautau))
     g_had_pn = TGraph(nPts, array("f", fltMasses), array("f", effs_had_pn))
-    g_had_dt = TGraph(nPts, array("f", fltMasses), array("f", effs_had_dt))
+    #g_had_dt = TGraph(nPts, array("f", fltMasses), array("f", effs_had_dt))
 
     g_ee.SetMaximum(105)
     g_mumu.SetMaximum(105)
     #g_tautau.SetMaximum(105)
     g_had_pn.SetMaximum(105)
-    g_had_dt.SetMaximum(105)
+    #g_had_dt.SetMaximum(105)
     g_ee.SetMinimum(0)
     g_mumu.SetMinimum(0)
     #g_tautau.SetMinimum(0)
     g_had_pn.SetMinimum(0)
-    g_had_dt.SetMinimum(0)
+    #g_had_dt.SetMinimum(0)
 
     specTitle = ""
     if len(args.years) == 1:
@@ -227,25 +228,25 @@ def recoEffs_Z(args):
     g_mumu.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow #mu#mu;#tau* Mass [GeV]; Efficiency [%]")
     #g_tautau.SetTitle("RECO Eff" + specTitle + ": Z#rightarrow#tau#tau;#tau* Mass [GeV]; Efficiency [%]")
     g_had_pn.SetTitle("RECO Eff (PN ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
-    g_had_dt.SetTitle("RECO Eff (DT ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
+    #g_had_dt.SetTitle("RECO Eff (DT ID)" + specTitle + ": Z#rightarrow had;#tau* Mass [GeV]; Efficiency [%]")
 
     g_ee.SetMarkerStyle(5)
     g_mumu.SetMarkerStyle(5)
     #g_tautau.SetMarkerStyle(5)
     g_had_pn.SetMarkerStyle(5)
-    g_had_dt.SetMarkerStyle(5)
+    #g_had_dt.SetMarkerStyle(5)
 
     g_ee.SetMarkerSize(3)
     g_mumu.SetMarkerSize(3)
     #g_tautau.SetMarkerSize(3)
     g_had_pn.SetMarkerSize(3)
-    g_had_dt.SetMarkerSize(3)
+#    g_had_dt.SetMarkerSize(3)
 
     g_ee.SetLineWidth(2)
     g_mumu.SetLineWidth(2)
     #g_tautau.SetLineWidth(2)
     g_had_pn.SetLineWidth(2)
-    g_had_dt.SetLineWidth(2)
+ #   g_had_dt.SetLineWidth(2)
 
     drawStyle = "AP"
     gStyle.SetOptStat(0)
@@ -259,14 +260,14 @@ def recoEffs_Z(args):
     #g_tautau.Draw(drawStyle)
     #canv.cd(4)
     g_had_pn.Draw(drawStyle)
-    canv.cd(4)
+   # canv.cd(4)
     #canv.cd(5)
-    g_had_dt.Draw(drawStyle)
+  #  g_had_dt.Draw(drawStyle)
 
     resp = input("Hit ENTER to save and close plot... ")
     canv.SaveAs("Plots/recoEffs_Z.png")
 
-
+    
     #END calRecoEffs_Z
 
 # -----------------------------------------------------------------------------------------------------------------------------
