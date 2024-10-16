@@ -12,12 +12,14 @@ reco_tau_run3 = "(1>0)" #TODO
 
 
 #TODO
-def getCuts(var, tier):
+def getCuts(var, channel, tier):
     cuts = "((1>0)"
 
-    if var.startswith("Z_"):
+    if True:
         if tier == "RECO":
             cuts += "&& (Z_dm >= 1 && Z_dm <= 2)"
+            if channel != "":
+                cuts += " && ("+channel+"_isCand)"
         else:
             cuts += "&& Gen_isCand"
 

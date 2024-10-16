@@ -1,6 +1,6 @@
 #A namespace for colors and palettes for plots
 
-from ROOT import gStyle, TCanvas, TF2
+from ROOT import gStyle, TCanvas, TF2, TColor
 from array import array
 import sys
 
@@ -10,7 +10,10 @@ colors = {
     "cool" : [884, 874, 881, 876, 890, 855, 852, 867, 835, 844, 419, 413],
     "line_cool" : [884, 881, 852, 876, 419],
     "warm" : [635, 633, 626, 904, 616],
-    "line_warm" : [636, 633, 619, 613, 802]
+    "line_warm" : [636, 633, 619, 613, 802],
+    "cms" : [TColor.GetColor("#5790fc"), TColor.GetColor("#f89c20"), TColor.GetColor("#e42536"), TColor.GetColor("#964a8b"), TColor.GetColor("#9c9ca1"), TColor.GetColor("#7a21dd")],
+    "cms10" : [TColor.GetColor("#3f90da"), TColor.GetColor("#ffa90e"), TColor.GetColor("#bd1f01"), TColor.GetColor("#94a4a2"), TColor.GetColor("#832db6"), TColor.GetColor("#a96b59"), TColor.GetColor("#e76300"), TColor.GetColor("#b9ac70"), TColor.GetColor("#717581"), TColor.GetColor("#92dadd")],
+    "col2d" : [595, 602, 434, 411]
 
 }
 
