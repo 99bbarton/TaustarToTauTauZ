@@ -46,7 +46,7 @@ def parseArgs():
     argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters")
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis and sim for 3 args.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
-    argparser.add_argument("-y", "--years", required=True, action= "append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
+    argparser.add_argument("-y", "--years", required=True, action="append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], action="append", help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e","--plotEach", choices=["PROC", "YEAR", "CH", "MASS"], default="NA", help="If specified, will make a hist per channel/proc/year rather than combining them into a single hist")
@@ -54,7 +54,9 @@ def parseArgs():
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
-    argparser.add_argument("--noStats", action="store_true", help="If specified, will disabled the stat box on 1D plots")
+    argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D plots")
+    argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
+    argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
     args = argparser.parse_args()  
 
     if len(args.vars) == 1 and args.vars[0] == "SIG_M":
@@ -96,7 +98,9 @@ def parseArgs():
            elif i == 4 or i == 5:
                varToPlotParams[args.vars[1]][i-1] = float(val)
 
-
+    if "ALL" in args.save:
+        args.save = [".png", ".pdf", ".C"]
+               
     return args
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -159,7 +163,7 @@ def getFileList(args):
 def plot1D(filelist, args):
     global varToPlotParams, plotEachToLeg
 
-    if args.noStats:
+    if args.nS:
         gStyle.SetOptStat(False)
     canv = TCanvas("canv", "1D Plotting", 1200, 1000)
     canv.SetLeftMargin(0.15)
@@ -208,8 +212,6 @@ def plot1D(filelist, args):
                 hTemp = TH1F("h_"+hName+"_temp", ";"+plotParams[1]+";Events", plotParams[2], plotParams[3], plotParams[4])
             
                 plotStr = plotParams[0].replace("CHANNEL", ch)
-                if plotStr.find("dPhi") > 0:
-                    plotStr = ch + "_" + ch[0].lower() + ch[1:] + "dPhi"
                     
                 tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
             
@@ -241,12 +243,15 @@ def plot1D(filelist, args):
         leg.Draw()
 
     canv.Update()
-    
-    wait = input("Hit ENTER to save plot and end... ")
+
+    if not args.nP:
+        wait = input("Hit ENTER to save plot and end... ")
+        
     plotname = "Plots/" + args.vars[0].lower()
     if args.plotEach != "NA":
         plotname += "_per_" + args.plotEach.lower()
-    canv.SaveAs(plotname + ".png")
+    for fileType in args.save:
+        canv.SaveAs(plotname + fileType)
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -352,16 +357,12 @@ def plot2D_hists(filelist, args):
         leg.Draw()
     
     canv.Update()
-    wait = input("Hit ENTER to save plot and end... ")
+    if not args.nP:
+        wait = input("Hit ENTER to save plot and end... ")
     plotname = "Plots/" + args.vars[0].lower() + "_vs_" + args.vars[1].lower()
-    canv.SaveAs(plotname + ".png")
-
-## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
-
-#TODO
-def plot2D_graphs(filelist, args):
-    print("ERROR: NOT YET IMLEMENTED")
-
+    for fileType in args.save:
+        canv.SaveAs(plotname + fileType)
+    
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 if __name__ == "__main__":
