@@ -13,7 +13,10 @@ Gen_zDauFid, O, True if the (gen) Z daughters pass the appropriate fiducial cuts
 Gen_zD1RecIdx, I, The idx of the matching Electron/Muon matching to the zDau1Idx GenPart if zDM==1/2, GenProducer.py
 Gen_zD2RecIdx, I, The idx of the matching Electron/Muon matching to the zDau2Idx GenPart if zDM==1/2, GenProducer.py
 Gen_zDM, I, 0 = hadronic, 1=electrons, 2=muons, 3=taus, 4=invisible, GenProducer.py
-Gen_zGenAK8Idx, I, Idx to GenJetAK8 collection of a possible jet matching the Z from taustar if zDM == 0, GenProducer.py
+Gen_zGenAK8Idx, I, Idx to GenJetAK8 collection of a possible jet matching the Z from taustar, GenProducer.py
+Gen_zGenAK4Idx, I, Idx to GenJet collection of a possible jet matching the Z from the taustar, GenProducer.py
+Gen_zRecAK8Idx, I, Idx to FatJet collection of reco AK8 matching the best GenAK8 jet, GenProducer.py
+Gen_zRecAK4Idx, I, Idx to Jet collection of reco AK4 matching the best GenAK4 jet, GenProducer.py
 Gen_isCand, O, True if event could be reco'd i.e. z,tau,tsTau DMs good, all fiducial, etc, GenProducer.py
 Gen_ch, I, 0=tautau, 1=etau, 2=mutau. -1 otherwise, GenProducer.py
 Gen_tausMET_pt, F, pT of MET from the spectator tau and taustar tau, GenProducer.py
@@ -52,6 +55,17 @@ ETau_haveTrip, O, True if have a good e, tau, and Z, ETauProducer.py
 ETau_minCollM, F, The smaller collinear mass of either e+nu+Z or tau+nu+Z, ETauProducer.py
 ETau_maxCollM, F, The larger collinear mass of either e+nu+Z or tau+nu+Z, ETauProducer.py
 ETau_isCand, O, True if the event is good e+tau+Z event, ETauProducer.py
+MuTau_muIdx, I, Index to Muons of muon, MuTauProducer.py
+MuTau_tauIdx, I, Index to Taus of hadronic tau, MuTauProducer.py
+MuTau_tauProngs, I, Number if prongs of tau (1 or 3), MuTauProducer.py
+MuTau_havePair, O, True if have a good mu and tau, MuTauProducer.py
+MuTau_muTauDR, F, DeltaR betwenn mu and tau, MuTauProducer.py
+MuTau_muTauDPhi, F, Delta phi between mu and tau, MuTauProducer.py
+MuTau_visM, F, Visible mass of the mu+tau pair, MuTauProducer.py
+MuTau_haveTrip, O, True if have a good mu, tau, and Z, MuTauProducer.py
+MuTau_minCollM, F, The smaller collinear mass of e+nu+Z or tau+nu+z, MuTauProducer.py
+MuTau_maxCollM, F, The larger collinear mass of either mu+nu+Z or tau+nu+Z, MuTauProducer.py
+MuTau_isCand, O, True if the event is good mu+tau+Z event, MuTauProducer.py
 TauTau_tau1Idx, I, Index to Taus of the best hadronic tau (sorted by vsJets, pt), TauTauProducer.py
 TauTau_tau2Idx, I, Index to Taus of second best hadronic tau (sorted by vsJets, pt, and DR>0.4 from best tau), TauTauProducer.py
 TauTau_tau1Prongs, I, Number if prongs of tau1 (1 or 3), TauTauProducer.py
@@ -64,17 +78,6 @@ TauTau_haveTrip, O, True if have two good taus and a Z, TauTauProducer.py
 TauTau_minCollM, F, The smaller collinear mass of tau1+nu+Z or tau2+nu+Z, TauTauProducer.py
 TauTau_maxCollM, F, The larger collinear mass of either tau1+nu+Z or tau2+nu+Z, TauTauProducer.py
 TauTau_isCand, O, True if the event is good tau+tau+Z event, TauTauProducer.py
-MuTau_muIdx, I, Index to Muons of muon, MuTauProducer.py
-MuTau_tauIdx, I, Index to Taus of hadronic tau, MuTauProducer.py
-MuTau_tauProngs, I, Number if prongs of tau (1 or 3), MuTauProducer.py
-MuTau_havePair, O, True if have a good mu and tau, MuTauProducer.py
-MuTau_muTauDR, F, DeltaR betwenn mu and tau, MuTauProducer.py
-MuTau_muTauDPhi, F, Delta phi between mu and tau, MuTauProducer.py
-MuTau_visM, F, Visible mass of the mu+tau pair, MuTauProducer.py
-MuTau_haveTrip, O, True if have a good mu, tau, and Z, MuTauProducer.py
-MuTau_minCollM, F, The smaller collinear mass of e+nu+Z or tau+nu+z, MuTauProducer.py
-MuTau_maxCollM, F, The larger collinear mass of either mu+nu+Z or tau+nu+Z, MuTauProducer.py
-MuTau_isCand, O, True if the event is good mu+tau+Z event, MuTauProducer.py
 Z_dm, I, 0 = hadronic, 1=electrons, 2=muons, 3=taus. -1 by default, ZProducer.py
 Z_d1Idx, I, Idx to first daughter of Z in either Muons or Electrons collection (if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
 Z_d2Idx, I, Idx to second daughter of Z in either Muons or Electrons collection (depending on if Z_dm == 1 or Z_dm == 2). -1 default, ZProducer.py
@@ -84,7 +87,9 @@ Z_mass, F, Mass of ee or mumu pair if either Z_dm == 1 or Z_dm == 2 or jet if Z_
 Z_pt, F, Pt of ee or mumu pair or jet. 0 default, ZProducer.py
 Z_eta, F, Eta of the overall Z candidate, ZProducer.py
 Z_phi, F, Phi of the overall Z candidate, ZProducer.py
-Z_jetIdxPN, I, Idx to FatJet collection of the most Z-like jet determined using particle net score. if Z_dm=0, ZProducer.py
+Z_jetIdxAK8, I, Idx to FatJet collection of the most Z-like AK8 jet (using particle net). if Z_dm=0, ZProducer.py
+Z_jetIdxAK4, I, Idx to Jet collection of the most Z-like AK4 jet (using particle net). if Z_dm=0, ZProducer.py
+Z_jetR, I, Either 4 or 8 if the best matching jet is an AK4/8 jet respectively if Z_Dm=0. -1 otherwise, ZProducer.py
 Z_nEE, I, Number of candidate ee pairs found, ZProducer.py
 Z_nMuMu, I, Number of candidate mumu pairs found, ZProducer.py
 Z_isCand, O, True if Z is a good candidate (DM, mass, etc), ZProducer.py
