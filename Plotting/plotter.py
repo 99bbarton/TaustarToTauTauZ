@@ -23,6 +23,18 @@ varToPlotParams = {
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
     "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_d1, Z_d2)", 80, 0, 4.0],
     "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 30, 75, 105],
+    "Z_JETR"    : ["Z_jetR", "Best jet R", 3, 3, 9],
+    "Z_AK4M"    : ["Jet_mass[Z_jetIdxAK4]", "Rec AK4 Jet Mass [GeV]", 30, 60, 120],
+    "Z_AK8M"    : ["FatJet_mass[Z_jetIdxAK8]", "Rec AK8 Jet Mass [GeV]", 30, 60, 120],
+    "Z_AK8MSD"  : ["FatJet_msoftdrop[Z_jetIdxAK8]", "Rec AK8 Jet Soft Drop Mass [GeV]", 30, 60, 120],
+    "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
+    "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
+    "GEN_ZAK4IDX" : ["Gen_z_DATATIER_AK4Idx", "GEN Matched _DATATIER_ AK4 Idx", 5, -0.5, 5.5],
+    "GEN_ZAK8IDX" : ["Gen_z_DATATIER_AK8Idx", "GEN Matched _DATATIER_ AK8 Idx", 5, -0.5, 5.5],
+    "GEN_ZAK8_M" : ["GenJetAK8_mass[Gen_zGenAK8Idx]", "AK8 Jet Mass of GEN Particles [GeV]", 100, 0, 200],
+    "GEN_ZAK4_M" : ["GenJet_mass[Gen_zGenAK4Idx]", "AK4 Jet Mass of Gen Particles [GeV]", 70, 0, 140],
+    #"Z_AK4M_GEN"    : ["Jet_mass[Gen_zRecAK4Idx]", "Rec AK4 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120], # Redundant with Z_AK*M with cut requiring match
+    #"Z_AK8M_GEN"    : ["FatJet_mass[Gen_zRecAK8Idx]", "Rec AK8 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120],
     "Z_PN_SCORE": ["FatJet_particleNetWithMass_ZvsQCD[Z_jetIdxPN]", "Particle Net ZvsQCD Score", 20, 0.9, 1.0],
     #"N_Z"       : [""], #TODO
     "VIS_M"     : ["CHANNEL_visM", "Visible Mass [GeV]", 106, 200, 5500], 
@@ -43,25 +55,33 @@ plotEachToLeg = {
 
 def parseArgs():
     global varToPlotParams
-    argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters")
+    argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters. ")
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis and sim for 3 args.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, action="append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], action="append", help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e","--plotEach", choices=["PROC", "YEAR", "CH", "MASS"], default="NA", help="If specified, will make a hist per channel/proc/year rather than combining them into a single hist")
-    argparser.add_argument("-d", "--dataTier", choices=["GEN", "RECO","GEN_RECO"], default="RECO",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
+    argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
+    argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D plots only)")
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D plots")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
+    argparser.add_argument("--pV", action="store_true", help="If specified, will print the support variables to plot and their associated binnings, etc")
     args = argparser.parse_args()  
+
+    if args.pV:
+        printVarOps()
+        exit(0)
 
     if len(args.vars) == 1 and args.vars[0] == "SIG_M":
         print("ERROR: SIG_M can only be plotted as the independent variable (with another variable)")
         exit(1)
+    if len(args.vars) == 2 and args.normalize:
+        print("WARNING: Normalization not currently supported for 2D plots")
 
     if args.inDir.startswith("/store"):
         args.inDir = os.environ["ROOTURL"] + args.inDir
@@ -83,6 +103,16 @@ def parseArgs():
     if "ALL" in args.channel:
         args.channel = ["ETau", "MuTau", "TauTau"]
 
+
+    if len(args.vars) == 1:
+        args.dataTier = [args.dataTier]
+    elif args.dataTier == "Gen_Rec":
+        args.dataTier = ["Gen", "Rec"]
+    else:
+        args.dataTier = [args.dataTier, args.dataTier]
+                         
+        
+        
 
     if args.modifyBins:
        for i, val in enumerate(args.modifyBins):
@@ -173,7 +203,15 @@ def plot1D(filelist, args):
         leg = TLegend(0.7, 0.7, 0.9, 0.9, plotEachToLeg[args.plotEach])
 
     plotParams = varToPlotParams[args.vars[0]]
+    plotParams[0] = plotParams[0].replace("_DATATIER_", args.dataTier[0])
+    plotParams[1] = plotParams[1].replace("_DATATIER_", args.dataTier[0])
 
+    titleStr = ";" + plotParams[1] + ";"
+    if args.normalize:
+        titleStr += "Fraction of Events"
+    else:
+        titleStr += "Events"
+    
     hists = []
     maxVal = 0
 
@@ -186,7 +224,7 @@ def plot1D(filelist, args):
         fileNames = []
 
     for hNum, hName in enumerate(hNameList):
-        hists.append(TH1F("h_"+hName, ";"+plotParams[1]+";Events", plotParams[2], plotParams[3], plotParams[4]))
+        hists.append(TH1F("h_"+hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         
         if args.plotEach != "CH":
             fileNames = filelist[hName]
@@ -207,9 +245,8 @@ def plot1D(filelist, args):
                 else:
                     cutStr = getCuts(args.vars[0], ch, args.dataTier)
                 cutStr = cutStr.replace("CHANNEL", ch)
-                
-                    
-                hTemp = TH1F("h_"+hName+"_temp", ";"+plotParams[1]+";Events", plotParams[2], plotParams[3], plotParams[4])
+                                    
+                hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
             
                 plotStr = plotParams[0].replace("CHANNEL", ch)
                     
@@ -223,13 +260,17 @@ def plot1D(filelist, args):
         hists[hNum].SetLineColor(getColor(args.palette, hNum))
         hists[hNum].SetLineWidth(3)
 
+        if args.normalize:
+            hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
+
         if hists[hNum].GetMaximum() > maxVal:
             maxVal = hists[hNum].GetMaximum()
 
         if makeLegend:
             leg.AddEntry(hists[hNum], hName, "L")
 
-    canv.Clear()
+    canv.Clear()    
+    
     maxVal = maxVal * 1.1
     
     for hN, hist in enumerate(hists):
@@ -270,7 +311,11 @@ def plot2D_hists(filelist, args):
 
     plotParamsD1 = varToPlotParams[args.vars[0]]
     plotParamsD2 = varToPlotParams[args.vars[1]]
-
+    plotParamsD1[0] = plotParamsD1[0].replace("_DATATIER_", args.dataTier[0])
+    plotParamsD1[1] = plotParamsD1[1].replace("_DATATIER_", args.dataTier[0])
+    plotParamsD2[0] = plotParamsD2[0].replace("_DATATIER_", args.dataTier[1])
+    plotParamsD2[1] = plotParamsD2[1].replace("_DATATIER_", args.dataTier[1])
+    
     #Reduce to 5 GeV/bin for max_vs_min coll mass plots to avoid visible binning effects
     if args.vars[1] == "MAX_COL_M" and args.vars[0] == "MIN_COL_M" and not args.modifyBins:
         plotParamsD1[2] = (plotParamsD1[4] - plotParamsD1[3]) // 5
@@ -363,6 +408,21 @@ def plot2D_hists(filelist, args):
     for fileType in args.save:
         canv.SaveAs(plotname + fileType)
     
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+def printVarOps():
+    global varToPlotParams
+
+    print("\nThese are the supported variables to plot and their associated default parameters")
+    print("Variable Name : [tree variable, axis title, nBins, binMin, binMax]")
+    print("-----------------------------------------------------------------------------------------------------")
+    for var in varToPlotParams.keys():
+        print(var + " : " + str(varToPlotParams[var]))
+
+    print("-----------------------------------------------------------------------------------------------------\n")
+        
+
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 if __name__ == "__main__":

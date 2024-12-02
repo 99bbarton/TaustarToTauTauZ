@@ -3,6 +3,7 @@
 *~
 *.pyc
 *.png
+*.log
 
 MCGeneration/CondorScripts/
 Plotting/Plots/*

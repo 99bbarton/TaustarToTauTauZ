@@ -16,8 +16,8 @@ def getCuts(var, channel, tier):
     cuts = "((1>0)"
 
     if True:
-        if tier == "RECO":
-            cuts += "&& (Z_dm >= 1 && Z_dm <= 2)"
+        if tier == "Rec":
+            cuts += "&& (Z_dm >= 0 && Z_dm <= 2)"
             if channel != "":
                 cuts += " && ("+channel+"_isCand)"
         else:
