@@ -62,7 +62,7 @@ def trigEffsPerMass(args):
     gStyle.SetOptStat(0)
 
     #For now, base cuts use gen info and just require z->ee/mumu/had + etau/mutau/tautau
-    baseCuts = "(Gen_zDM >= 0 && Gen_zDM < 3) && (Gen_tsTauDM == 0 || Gen_tauDM == 0)"
+    baseCuts = "Gen_isCand"
 
     #graphs = {}
     print("\nTrigger efficiencies:")
@@ -71,18 +71,18 @@ def trigEffsPerMass(args):
         #graphs[trigN] = []
     
         #if trigger == "(HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg||HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1)":
-         #   triggerName = "tau2018"
+        #   triggerName = "tau2018"
             #trigger = "((HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg && Gen_tsTauDM == && Gen_tauDM == 0 && GenPart[Gen_tsTauIdx].pt > 40 && GenPart[Gen_tsTauIdx].eta < 2.1 && GenPart[Gen_tauIdx].pt > 40 && GenPart[Gen_tauIdx].eta < 2.1)"
             #trigger += " && (HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1 && ((Gen_tsTauDM == 0 && Gen_tauDM == 0) || (Gen_tsTauDM == 0 && Gen_tauDM == 0)) )"
-        if trigger in trig_run2_gen.keys():
-            triggerName = trigger
-            trigger = trig_run2_gen[triggerName]
-        elif trigger in trig_run3_gen.keys():
-            triggerName = trigger
-            trigger = trig_run3_gen[triggerName]
+        # if trigger in trig_run2_gen.keys():
+        #     triggerName = trigger
+        #     trigger = trig_run2_gen[triggerName]
+        # elif trigger in trig_run3_gen.keys():
+        #     triggerName = trigger
+        #     trigger = trig_run3_gen[triggerName]
         
-        else:
-            triggerName = trigger
+        # else:
+        #     triggerName = trigger
         
         for year in args.years:
             intMasses = []
@@ -97,13 +97,13 @@ def trigEffsPerMass(args):
                 tree = inFile.Get("Events")
                 denEvents = tree.GetEntries(baseCuts)
                 efficiencies.append(tree.GetEntries(baseCuts + " && " + trigger))
-                print(year + " : " + mass + " : " + triggerName + " : " + str(efficiencies[-1]) + " : " + str(denEvents) + " : " + str(round(efficiencies[-1]/float(denEvents), 2)))
+                print(year + " : " + mass + " : " + trigger + " : " + str(efficiencies[-1]) + " : " + str(denEvents) + " : " + str(round(efficiencies[-1]/float(denEvents), 2)))
                 efficiencies[-1] /= float(denEvents)
 
                 inFile.Close()
             
             graph = TGraph(len(intMasses), array("f", intMasses), array("f", efficiencies))
-            graph.SetTitle(triggerName + ";Taustar Mass [GeV]; Overall Efficiency")
+            graph.SetTitle(trigger + ";Taustar Mass [GeV]; Overall Efficiency")
             graph.SetMaximum(1.0)
             graph.SetMinimum(0.0)
             graph.SetMarkerStyle(5)
@@ -116,11 +116,11 @@ def trigEffsPerMass(args):
             graph.Draw("AP")
             if len(args.triggers) == 1:
                 wait = input("Hit ENTER to continue...")
-            canv.SaveAs("Plots/TrigPlots/effPerMass_"+ year + "_" + triggerName + ".png")
+            canv.SaveAs("Plots/TrigPlots/effPerMass_"+ year + "_" + trigger + ".png")
 
 
     #if len(args.triggers) > 1:
-     #   for trigN, trigger in enumerate(args.triggers):
+    #   for trigN, trigger in enumerate(args.triggers):
             
 
 # -----------------------------------------------------------------------------------------------------------------------------

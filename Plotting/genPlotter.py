@@ -26,6 +26,7 @@ def parseArgs():
     argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
     argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3", "4"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau, 4=invisible")
     argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
+    argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     args = argparser.parse_args()
 
     if not args.masses:
@@ -218,7 +219,8 @@ def plotDR_TauZ(args):
     leg_dPhi.Draw()
     canv_dPhi.Update()
 
-    resp = input("Hit ENTER to close plot and save...")
+    if not args.nP:
+        resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/deltaR_TauZ.png")
     canv_dPhi.SaveAs("Plots/GenPlots/deltaPhi_tsTauTau.png")
@@ -306,7 +308,8 @@ def plotDR_WNu(args):
 
     canv.Update()
 
-    resp = input("Hit ENTER to close plot and save...")
+    if not args.nP:
+        resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/deltaR_WNu.png")
 
@@ -446,7 +449,8 @@ def plotGenPartVar_TauZ(args):
 
     canv.Update()
 
-    resp = input("Hit ENTER to close plot and save...")
+    if not args.nP:
+        resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/"+args.genVar+"_TauZ.png")
 
@@ -560,7 +564,8 @@ def plotGenPartVar_WNu(args):
 
     canv.Update()
 
-    resp = input("Hit ENTER to close plot and save...")
+    if not args.nP:
+        resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/"+args.genVar+"_WNu.png")
 
@@ -709,7 +714,8 @@ def plotMET_TauZ(args):
 
     canv.Update()
 
-    resp = input("Hit ENTER to close plot and save...")
+    if not args.nP:
+        resp = input("Hit ENTER to close plot and save...")
 
     canv.SaveAs("Plots/GenPlots/met_TauZ.png")
 

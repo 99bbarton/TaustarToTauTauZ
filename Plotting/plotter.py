@@ -70,6 +70,7 @@ def parseArgs():
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D plots")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
+    argparser.add_argument("--plotName", action="store", type=str, help="A filename for the saved output")
     argparser.add_argument("--pV", action="store_true", help="If specified, will print the support variables to plot and their associated binnings, etc")
     args = argparser.parse_args()  
 
@@ -110,27 +111,24 @@ def parseArgs():
         args.dataTier = ["Gen", "Rec"]
     else:
         args.dataTier = [args.dataTier, args.dataTier]
-                         
-        
-        
 
     if args.modifyBins:
-       for i, val in enumerate(args.modifyBins):
-           if i > 5:
-               print("WARNING: Too many arguments were consumed by -b/--modifyBins. Maxiumum of 6 is allowed.")
-               break
-           if i == 0:
-               varToPlotParams[args.vars[0]][2] = int(val)
-           elif i == 1 or i == 2:
-               varToPlotParams[args.vars[0]][i+2] = float(val)
-           elif i == 3:
-               varToPlotParams[args.vars[1]][2] = int(val)
-           elif i == 4 or i == 5:
-               varToPlotParams[args.vars[1]][i-1] = float(val)
+        for i, val in enumerate(args.modifyBins):
+            if i > 5:
+                print("WARNING: Too many arguments were consumed by -b/--modifyBins. Maxiumum of 6 is allowed.")
+                break
+            if i == 0:
+                varToPlotParams[args.vars[0]][2] = int(val)
+            elif i == 1 or i == 2:
+                varToPlotParams[args.vars[0]][i+2] = float(val)
+            elif i == 3:
+                varToPlotParams[args.vars[1]][2] = int(val)
+            elif i == 4 or i == 5:
+                varToPlotParams[args.vars[1]][i-1] = float(val)
 
     if "ALL" in args.save:
         args.save = [".png", ".pdf", ".C"]
-               
+
     return args
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -287,8 +285,11 @@ def plot1D(filelist, args):
 
     if not args.nP:
         wait = input("Hit ENTER to save plot and end... ")
-        
-    plotname = "Plots/" + args.vars[0].lower()
+    
+    if args.plotName:
+        plotname = args.plotName
+    else:
+        plotname = "Plots/" + args.vars[0].lower()
     if args.plotEach != "NA":
         plotname += "_per_" + args.plotEach.lower()
     for fileType in args.save:
@@ -404,7 +405,10 @@ def plot2D_hists(filelist, args):
     canv.Update()
     if not args.nP:
         wait = input("Hit ENTER to save plot and end... ")
-    plotname = "Plots/" + args.vars[0].lower() + "_vs_" + args.vars[1].lower()
+    if args.plotName:
+        plotname = args.plotName
+    else:
+        plotname = "Plots/" + args.vars[0].lower() + "_vs_" + args.vars[1].lower()
     for fileType in args.save:
         canv.SaveAs(plotname + fileType)
     
