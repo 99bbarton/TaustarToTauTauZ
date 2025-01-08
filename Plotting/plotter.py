@@ -19,14 +19,14 @@ from Cuts import getCuts
 # Map of variable options to [plotting string, histogram axis title string, nBins, bins min, bins max]
 varToPlotParams = { 
     #"SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
-    "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 100, 0, 1000],
+    "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 300, 0, 3000],
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
     "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_d1, Z_d2)", 80, 0, 4.0],
     "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 30, 75, 105],
     "Z_JETR"    : ["Z_jetR", "Best jet R", 3, 3, 9],
     "Z_AK4M"    : ["Jet_mass[Z_jetIdxAK4]", "Rec AK4 Jet Mass [GeV]", 30, 60, 120],
     "Z_AK8M"    : ["FatJet_mass[Z_jetIdxAK8]", "Rec AK8 Jet Mass [GeV]", 30, 60, 120],
-    "Z_AK8MSD"  : ["FatJet_msoftdrop[Z_jetIdxAK8]", "Rec AK8 Jet Soft Drop Mass [GeV]", 30, 60, 120],
+    "Z_AK8SDM"  : ["FatJet_msoftdrop[Z_jetIdxAK8]", "Rec AK8 Jet Soft Drop Mass [GeV]", 30, 60, 120],
     "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
     "GEN_ZAK4IDX" : ["Gen_z_DATATIER_AK4Idx", "GEN Matched _DATATIER_ AK4 Idx", 5, -0.5, 5.5],
@@ -48,6 +48,7 @@ plotEachToLeg = {
     "YEAR" : "Year",
     "CH"   : "Channel",
     "MASS" : "#tau* Mass [GeV]",
+    "DM"   : "Z Decay Mode",
     "NA"   : ""
 }
 
@@ -61,13 +62,14 @@ def parseArgs():
     argparser.add_argument("-y", "--years", required=True, action="append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], action="append", help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
-    argparser.add_argument("-e","--plotEach", choices=["PROC", "YEAR", "CH", "MASS"], default="NA", help="If specified, will make a hist per channel/proc/year rather than combining them into a single hist")
+    argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
+    argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
-    argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D plots only)")
+    argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D hists only)")
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
-    argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D plots")
+    argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
     argparser.add_argument("--plotName", action="store", type=str, help="A filename for the saved output")
@@ -83,6 +85,12 @@ def parseArgs():
         exit(1)
     if len(args.vars) == 2 and args.normalize:
         print("WARNING: Normalization not currently supported for 2D plots")
+    if len(args.vars) > 2:
+        print("WARNING: Only the first two arguments will be used!")
+    if len(args.vars) != 2 and args.graph:
+        print("ERROR: Graphs can only be made from 2 specified variables!")
+        exit(1)
+
 
     if args.inDir.startswith("/store"):
         args.inDir = os.environ["ROOTURL"] + args.inDir
@@ -140,14 +148,17 @@ def main(args):
     if len(args.vars) == 1:
         plot1D(filelist, args)
     elif len(args.vars) == 2:
-        plot2D_hists(filelist, args)
+        if args.graph:
+            plot2D_graph(filelist, args)
+        else:
+            plot2D_hists(filelist, args)
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def getFileList(args):
     filelist = {}
 
-    if args.plotEach == "NA" or args.plotEach == "CH":
+    if args.plotEach in ["NA", "CH", "DM"]:
         filelist["ALL"] = []
         for proc in args.processes:
             for year in args.years:
@@ -216,7 +227,9 @@ def plot1D(filelist, args):
     hNameList = []
     if args.plotEach == "CH":
         hNameList = args.channel
-        fileNames = filelist["ALL"]
+    elif args.plotEach == "DM":
+        hNameList = ["ee", "mumu", "had"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
     else:
         hNameList = filelist.keys()
         fileNames = []
@@ -224,7 +237,9 @@ def plot1D(filelist, args):
     for hNum, hName in enumerate(hNameList):
         hists.append(TH1F("h_"+hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         
-        if args.plotEach != "CH":
+        if args.plotEach in ["CH", "DM"]:
+            fileNames = filelist["ALL"]
+        else:
             fileNames = filelist[hName]
 
         for filename in fileNames:
@@ -243,7 +258,9 @@ def plot1D(filelist, args):
                 else:
                     cutStr = getCuts(args.vars[0], ch, args.dataTier)
                 cutStr = cutStr.replace("CHANNEL", ch)
-                                    
+                if args.plotEach == "DM":
+                    cutStr += " && Z_dm==" + str(dmFromName[hName])
+
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
             
                 plotStr = plotParams[0].replace("CHANNEL", ch)
@@ -295,12 +312,12 @@ def plot1D(filelist, args):
     for fileType in args.save:
         canv.SaveAs(plotname + fileType)
 
-## ------------------------------------------------------------------------------------------------------------------------------------------------- #
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def plot2D_hists(filelist, args):
     global varToPlotParams, plotEachToLeg
 
-    canv = TCanvas("canv", "2D Plotting", 1200, 1000)
+    canv = TCanvas("canv", "2D Hists", 1200, 1000)
     canv.SetLeftMargin(0.15)
     gStyle.SetOptStat(0)
 
@@ -332,16 +349,19 @@ def plot2D_hists(filelist, args):
     hNameList = []
     if args.plotEach == "CH":
         hNameList = args.channels
-        fileNames = filelist["ALL"]
+    elif args.plotEach == "DM":
+        hNameList = ["ee", "mumu", "had"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
     else:
         hNameList = filelist.keys()
-        fileNames = []  
 
     for hNum, hName in enumerate(hNameList):
         histToFill = "h_"+args.vars[0] + "_vs_"+args.vars[1]+"_"+hName
         hists.append(TH2F(histToFill, ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4]))
         
-        if args.plotEach != "CH":
+        if args.plotEach in ["CH", "DM"]:
+            fileNames = filelist["ALL"]
+        else:
             fileNames = filelist[hName]
 
         for filename in fileNames:
@@ -362,6 +382,8 @@ def plot2D_hists(filelist, args):
                     cutStrD2 = getCuts(args.vars[1], ch, dataTier2)
                     cutStr = "(" + cutStrD1 + ") && (" + cutStrD2 + ")"
                 cutStr = cutStr.replace("CHANNEL", ch)
+                if args.plotEach == "DM":
+                    cutStr += " && Z_dm==" + str(dmFromName[hName])
 
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 
@@ -412,6 +434,21 @@ def plot2D_hists(filelist, args):
     for fileType in args.save:
         canv.SaveAs(plotname + fileType)
     
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+#TODO
+def plot2D_graph(filelist, args):
+    global varToPlotParams, plotEachToLeg
+
+    canv = TCanvas("canv", "2D Graphs", 1200, 1000)
+    canv.SetLeftMargin(0.15)
+    gStyle.SetOptStat(0)
+
+    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach = "DM":
+    if makeLegend:
+        gStyle.SetOptStat(0)
+        leg = TLegend(0.7, 0.2, 0.9, 0.4, plotEachToLeg[args.plotEach])
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
