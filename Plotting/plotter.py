@@ -19,10 +19,11 @@ from Cuts import getCuts
 # Map of variable options to [plotting string, histogram axis title string, nBins, bins min, bins max]
 varToPlotParams = { 
     #"SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
-    "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 300, 0, 3000],
+    "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 60, 0, 3000],
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
     "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_d1, Z_d2)", 80, 0, 4.0],
-    "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 30, 75, 105],
+    "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 60, 60, 120],
+    "Z_DM"      : ["Z_dm", "Decay Mode of Z", 3, -0.5, 2.5],
     "Z_JETR"    : ["Z_jetR", "Best jet R", 3, 3, 9],
     "Z_AK4M"    : ["Jet_mass[Z_jetIdxAK4]", "Rec AK4 Jet Mass [GeV]", 30, 60, 120],
     "Z_AK8M"    : ["FatJet_mass[Z_jetIdxAK8]", "Rec AK8 Jet Mass [GeV]", 30, 60, 120],
@@ -60,15 +61,17 @@ def parseArgs():
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis and sim for 3 args.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, action="append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
-    argparser.add_argument("-p", "--processes", required=True, type=str, choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], action="append", help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
+    argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
+    argparser.add_argument("-l", "--logScale", nargs="+", choices=["X","Y","Z"], help="Axis to make log scale")
     argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D hists only)")
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
+    argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
@@ -133,6 +136,10 @@ def parseArgs():
                 varToPlotParams[args.vars[1]][2] = int(val)
             elif i == 4 or i == 5:
                 varToPlotParams[args.vars[1]][i-1] = float(val)
+
+    if args.logScale:
+        if "Z" in args.logScale and len(args.vars) != 2:
+            print("WARNING: Ignoring request for Z-axis to be log scaled. There were not two variables specified.")
 
     if "ALL" in args.save:
         args.save = [".png", ".pdf", ".C"]
@@ -297,7 +304,13 @@ def plot1D(filelist, args):
     
     if makeLegend:
         leg.Draw()
-
+        
+    if args.logScale:
+        if "X" in args.logScale:
+            canv.SetLogx(True)
+        if "Y" in args.logScale:
+            canv.SetLogy(True)
+        
     canv.Update()
 
     if not args.nP:
@@ -319,9 +332,10 @@ def plot2D_hists(filelist, args):
 
     canv = TCanvas("canv", "2D Hists", 1200, 1000)
     canv.SetLeftMargin(0.15)
+    canv.SetRightMargin(0.15)
     gStyle.SetOptStat(0)
 
-    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH"
+    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM"
     if makeLegend:
         gStyle.SetOptStat(0)
         leg = TLegend(0.7, 0.5, 0.9, 0.7, plotEachToLeg[args.plotEach])
@@ -404,17 +418,22 @@ def plot2D_hists(filelist, args):
         if args.plotEach != "NA":
             hists[hNum].SetLineColor(getColor(args.palette, hNum))
             hists[hNum].SetMarkerColor(getColor(args.palette, hNum))
-            hists[hNum].SetFillColor(getColor(args.palette, hNum))
-            drawStyle = "SCAT" #This has to be forced in the latest root distributions
+            
+            if args.drawStyle:
+                drawStyle = args.drawStyle
+            else:
+                drawStyle = "SCAT" #This has to be forced in the latest root distributions
+            if drawStyle.find("CANDLE") < 0:        
+                hists[hNum].SetFillColor(getColor(args.palette, hNum))
+
             leg.AddEntry(hists[hNum], hName, "F")
         else:
-            drawStyle = "COLZ"
+            if args.drawStyle:
+                drawStyle = args.drawStyle
+            else:
+                drawStyle = "COLZ"
     
     for hN, hist in enumerate(hists):
-
-        hist.SetLineColor(getColor(args.palette, hN))
-        hist.SetMarkerColor(getColor(args.palette, hN))
-        hist.SetFillColor(getColor(args.palette, hN))
         
         if hN == 0:
             hist.Draw(drawStyle)
@@ -423,6 +442,14 @@ def plot2D_hists(filelist, args):
     
     if args.plotEach != "NA":
         leg.Draw()
+
+    if args.logScale:
+        if "X" in args.logScale:
+            canv.SetLogx(True)
+        if "Y" in args.logScale:
+            canv.SetLogy(True)
+        if "Z" in args.logScale:
+            canv.SetLogz(True)   
     
     canv.Update()
     if not args.nP:
@@ -445,7 +472,7 @@ def plot2D_graph(filelist, args):
     canv.SetLeftMargin(0.15)
     gStyle.SetOptStat(0)
 
-    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach = "DM":
+    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM"
     if makeLegend:
         gStyle.SetOptStat(0)
         leg = TLegend(0.7, 0.2, 0.9, 0.4, plotEachToLeg[args.plotEach])

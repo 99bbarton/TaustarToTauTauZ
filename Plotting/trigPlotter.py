@@ -19,11 +19,12 @@ from trigDef import trig_run3_gen, trig_run2_gen
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Script to plot GEN-level variables")
     argparser.add_argument("-i", "--inDir", required=True, action="store", help="A directory to find the input root files")
-    argparser.add_argument("-t", "--triggers", required=True, action="append", help="A trigger string to test")
+    argparser.add_argument("-t", "--triggers", required=True, nargs="+", help="A trigger string to test")
     #argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
-    argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
-    argparser.add_argument("-y", "--years", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, action="append", help="What years to plot")
-
+    argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], help = "Which signal masses to plot")
+    argparser.add_argument("-y", "--years", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], type=str, nargs="+", help="What years to plot")
+    argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
+    
     args = argparser.parse_args()
 
     if not args.masses:
@@ -103,7 +104,7 @@ def trigEffsPerMass(args):
                 inFile.Close()
             
             graph = TGraph(len(intMasses), array("f", intMasses), array("f", efficiencies))
-            graph.SetTitle(trigger + ";Taustar Mass [GeV]; Overall Efficiency")
+            graph.SetTitle(year+" : " + trigger + ";Taustar Mass [GeV]; Overall Efficiency")
             graph.SetMaximum(1.0)
             graph.SetMinimum(0.0)
             graph.SetMarkerStyle(5)
@@ -114,7 +115,9 @@ def trigEffsPerMass(args):
             #if len(args.triggers) == 1:
             canv.cd()
             graph.Draw("AP")
-            if len(args.triggers) == 1:
+            canv.Update()
+            
+            if not args.nP:
                 wait = input("Hit ENTER to continue...")
             canv.SaveAs("Plots/TrigPlots/effPerMass_"+ year + "_" + trigger + ".png")
 

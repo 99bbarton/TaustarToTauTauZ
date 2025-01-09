@@ -24,9 +24,24 @@ cp Plots/GenPlots/deltaR_TauZ.png $OUTDIR
 cp Plots/GenPlots/deltaPhi_tsTauTau.png $OUTDIR
 
 ## Run2
-### Generation
-### GEN-Level Kinematics and Topography
+
+
 # Trigger Selection
+## Run3
+python3 trigPlotter.py -i $SIG_R3 -y RUN3 --nP -t Trig_tau -t Trig_tauOR -t Trig_MET
+cp Plots/TrigPlots/effPerMass_2022_Trig_tau.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2022_Trig_tauOR.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2022_Trig_MET.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2022post_Trig_tau.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2022post_Trig_tauOR.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2022post_Trig_MET.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023_Trig_tau.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023_Trig_tauOR.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023_Trig_MET.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023post_Trig_tau.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023post_Trig_tauOR.png $OUTDIR
+cp Plots/TrigPlots/effPerMass_2023post_Trig_MET.png $OUTDIR
+
 
 ## Run3
 ## Run2
