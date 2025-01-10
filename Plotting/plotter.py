@@ -3,7 +3,7 @@
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = True
 
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, THStack, gPad, TH2F
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, TH2F, TMultiGraph
 import os
 import sys
 import argparse
@@ -18,7 +18,7 @@ from Cuts import getCuts
 
 # Map of variable options to [plotting string, histogram axis title string, nBins, bins min, bins max]
 varToPlotParams = { 
-    #"SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
+    "SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
     "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 60, 0, 3000],
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
     "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_d1, Z_d2)", 80, 0, 4.0],
@@ -44,6 +44,13 @@ varToPlotParams = {
     #    "DPHI"      : ["CHANNEL_CHANNELdPhi", "#Delta#phi", 63, 0, 6.3]  #TODO, update dPhi to not have second info, make it cos^@(dphi) maybe?
 }
 
+# Map of variable options to either a list of values or a list of [min, max] "bin ranges"
+# varToGraphParams = {
+#     "SIG_M"     : ["250", ""],
+#     "Eta"       : [[["0", "1.444"]]]
+# }
+
+
 plotEachToLeg = {
     "PROC" : "Process",
     "YEAR" : "Year",
@@ -58,18 +65,20 @@ plotEachToLeg = {
 def parseArgs():
     global varToPlotParams
     argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters. ")
-    argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis and sim for 3 args.")
+    argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, action="append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
-    argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
+    #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
+    argparser.add_argument("--effCut", type="str", )
     argparser.add_argument("-l", "--logScale", nargs="+", choices=["X","Y","Z"], help="Axis to make log scale")
     argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D hists only)")
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
+    argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
     argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
@@ -140,6 +149,12 @@ def parseArgs():
     if args.logScale:
         if "Z" in args.logScale and len(args.vars) != 2:
             print("WARNING: Ignoring request for Z-axis to be log scaled. There were not two variables specified.")
+
+    if args.effCut and not args.cuts:
+        print("WARNING: Efficiency cut was specified but not a denominator cut (i.e. via --cuts)")
+    if args.effCut and args.normalize:
+        print("ERROR: Efficiency plotting and normalization were both specified. These are incompatible!")
+        exit(1)
 
     if "ALL" in args.save:
         args.save = [".png", ".pdf", ".C"]
@@ -229,6 +244,8 @@ def plot1D(filelist, args):
         titleStr += "Events"
     
     hists = []
+    if args.effCut:
+        numHists = []
     maxVal = 0
 
     hNameList = []
@@ -243,6 +260,8 @@ def plot1D(filelist, args):
 
     for hNum, hName in enumerate(hNameList):
         hists.append(TH1F("h_"+hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
+        if args.effCut:
+            numHists.append(TH1F("h_"+hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
         
         if args.plotEach in ["CH", "DM"]:
             fileNames = filelist["ALL"]
@@ -270,17 +289,26 @@ def plot1D(filelist, args):
 
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
             
-                plotStr = plotParams[0].replace("CHANNEL", ch)
-                    
+                plotStr = plotParams[0].replace("CHANNEL", ch)                    
                 tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
-            
+
                 hists[-1].Add(hTemp)
                 del hTemp
+
+                if args.effCut:
+                    hTemp_num = TH1F("h_"+hName+"_temp_num", titleStr, plotParams[2], plotParams[3], plotParams[4])
+                    cutStr += " && " + args.effCut
+                    tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
+                    numHists[-1].Add(hTemp_num)
+                    del hTemp_num
 
             inFile.Close()
         
         hists[hNum].SetLineColor(getColor(args.palette, hNum))
         hists[hNum].SetLineWidth(3)
+        if args.effCut:
+            numHists[hNum].SetLineColor(getColor(args.palette, hNum))
+            numHists[hNum].SetLineWidth(3)
 
         if args.normalize:
             hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
@@ -296,6 +324,12 @@ def plot1D(filelist, args):
     maxVal = maxVal * 1.1
     
     for hN, hist in enumerate(hists):
+        if args.effCut:
+            hist.Sumw2()
+            numHists[hN].Sumw2()
+            hist.Divide(numHists[hN])
+            maxVal = 1.1
+
         hist.SetMaximum(maxVal)
         if hN == 0:
             hist.Draw("HIST")
@@ -343,21 +377,20 @@ def plot2D_hists(filelist, args):
 
     plotParamsD1 = varToPlotParams[args.vars[0]]
     plotParamsD2 = varToPlotParams[args.vars[1]]
-    plotParamsD1[0] = plotParamsD1[0].replace("_DATATIER_", args.dataTier[0])
-    plotParamsD1[1] = plotParamsD1[1].replace("_DATATIER_", args.dataTier[0])
-    plotParamsD2[0] = plotParamsD2[0].replace("_DATATIER_", args.dataTier[1])
-    plotParamsD2[1] = plotParamsD2[1].replace("_DATATIER_", args.dataTier[1])
-    
-    #Reduce to 5 GeV/bin for max_vs_min coll mass plots to avoid visible binning effects
-    if args.vars[1] == "MAX_COL_M" and args.vars[0] == "MIN_COL_M" and not args.modifyBins:
-        plotParamsD1[2] = (plotParamsD1[4] - plotParamsD1[3]) // 5
-        plotParamsD2[2] = (plotParamsD2[4] - plotParamsD2[3]) // 5
-
     if args.dataTier == "GEN_RECO":
         dataTier1 = "GEN"
         dataTier2 = "RECO"
     else:
         dataTier1 = dataTier2 = args.dataTier
+    plotParamsD1[0] = plotParamsD1[0].replace("_DATATIER_", dataTier1)
+    plotParamsD1[1] = plotParamsD1[1].replace("_DATATIER_", dataTier1)
+    plotParamsD2[0] = plotParamsD2[0].replace("_DATATIER_", dataTier2)
+    plotParamsD2[1] = plotParamsD2[1].replace("_DATATIER_", dataTier2)
+    
+    #Reduce to 5 GeV/bin for max_vs_min coll mass plots to avoid visible binning effects
+    if args.vars[1] == "MAX_COL_M" and args.vars[0] == "MIN_COL_M" and not args.modifyBins:
+        plotParamsD1[2] = (plotParamsD1[4] - plotParamsD1[3]) // 5
+        plotParamsD2[2] = (plotParamsD2[4] - plotParamsD2[3]) // 5
 
     hists = []
     hNameList = []
@@ -476,6 +509,58 @@ def plot2D_graph(filelist, args):
     if makeLegend:
         gStyle.SetOptStat(0)
         leg = TLegend(0.7, 0.2, 0.9, 0.4, plotEachToLeg[args.plotEach])
+    
+    plotParamsD1 = varToPlotParams[args.vars[0]]
+    plotParamsD2 = varToPlotParams[args.vars[1]]
+    if args.dataTier == "GEN_RECO":
+        dataTier1 = "GEN"
+        dataTier2 = "RECO"
+    else:
+        dataTier1 = dataTier2 = args.dataTier
+    plotParamsD1[0] = plotParamsD1[0].replace("_DATATIER_", dataTier1)
+    plotParamsD1[1] = plotParamsD1[1].replace("_DATATIER_", dataTier1)
+    plotParamsD2[0] = plotParamsD2[0].replace("_DATATIER_", dataTier2)
+    plotParamsD2[1] = plotParamsD2[1].replace("_DATATIER_", dataTier2)
+
+    graphs = TMultiGraph()
+    gNameList = []
+    if args.plotEach == "CH":
+        gNameList = args.channels
+    elif args.plotEach == "DM":
+        gNameList = ["ee", "mumu", "had"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
+    else:
+        gNameList = filelist.keys()
+
+    yVals = {}
+    for gNum, gName in enumerate(gNameList):
+        yVals
+        
+        if args.plotEach in ["CH", "DM"]:
+            fileNames = filelist["ALL"]
+        else:
+            fileNames = filelist[hName]
+
+        for filename in fileNames:
+            inFile = TFile.Open(filename, "r")
+            if inFile == "None":
+                print("ERROR: Could not read file " + inFile)
+                continue
+            tree = inFile.Get("Events")
+
+            for ch in args.channel:
+                if args.plotEach == "CH" and ch != hName:
+                    continue
+
+                if args.cuts:
+                    cutStr = args.cuts
+                else:
+                    cutStrD1 = getCuts(args.vars[0], ch, dataTier1)
+                    cutStrD2 = getCuts(args.vars[1], ch, dataTier2)
+                    cutStr = "(" + cutStrD1 + ") && (" + cutStrD2 + ")"
+                cutStr = cutStr.replace("CHANNEL", ch)
+                if args.plotEach == "DM":
+                    cutStr += " && Z_dm==" + str(dmFromName[hName])
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
