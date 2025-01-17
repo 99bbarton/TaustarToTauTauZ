@@ -6,7 +6,11 @@ Gen_tsIdx              |  I   | Idx to last copy of taustar in GenPart          
 Gen_tsTauIdx           |  I   | Idx to the last copy of the tau decay product of the taustar in GenPart                                                  | GenProducer.py      
 Gen_tsTauDM            |  I   | Decay mode of the ts tau:  0=had, 1=e, 2=muon                                                                            | GenProducer.py      
 Gen_tauIdx             |  I   | Idx to the last copy of the spectator tau produced alongside the taustar in GenPart                                      | GenProducer.py      
-Gen_tauDM              |  I   | Decay mode of the spectator tau:  0=had, 1=e, 2=muon                                                                     | GenProducer.py      
+WARNING: Unrecognized line format. Number of " found was not 6. Skipping...
+Line was: "Gen_tauDM", "I") #"Decay mode of the spectator tau:  0=had, 1=e, 2=muon
+
+Gen_tsTau_visInvDR     |  F   | DeltaR between the visible & invisible components of the tau from the taustar                                            | GenProducer.py      
+Gen_tau_visInvDR       |  F   | DeltaR between the visible & invisible components of the spectator tau                                                   | GenProducer.py      
 Gen_tsTauFid           |  O   | True if the tsTau passes fiducial cuts                                                                                   | GenProducer.py      
 Gen_tauFid             |  O   | True if the tau passes fiducial cuts                                                                                     | GenProducer.py      
 Gen_zIdx               |  I   | Idx to the last copy of the Z from the taustar decay in GenPart                                                          | GenProducer.py      
@@ -51,8 +55,8 @@ ETau_eIdx              |  I   | Index to Electrons of electron                  
 ETau_tauIdx            |  I   | Index to Taus of hadronic tau                                                                                            | ETauProducer.py     
 ETau_tauProngs         |  I   | Number of prongs of tau (1 or 3)                                                                                         | ETauProducer.py     
 ETau_havePair          |  O   | True if have a good e and tau                                                                                            | ETauProducer.py     
-ETau_eTauDR            |  F   | Delta R between electron and tau                                                                                         | ETauProducer.py     
-ETau_eTauDPhi          |  F   | Delta Phi between electron and tau                                                                                       | ETauProducer.py     
+ETau_ETauDR            |  F   | Delta R between electron and tau                                                                                         | ETauProducer.py     
+ETau_ETauCos2DPhi      |  F   | cos^2(tau.phi-e.phi)                                                                                                     | ETauProducer.py     
 ETau_visM              |  F   | Visible mass of the e+tau pair                                                                                           | ETauProducer.py     
 ETau_haveTrip          |  O   | True if have a good e, tau, and Z                                                                                        | ETauProducer.py     
 ETau_minCollM          |  F   | The smaller collinear mass of either e+nu+Z or tau+nu+Z                                                                  | ETauProducer.py     
@@ -62,8 +66,8 @@ MuTau_muIdx            |  I   | Index to Muons of muon                          
 MuTau_tauIdx           |  I   | Index to Taus of hadronic tau                                                                                            | MuTauProducer.py    
 MuTau_tauProngs        |  I   | Number if prongs of tau (1 or 3)                                                                                         | MuTauProducer.py    
 MuTau_havePair         |  O   | True if have a good mu and tau                                                                                           | MuTauProducer.py    
-MuTau_muTauDR          |  F   | DeltaR betwenn mu and tau                                                                                                | MuTauProducer.py    
-MuTau_muTauDPhi        |  F   | Delta phi between mu and tau                                                                                             | MuTauProducer.py    
+MuTau_MuTauDR          |  F   | DeltaR betwenn mu and tau                                                                                                | MuTauProducer.py    
+MuTau_MuTauCos2DPhi    |  F   | cos^2(tau.phi-mu.phi)                                                                                                    | MuTauProducer.py    
 MuTau_visM             |  F   | Visible mass of the mu+tau pair                                                                                          | MuTauProducer.py    
 MuTau_haveTrip         |  O   | True if have a good mu, tau, and Z                                                                                       | MuTauProducer.py    
 MuTau_minCollM         |  F   | The smaller collinear mass of e+nu+Z or tau+nu+z                                                                         | MuTauProducer.py    
@@ -74,8 +78,8 @@ TauTau_tau2Idx         |  I   | Index to Taus of second best hadronic tau (sorte
 TauTau_tau1Prongs      |  I   | Number if prongs of tau1 (1 or 3)                                                                                        | TauTauProducer.py   
 TauTau_tau2Prongs      |  I   | Number if prongs of tau2 (1 or 3)                                                                                        | TauTauProducer.py   
 TauTau_havePair        |  O   | True if have two good taus                                                                                               | TauTauProducer.py   
-TauTau_tausDR          |  F   | DeltaR betwenn the two taus                                                                                              | TauTauProducer.py   
-TauTau_tausDPhi        |  F   | Delta phi between the two taus                                                                                           | TauTauProducer.py   
+TauTau_TauTauDR        |  F   | DeltaR between the two taus                                                                                              | TauTauProducer.py   
+TauTau_TauTauCos2DPhi  |  F   | cos^2(tau1.phi-tau2.phi)                                                                                                 | TauTauProducer.py   
 TauTau_visM            |  F   | Visible mass of the tau pair                                                                                             | TauTauProducer.py   
 TauTau_haveTrip        |  O   | True if have two good taus and a Z                                                                                       | TauTauProducer.py   
 TauTau_minCollM        |  F   | The smaller collinear mass of tau1+nu+Z or tau2+nu+Z                                                                     | TauTauProducer.py   
