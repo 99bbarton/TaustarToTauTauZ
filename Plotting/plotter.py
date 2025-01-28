@@ -36,7 +36,7 @@ varToPlotParams = {
     "GEN_ZAK4_M" : ["GenJet_mass[Gen_zGenAK4Idx]", "AK4 Jet Mass of Gen Particles [GeV]", 70, 0, 140],
     "TAU_VISINVDR": ["Gen_tau_visInvDR", "#DeltaR(tau_vis, tau_inv)]", 10, 0, 0.2],
     "TSTAU_VISINVDR": ["Gen_tsTau_visInvDR", "#DeltaR(tsTau_vis, tsTau_inv)]", 10, 0, 0.2],
-    "VISINVDR"      : [["Gen_tau_visInvDR", "Gen_tsTau_visInvDR"], "#DeltaR(#tau_vis, #tau_inv)]", 10, 0, 0.1],      
+    "VISINVDR"      : [["Gen_tau_visInvDR", "Gen_tsTau_visInvDR"], "#DeltaR(#tau_{vis}, #tau_{inv})", 10, 0, 0.1],      
     #"Z_AK4M_GEN"    : ["Jet_mass[Gen_zRecAK4Idx]", "Rec AK4 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120], # Redundant with Z_AK*M with cut requiring match
     #"Z_AK8M_GEN"    : ["FatJet_mass[Gen_zRecAK8Idx]", "Rec AK8 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120],
     "Z_PN_SCORE": ["FatJet_particleNetWithMass_ZvsQCD[Z_jetIdxPN]", "Particle Net ZvsQCD Score", 20, 0.9, 1.0],
@@ -413,7 +413,7 @@ def plot2D_hists(filelist, args):
     makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM"
     if makeLegend:
         gStyle.SetOptStat(0)
-        leg = TLegend(0.7, 0.5, 0.9, 0.7, plotEachToLeg[args.plotEach])
+        leg = TLegend(0.65, 0.45, 0.85, 0.65, plotEachToLeg[args.plotEach])
 
     plotParamsD1 = varToPlotParams[args.vars[0]]
     plotParamsD2 = varToPlotParams[args.vars[1]]

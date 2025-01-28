@@ -23,9 +23,9 @@ def parseArgs():
     argparser.add_argument("-r","--deltaR", action="store_true", help="Plot DeltaR between GEN particles")
     argparser.add_argument("--met", action="store_true", help="Plot MET quantities")
     argparser.add_argument("-p", "--palette",choices=cols.getPalettes(), help="A palette to use for plotting")
-    argparser.add_argument("-m", "--masses", type=str, choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], action="append", help = "Which signal masses to plot")
+    argparser.add_argument("-m", "--masses", type=str, nargs="+", choices = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], help = "Which signal masses to plot")
     argparser.add_argument("--dm", type=str, choices=["0", "1", "2", "3", "4"], help="Specify plotting of a single decay mode of the Z/W. 0=hadronic, 1=el, 2=mu, 3=tau, 4=invisible")
-    argparser.add_argument("-y", "--years", action= "append", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
+    argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     args = argparser.parse_args()
 
@@ -40,7 +40,6 @@ def parseArgs():
     if args.inDir.startswith("/store"):
         args.inDir = os.environ["ROOTURL"] + args.inDir
 
-    print(args.years)
     return args
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
