@@ -5,7 +5,7 @@ from array import array
 import sys
 
 colors = {
-    "line" : [2, 4, 6, 7, 415, 32, 36, 634],
+    "line" : [2, 4, 6, 7, 415, 32, 36, 634, 808, 418, 883, 435],
     "stack" : [595, 602, 434, 411, 426, 419, 597, 414, 402, 797, 626, 634, 610, 618, 619],
     "stack_syd" : [TColor.GetColor("#6d7885"),TColor.GetColor("#d2e8ff"),TColor.GetColor("#019063"),TColor.GetColor("#03d0d1"),TColor.GetColor("#5e8a7b"),TColor.GetColor("#1b614a"),TColor.GetColor("#a1b5ae"),TColor.GetColor("#1b8070"),TColor.GetColor("#2debac"),TColor.GetColor("#65a1a1"),TColor.GetColor("#018585"),TColor.GetColor("#02aa91"),TColor.GetColor( "#355882"),TColor.GetColor("#4ebaa9"),TColor.GetColor("#01724d")],
     "cool" : [884, 874, 881, 876, 890, 855, 852, 867, 835, 844, 419, 413],
@@ -39,7 +39,7 @@ def showPalette(palette):
     f1 = TF2("f1","y",0, 1 ,1,10)
     f1.Draw("colz")
 
-    resp = raw_input("Hit enter to close...")
+    resp = input("Hit enter to close...")
     return 0
 
 
