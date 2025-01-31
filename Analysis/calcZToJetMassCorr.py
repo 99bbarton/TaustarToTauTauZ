@@ -81,7 +81,7 @@ def calcCorrectedZMass(args, fileList):
     gStyle.SetOptStat(0)
     canv.cd()
 
-    cuts = "(Gen_isCand && Z_isCand && (" + str(args.minMax[0]) + "<= Z_pt && Z_pt < " + str(args.minMax[1]) + "))"
+    cuts = "(Gen_isCand && Z_isCand && Z_dm == 0 &(" + str(args.minMax[0]) + "<= Z_pt && Z_pt < " + str(args.minMax[1]) + "))"
     if args.cuts:
         cuts = args.cuts
 
@@ -111,6 +111,7 @@ def calcCorrectedZMass(args, fileList):
     g_bef.Draw("AP")
 
     fitFunc_bef = TF1("fitFunc_bef", "pol1", args.minMax[0], args.minMax[1])
+    #fitFunc_bef = TF1("fitFunc_bef", "[0]+[1]*sqrt(x)", args.minMax[0], args.minMax[1])
     if args.fixIntercept:
         fitFunc_bef.SetParameter(0, 91.18) #Fix the intercept at the Z mass
     g_bef.Fit(fitFunc_bef, "S")
@@ -123,7 +124,7 @@ def calcCorrectedZMass(args, fileList):
     canv.cd(4)
     chain.Draw("Z_mass:Z_pt", cuts)
     g_aft = gPad.GetPrimitive("Graph").Clone()
-    g_aft.SetTitle("Before Correction;Z pT [GeV];Reconstructed Z Mass [GeV]")
+    g_aft.SetTitle("After Correction;Z pT [GeV];Reconstructed Z Mass [GeV]")
     g_aft.Draw("AP")
     h_aft = TH2F("h_aft", "After Correction;Z pT [GeV];Reconstructed Z Mass [GeV]", int((args.minMax[1] - args.minMax[0]) / 20), args.minMax[0], args.minMax[1], nBins_m, binMin_m, binMax_m)
 
