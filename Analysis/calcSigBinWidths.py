@@ -26,7 +26,7 @@ def parseArgs():
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots and writing calculated values")
-    argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
+    argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C"], default=[], help="What file types to save plots as. Default not saved.")
     
     args = argparser.parse_args()  
 
