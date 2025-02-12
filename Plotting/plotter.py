@@ -30,6 +30,7 @@ varToPlotParams = {
     "Z_AK8SDM"  : ["FatJet_msoftdrop[Z_jetIdxAK8]", "Rec AK8 Jet Soft Drop Mass [GeV]", 30, 60, 120],
     "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
+    "Z_AK8BTAG" : ["FatJet_btagDeepB[Z_jetIdxAK8]", "FatJet deepB b-tag score", 20, 0, 1],
     "GEN_ZAK4IDX" : ["Gen_z_DATATIER_AK4Idx", "GEN Matched _DATATIER_ AK4 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8IDX" : ["Gen_z_DATATIER_AK8Idx", "GEN Matched _DATATIER_ AK8 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8_M" : ["GenJetAK8_mass[Gen_zGenAK8Idx]", "AK8 Jet Mass of GEN Particles [GeV]", 100, 0, 200],
@@ -45,7 +46,10 @@ varToPlotParams = {
     "MIN_COL_M" : ["CHANNEL_minCollM", "Min Collinear Mass [GeV]", 116, 200, 6000], #50 GeV/bin default
     "MAX_COL_M" : ["CHANNEL_maxCollM", "Max Collinear Mass [GeV]", 116, 200, 6000],
     "COS2DPHI"  : ["CHANNEL_CHANNELCos2DPhi", "#Delta#phi", 63, 0, 6.3],
-    "TAUSDR"    : ["CHANNEL_CHANNELDR", "#DeltaR(#tau_{1},#tau_{2}))", 50, 0, 5]
+    "TAUSDR"    : ["CHANNEL_CHANNELDR", "#DeltaR(#tau_{1},#tau_{2}))", 50, 0, 5],
+    "BOOST_DR"  : ["Boost_dR", "#DeltaR(Z_{subJet1},Z_{subJet2})", 50, 0, 5],
+    "BOOST_DPHI"  : ["Boost_dPhi", "#Delta#phi(Z_{subJet1},Z_{subJet2})", 16, 0, 6.4]
+    
 }
 
 # Map of variable options to either a list of values or a list of [min, max] "bin ranges"
