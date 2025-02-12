@@ -45,11 +45,16 @@ varToPlotParams = {
     "VIS_M"     : ["CHANNEL_visM", "Visible Mass [GeV]", 106, 200, 5500], 
     "MIN_COL_M" : ["CHANNEL_minCollM", "Min Collinear Mass [GeV]", 116, 200, 6000], #50 GeV/bin default
     "MAX_COL_M" : ["CHANNEL_maxCollM", "Max Collinear Mass [GeV]", 116, 200, 6000],
-    "COS2DPHI"  : ["CHANNEL_CHANNELCos2DPhi", "#Delta#phi", 63, 0, 6.3],
+    "COS2DPHI"  : ["cos(CHANNEL_CHANNELDPhi)*cos(CHANNEL_CHANNELDPhi)", "cos^2(#Delta#phi)", 63, 0, 6.3],
+    "COSDPHI"      : ["cos(CHANNEL_CHANNELDPhi)","cos(#Delta#phi)", 20, -1, 1],
+    "SINDPHI"      : ["sin(CHANNEL_CHANNELDPhi)","sin(#Delta#phi)", 20, -1, 1],
+    "DPHI"      : ["CHANNEL_CHANNELDPhi","#Delta#phi", 32, 0, 6.4 ],
     "TAUSDR"    : ["CHANNEL_CHANNELDR", "#DeltaR(#tau_{1},#tau_{2}))", 50, 0, 5],
     "BOOST_DR"  : ["Boost_dR", "#DeltaR(Z_{subJet1},Z_{subJet2})", 50, 0, 5],
-    "BOOST_DPHI"  : ["Boost_dPhi", "#Delta#phi(Z_{subJet1},Z_{subJet2})", 16, 0, 6.4]
-    
+    "BOOST_DPHI"  : ["Boost_dPhi", "#Delta#phi(Z_{subJet1},Z_{subJet2})", 16, 0, 6.4],
+    "BOOST_PT" : ["Boost_pt[SJIDX]", "SubJet pT in Z Ref. Frame [GeV]", 100, 0, 200],
+    "BOOST_PHI" : ["Boost_phi[SJIDX]", "SubJet #phi in Z Ref. Frame", 10, -3.14, 3.14],
+    "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5] 
 }
 
 # Map of variable options to either a list of values or a list of [min, max] "bin ranges"
@@ -65,6 +70,7 @@ plotEachToLeg = {
     "CH"   : "Channel",
     "MASS" : "#tau* Mass [GeV]",
     "DM"   : "Z Decay Mode",
+    "SJ"   : "Z SubJet",
     "NA"   : ""
 }
 
@@ -78,7 +84,7 @@ def parseArgs():
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
-    argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
+    argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM", "SJ"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
@@ -273,6 +279,9 @@ def plot1D(filelist, args):
     elif args.plotEach == "DM":
         hNameList = ["ee", "mumu", "had"]
         dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
+    elif args.plotEach == "SJ":
+        hNameList = ["Leading SubJet", "Sub-leading SubJet"]
+        sjIdxFromName ={"Leading SubJet":"1", "Sub-leading SubJet":"2"}
     else:
         hNameList = filelist.keys()
         fileNames = []
@@ -312,7 +321,9 @@ def plot1D(filelist, args):
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
 
                 if type(plotParams[0]) is str:
-                    plotStr = plotParams[0].replace("CHANNEL", ch)                    
+                    plotStr = plotParams[0].replace("CHANNEL", ch)  
+                    if args.plotEach == "SJ":
+                        plotStr = plotStr.replace("SJIDX", sjIdxFromName[hName])                  
                     tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
 
                     hists[-1].Add(hTemp)
