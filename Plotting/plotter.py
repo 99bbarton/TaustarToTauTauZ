@@ -19,9 +19,9 @@ from Cuts import getCuts
 # Map of variable options to [plotting string, histogram axis title string, nBins, bins min, bins max]
 varToPlotParams = { 
     "SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
-    "Z_PT"      : ["Z_pt", "Z_{pT} [GeV]", 60, 0, 3000],
+    "Z_PT"      : ["Z_pt", "Z pT [GeV]", 80, 0, 4000],
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
-    "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_d1, Z_d2)", 20, 0, 1.0],
+    "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_{d1}, Z_{d2})", 20, 0, 1.0],
     "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 60, 60, 120],
     "Z_DM"      : ["Z_dm", "Decay Mode of Z", 3, -0.5, 2.5],
     "Z_JETR"    : ["Z_jetR", "Best jet R", 3, 3, 9],
@@ -35,6 +35,8 @@ varToPlotParams = {
     "GEN_ZAK8IDX" : ["Gen_z_DATATIER_AK8Idx", "GEN Matched _DATATIER_ AK8 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8_M" : ["GenJetAK8_mass[Gen_zGenAK8Idx]", "AK8 Jet Mass of GEN Particles [GeV]", 100, 0, 200],
     "GEN_ZAK4_M" : ["GenJet_mass[Gen_zGenAK4Idx]", "AK4 Jet Mass of Gen Particles [GeV]", 70, 0, 140],
+    "GEN_ZDAUDR" : ["Gen_dr_zDaus", "GEN #DeltaR(Z_{d1}, Z_{d2})", 20, 0, 2],
+    "GEN_Z_PT"   : ["GenPart_pt[Gen_zIdx]", "GEN Z pT [GeV]", 80, 0, 4000],
     "TAU_VISINVDR": ["Gen_tau_visInvDR", "#DeltaR(tau_vis, tau_inv)]", 10, 0, 0.2],
     "TSTAU_VISINVDR": ["Gen_tsTau_visInvDR", "#DeltaR(tsTau_vis, tsTau_inv)]", 10, 0, 0.2],
     "VISINVDR"      : [["Gen_tau_visInvDR", "Gen_tsTau_visInvDR"], "#DeltaR(#tau_{vis}, #tau_{inv})", 10, 0, 0.1],      
@@ -52,9 +54,10 @@ varToPlotParams = {
     "TAUSDR"    : ["CHANNEL_CHANNELDR", "#DeltaR(#tau_{1},#tau_{2}))", 50, 0, 5],
     "BOOST_DR"  : ["Boost_dR", "#DeltaR(Z_{subJet1},Z_{subJet2})", 50, 0, 5],
     "BOOST_DPHI"  : ["Boost_dPhi", "#Delta#phi(Z_{subJet1},Z_{subJet2})", 16, 0, 6.4],
-    "BOOST_PT" : ["Boost_pt[SJIDX]", "SubJet pT in Z Ref. Frame [GeV]", 100, 0, 200],
+    "BOOST_PT" : ["Boost_pt[SJIDX]", "SubJet pT in Z Ref. Frame [GeV]", 60, 0, 60],
     "BOOST_PHI" : ["Boost_phi[SJIDX]", "SubJet #phi in Z Ref. Frame", 10, -3.14, 3.14],
-    "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5] 
+    "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5],
+    "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120]
 }
 
 # Map of variable options to either a list of values or a list of [min, max] "bin ranges"
@@ -65,26 +68,26 @@ varToPlotParams = {
 
 
 plotEachToLeg = {
-    "PROC" : "Process",
-    "YEAR" : "Year",
-    "CH"   : "Channel",
-    "MASS" : "#tau* Mass [GeV]",
-    "DM"   : "Z Decay Mode",
-    "SJ"   : "Z SubJet",
+    "PROC"   : "Process",
+    "YEAR"   : "Year",
+    "CH"     : "Channel",
+    "MASS"   : "#tau* Mass [GeV]",
+    "DM"     : "Z Decay Mode",
+    "SJ"     : "Z SubJet",
     "NA"   : ""
 }
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def parseArgs():
-    global varToPlotParams
+    global varToPlotParams, plotEachToLeg
     argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters. ")
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
-    argparser.add_argument("-e", "--plotEach", choices=["PROC", "YEAR", "CH", "MASS", "DM", "SJ"], default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
+    argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
@@ -201,7 +204,7 @@ def main(args):
 def getFileList(args):
     filelist = {}
 
-    if args.plotEach in ["NA", "CH", "DM"]:
+    if args.plotEach in ["NA", "CH", "DM", "SJ"]:
         filelist["ALL"] = []
         for proc in args.processes:
             for year in args.years:
@@ -280,8 +283,8 @@ def plot1D(filelist, args):
         hNameList = ["ee", "mumu", "had"]
         dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
     elif args.plotEach == "SJ":
-        hNameList = ["Leading SubJet", "Sub-leading SubJet"]
-        sjIdxFromName ={"Leading SubJet":"1", "Sub-leading SubJet":"2"}
+        hNameList = ["LeadingSubJet", "SubLeadingSubJet"]
+        sjIdxFromName ={"LeadingSubJet":"1", "SubLeadingSubJet":"2"}
     else:
         hNameList = filelist.keys()
         fileNames = []
@@ -291,7 +294,7 @@ def plot1D(filelist, args):
         if args.effCut:
             numHists.append(TH1F("h_"+hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
         
-        if args.plotEach in ["CH", "DM"]:
+        if args.plotEach in ["CH", "DM", "SJ"]:
             fileNames = filelist["ALL"]
         else:
             fileNames = filelist[hName]
