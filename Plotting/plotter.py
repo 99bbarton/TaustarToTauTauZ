@@ -19,7 +19,7 @@ from Cuts import getCuts
 # Map of variable options to [plotting string, histogram axis title string, nBins, bins min, bins max]
 varToPlotParams = { 
     "SIG_M"     : ["", "#M_{#tau*} [GeV]", 12, 0, 5500], #TODO
-    "Z_PT"      : ["Z_pt", "Z pT [GeV]", 80, 0, 4000],
+    "Z_PT"      : ["Z_pt", "Z pT [GeV]", 60, 0, 3000],
     "Z_ETA"     : ["Z_eta", "#eta_Z", 10, -2.5, 2.5],
     "Z_DAUDR"   : ["Z_dauDR", "#DeltaR(Z_{d1}, Z_{d2})", 20, 0, 1.0],
     "Z_M"       : ["Z_mass", "Reco Z Mass [GeV]", 60, 60, 120],
@@ -57,7 +57,10 @@ varToPlotParams = {
     "BOOST_PT" : ["Boost_pt[SJIDX]", "SubJet pT in Z Ref. Frame [GeV]", 60, 0, 60],
     "BOOST_PHI" : ["Boost_phi[SJIDX]", "SubJet #phi in Z Ref. Frame", 10, -3.14, 3.14],
     "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5],
-    "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120]
+    "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120],
+    "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 10, 0.5, 10.5],
+    "RECL_PT"   : ["ZReClJ_pt", "Re-clustered Z Jet pT [GeV]]", 60, 0, 3000],
+    
 }
 
 # Map of variable options to either a list of values or a list of [min, max] "bin ranges"
