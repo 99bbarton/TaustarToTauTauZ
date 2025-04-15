@@ -1,11 +1,11 @@
 
+import subprocess
+
+
 #year options:  ["2022", "2022post", "2023", "2023post"]
-years = ["2022post"]
+years = ["2022", "2022post", "2023", "2023post"]
 #process options: ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
-processes = ["WZ", "WW", "WJets", "DY", "TT", "ST"]
-
-yearToConfig = {"2022": "MC_preEE2022_22Sep2023_NANO.py", "2022post" : "MC_2022_22Sep2023_NANO.py", "2023": "MC_Summer23_NANO.py", "2023post": "MC_Summer23_postBPix_NANO.py" }
-
+processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
 
 
 datasets = {
@@ -129,6 +129,9 @@ datasets = {
         "WZ" : ["/WZ_TuneCP5_13p6TeV_pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v2/MINIAODSIM"],
         "WW" : ["/WW_TuneCP5_13p6TeV_pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v2/MINIAODSIM"],
         "WJets" : ["/WtoLNu-4Jets_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v1/MINIAODSIM"],
+        "DY"    : ["DYto2L-2Jets_MLL-10to50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14_ext1-v1/MINIAODSIM",
+                   "/DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v1/MINIAODSIM"
+                   ],
         "TT" : ["/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v2/MINIAODSIM",
                 "/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v2/MINIAODSIM",
                 "/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23MiniAODv4-130X_mcRun3_2023_realistic_v14-v2/MINIAODSIM"
@@ -198,35 +201,42 @@ datasets = {
     }
 }
 
+nanoDatasets = {}
 
 for year in years:
+    nanoDatasets[year] = {}
     for proc in processes:
-        for dataset in datasets[year][proc]:
-            dsName = dataset[1:dataset.find("TuneCP5")-1]
-            filename = "crab_ymls/MC/"+year+"/" + dsName + "_" + year + ".yml"
-            with open(filename, "w+") as outFile:
-                outFile.write("campaign:\n")
-                outFile.write("  name: mc_" + proc + "_" + year + "\n")
-                outFile.write("  crab_template: template_crab.py\n")
-                outFile.write("  \n")
-                outFile.write("  # User specific\n")
-                outFile.write("  workArea: MCPFNano\n")
-                outFile.write("  storageSite: T3_US_FNALLPC\n")
-                outFile.write("  outLFNDirBase: /store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/"+year+"/"+proc+"\n")
-                outFile.write("  voGroup: null # or leave empty\n")
-                outFile.write("  \n")
-                outFile.write("  # Campaign specific\n")
-                outFile.write("  tag_extension: " + dsName + " # Will get appended after the current tag\n")
-                outFile.write("  tag_mod: # Will modify name in-place for MC eg. 'PFNanoAODv1' will replace MiniAODv2 -> PFNanoAODv1\n")
-                outFile.write("  # If others shall be able to access dataset via DAS (important when collaborating for commissioning!)\n")
-                outFile.write("  publication: False\n")
-                outFile.write("  config: " + yearToConfig[year] + "\n")
-                outFile.write("  # Specify if running on data\n")
-                outFile.write("  data: False\n")
-                outFile.write("  lumiMask:\n")
-                outFile.write("  # datasets will take either a list of DAS names or a text file containing them\n")
-                outFile.write("  # do NOT submit too many tasks at the same time, despite it looking more convenient to you\n")
-                outFile.write("  # wait for tasks to finish before submitting entire campaigns,\n")
-                outFile.write("  # it's better to request one dataset at a time (taking fairshare into account)\n")
-                outFile.write("  datasets: \n")
-                outFile.write("    " + dataset + "\n")
+        nanoDatasets[year][proc] = []
+        for dsN, dataset in enumerate(datasets[year][proc]):
+            command = 'dasgoclient --query="child dataset=' + dataset + '"'
+            #print(command)
+            stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            #print(stdout)
+            stdout = stdout.strip()
+            print(stdout)
+
+            nanoDatasets[year][proc].append(stdout)
+
+
+
+print(nanoDatasets)
+
+with open("nanoDatasets.py", "w+") as outfile:
+    outfile.write("datasets = {\n")
+
+    for yrN, year in enumerate(years):
+        outfile.write('\t"' + year + '" : {\n')
+
+        for pN, proc in enumerate(processes):
+            if pN != len(processes) - 1:
+                outfile.write('\t\t"' + proc + '" : ' + str(nanoDatasets[year][proc]) + ',\n')
+            else:
+                outfile.write('\t\t"' + proc + '" : ' + str(nanoDatasets[year][proc]) + '\n')
+
+        if yrN != (len(years)-1):
+            outfile.write('\t},\n')
+        else:
+            outfile.write('\t}\n')
+    outfile.write('}\n')
+        
+                          
