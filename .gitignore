@@ -6,4 +6,5 @@
 *.log
 
 MCGeneration/CondorScripts/
+MCGeneration/BTVNanoScripts/Condor/Jobs/
 Plotting/Plots/*
