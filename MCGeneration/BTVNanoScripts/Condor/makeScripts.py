@@ -110,8 +110,8 @@ def makeScripts(args, dateStr):
                             #executable.write("rm " + inpFile + "\n") #Remove miniAOD file
 
                         #Now setup nanoAOD-tools CMSSW area
-                        executable.write('echo "ls of current directory gives:"')
-                        executable.write("ls")
+                        executable.write('echo "ls of current directory gives:"\n')
+                        executable.write("ls $PWD\n")
                         executable.write("cd\n")
                         executable.write("xrdcp root://cmseos.fnal.gov//store/user/bbarton/"+ cmssw_nano + ".tgz .\n")
                         executable.write("tar -xf " + cmssw_nano + ".tgz\n")
@@ -123,11 +123,11 @@ def makeScripts(args, dateStr):
                         executable.write("mv $HOME/" + cmssw_pfNano + "/src/btvnano-prod/" + subDataset +"*.root .\n")
                         executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
                         #Perform the NanoAOD-tools processing of the new custom nano+PF files
-                        executable.write("ls outputs/")
                         executable.write("python3 condorScript.py " + year + "\n")
+                        executable.write("ls $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
-                        executable.write("hadd " + outFileName + " outputs/" +subDataset+"*.root\n") #Hadd the outputs and move to EOS
-                        executable.write("xrdcp " + outFileName + " root://cmseos.fnal.gov/" + outDir + "\n")
+                        #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
+                        executable.write("xrdcp tree.root root://cmseos.fnal.gov/" + outDir + subDataset + year + "_" + str(jobN) + ".root\n")
                         executable.write("XRDEXIT=$?\n")
                         executable.write("if [[ $XRDEXIT -ne 0 ]]; then\n")
                         executable.write('echo "exit code $XRDEXIT, failure in xrdcp"\n')
