@@ -15,6 +15,7 @@ def parseArgs():
     argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "ALLnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help="Which samples to process")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["RUN3", "2022", "2022post", "2023", "2023post"], help="Which years to process")
     argparser.add_argument("-f", "--filesPerJob", required=False, type=int, default=10, help="The number of miniAOD dataset files to process per Condor job")
+    argparser.add_argument("--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
     args = argparser.parse_args()
 
     if "ALL" in args.processes:
@@ -75,9 +76,11 @@ def makeScripts(args, dateStr):
 
                 nJobs = len(inpDsFiles) // args.filesPerJob
 
-                print("Making", nJobs, "configs each with", args.filesPerJob, "input files to handle", len(inpDsFiles), subDataset[:-1], "files")
                 if len(inpDsFiles) % args.filesPerJob > 0:
                     nJobs += 1
+                print("Making", nJobs, "configs with", args.filesPerJob, "input files per job to handle", len(inpDsFiles), subDataset[:-1], "files")
+                if args.justCount:
+                    continue
                 
                 for jobN in range(nJobs):
                     start = jobN*args.filesPerJob
