@@ -75,8 +75,7 @@ def makeScripts(args, dateStr):
 
                 nJobs = len(inpDsFiles) // args.filesPerJob
 
-                print("Making", nJobs, "configs each with", args.filesPerJob, "input files to handle", len(inpDsFiles),
-                      subDataset[:-1], "files")
+                print("Making", nJobs, "configs each with", args.filesPerJob, "input files to handle", len(inpDsFiles), subDataset[:-1], "files")
                 if len(inpDsFiles) % args.filesPerJob > 0:
                     nJobs += 1
                 
