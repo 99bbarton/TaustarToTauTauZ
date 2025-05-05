@@ -10,7 +10,7 @@ sub_processes = {
     "WJets" : ["WtoLNu-4Jets"],
     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"],
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"],
     "QCD" : [],
 }
 
