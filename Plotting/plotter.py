@@ -3,7 +3,7 @@
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = True
 
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, TH2F, TMultiGraph
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, TH2F, TMultiGraph, THStack
 import os
 import sys
 import argparse
@@ -11,7 +11,7 @@ from math import pi
 from array import array
 
 sys.path.append("../Framework/")
-from Colors import getColor, getPalettes
+from Colors import getColor, getPalettes, getPalette
 from Cuts import getCuts
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -63,21 +63,26 @@ varToPlotParams = {
     
 }
 
-# Map of variable options to either a list of values or a list of [min, max] "bin ranges"
-# varToGraphParams = {
-#     "SIG_M"     : ["250", ""],
-#     "Eta"       : [[["0", "1.444"]]]
-# }
-
-
 plotEachToLeg = {
     "PROC"   : "Process",
+    "SP" : "Process",
     "YEAR"   : "Year",
     "CH"     : "Channel",
     "MASS"   : "#tau* Mass [GeV]",
     "DM"     : "Z Decay Mode",
     "SJ"     : "Z SubJet",
     "NA"   : ""
+}
+
+procToSubProc = {
+    "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L"],
+    "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q"],
+    "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
+    "WJets" : ["WtoLNu-4Jets"],
+    "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
+    "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"],
+    "QCD" : [],
 }
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -88,7 +93,7 @@ def parseArgs():
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
     argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
-    argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
+    argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
@@ -99,7 +104,9 @@ def parseArgs():
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("-a", "--addCuts", type=str, help="A cut to add to those returned by Cuts::getCuts")
     argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
+    argparser.add_argument("-s", "--stack", action="store_true", help="If specified, background samples will be stacked")
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
+    argparser.add_argument("--sPalette", choices=getPalettes(), default="stack", help="If --stack, what palette to use for the background MC stack")
     argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.'SAME' + multiple vars will plot all the vars on the same 1D hist")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
@@ -126,7 +133,7 @@ def parseArgs():
 
     if args.inDir.startswith("/store"):
         args.inDir = os.environ["ROOTURL"] + args.inDir
-    if args.inDir[-1] != "/":
+    if args.inDir[-1] != "/" and args.inDir != "DEF":
         args.inDir += "/"
 
     if "ALL" in args.years:
@@ -140,6 +147,7 @@ def parseArgs():
         args.processes = ["M250", "M1000", "M3000", "M5000"]
     elif "SIG_ALL" in args.processes:
         args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
+
 
     if "ALL" in args.channel:
         args.channel = ["ETau", "MuTau", "TauTau"]
@@ -171,9 +179,12 @@ def parseArgs():
             print("WARNING: Ignoring request for Z-axis to be log scaled. There were not two variables specified.")
 
     if args.effCut and not args.cuts:
-        print("WARNING: Efficiency cut was specified but not a denominator cut (i.e. via --cuts)")
+        print("WARNING: Efficiency cut was specified but not a denominator cut (i.e. you need both --effCut and --cuts)")
     if args.effCut and args.normalize:
         print("ERROR: Efficiency plotting and normalization were both specified. These are incompatible!")
+        exit(1)
+    if args.effCut and args.stack:
+        print("ERROR: Efficiency plotting and background stacking were both specified. These are incompatible!")
         exit(1)
 
     if "ALL" in args.save:
@@ -213,16 +224,27 @@ def getFileList(args):
             for year in args.years:
                 filename = args.inDir
                 if proc.startswith("M"):
+                    if args.inDir == "DEF":
+                        filename = str(os.environ["SIG_R" + yearToEra(year)])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
-                else:
-                    filename += proc + "_" + year + ".root"
-                filelist["ALL"].append(filename)
+                    filelist["ALL"].append(filename)
+                elif proc in procToSubProc.keys():
+                    for subProc in procToSubProc[proc]:
+                        if args.inDir == "DEF":
+                            filename = str(os.environ["BKGD_" + year])
+                        else:
+                            filename = args.inDir
+                        filename += subProc + "_" + year + ".root"
+                        filelist["ALL"].append(filename)
+                
     elif args.plotEach == "YEAR":
         for year in args.years:
             filelist[year] = []
             for proc in args.processes:
                 filename = args.inDir
                 if proc.startswith("M"):
+                    if args.inDir == "DEF":
+                        filename = str(os.environ["SIG_R" + yearToEra(year)])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                 else:
                     filename += proc + "_" + year + ".root"
@@ -231,19 +253,40 @@ def getFileList(args):
         for proc in args.processes:
             filelist[proc] = []
             for year in args.years:
-                
+
                 if proc.startswith("M"):
+                    if args.inDir == "DEF":
+                        filename = str(os.environ["SIG_R" + yearToEra(year)])
                     filename = args.inDir + "taustarToTauZ_" + proc.lower() + "_"
-                else:
-                    filename = args.inDir + proc + "_"
-                filelist[proc].append(filename + year + ".root")
+                    filelist[proc].append(filename + year + ".root")
+                elif proc in procToSubProc.keys():
+                    for subProc in procToSubProc[proc]:
+                        if args.inDir == "DEF":
+                            filename = str(os.environ["BKGD_" + year])
+                        else:
+                            filename = args.inDir
+                        filename += subProc + "_"
+                        filelist[proc].append(filename + year + ".root")
     elif args.plotEach == "MASS": #Really just a special case of PROC above but convenient for e.g. legend making for sig only plotting
         for proc in args.processes:
             mass = proc[1:]
             filelist[mass] = []
             for year in args.years:
+                if args.inDir == "DEF":
+                    filename = str(os.environ["SIG_R" + yearToEra(year)])
                 filename = args.inDir + "taustarToTauZ_m" + mass + "_"
                 filelist[mass].append(filename + year + ".root")
+    elif args.plotEach == "SP":
+        for proc in args.processes:
+            for subProc in procToSubProc[proc]:
+                filelist[subProc] = []
+                for year in args.years:
+                    if args.inDir == "DEF":
+                        filename = str(os.environ["BKGD_" + year])
+                    else:
+                        filename = args.inDir
+                    filename += subProc + "_" + year + ".root"
+                    filelist[subProc].append(filename)
 
     return filelist
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -279,6 +322,9 @@ def plot1D(filelist, args):
         numHists = []
     maxVal = 0
 
+    bkgdStack = THStack("bkgds", titleStr)
+    bHistNums = []
+
     hNameList = []
     if args.plotEach == "CH":
         hNameList = args.channel
@@ -292,7 +338,7 @@ def plot1D(filelist, args):
         hNameList = filelist.keys()
         fileNames = []
 
-    for hNum, hName in enumerate(hNameList):
+    for hNum, hName in enumerate(hNameList):        
         hists.append(TH1F("h_"+hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         if args.effCut:
             numHists.append(TH1F("h_"+hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
@@ -358,30 +404,46 @@ def plot1D(filelist, args):
                             tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
                             numHists[-1].Add(hTemp_num)
                             del hTemp_num
-
+            #END CHANNEL
             inFile.Close()
+        #END FILE
         
-        hists[hNum].SetLineColor(getColor(args.palette, hNum))
-        hists[hNum].SetLineWidth(3)
-        if args.effCut:
-            numHists[hNum].SetLineColor(getColor(args.palette, hNum))
-            numHists[hNum].SetLineWidth(3)
+        if isBkgdMC(hName) and args.stack:
+            bkgdStack.Add(hists[hName])
+            bHistNums.append(hNum)
+        else:
+            hists[hNum].SetLineColor(getColor(args.palette, hNum))
+            hists[hNum].SetLineWidth(3)
+            
+            if args.effCut:
+                numHists[hNum].SetLineColor(getColor(args.palette, hNum))
+                numHists[hNum].SetLineWidth(3)
 
-        if args.normalize:
-            hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
-
-        if hists[hNum].GetMaximum() > maxVal:
-            maxVal = hists[hNum].GetMaximum()
+            if args.normalize:
+                hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
 
         if makeLegend:
             leg.AddEntry(hists[hNum], hName, "L")
 
+        if hists[hNum].GetMaximum() > maxVal:
+            maxVal = hists[hNum].GetMaximum()
+    #END HIST
+
     canv.Clear()    
     
+    if args.stack:
+        maxVal = max(maxVal, bkgdStack.GetMaximum())
     maxVal = maxVal * 1.1
     
+
+    if args.stack:
+        stackPalette = getPalette(args.sPalette)
+        gStyle.SetPalette(len(stackPalette), stackPalette)
+        bkgdStack.SetMaxium(maxVal)
+        bkgdStack.Draw("PFC STACK")
+
     for hN, hist in enumerate(hists):
-        if args.effCut:
+        if args.effCut: #NB, can't have both effcut and stack arguments
             hist.Sumw2()
             numHists[hN].Sumw2()
             numHists[hN].Divide(hist)
@@ -392,8 +454,10 @@ def plot1D(filelist, args):
             else:
                 numHists[hN].Draw("HIST SAME")
         else:
+            if args.stack and hN in bHistNums:
+                continue
             hist.SetMaximum(maxVal)
-            if hN == 0:
+            if hN == 0 and not args.stack:
                 hist.Draw("HIST")
             else:
                 hist.Draw("HIST SAME")
@@ -410,7 +474,7 @@ def plot1D(filelist, args):
     canv.Update()
 
     if not args.nP:
-        wait = input("Hit ENTER to save plot and end... ")
+        wait = input("Hit ENTER to close plot... ")
     
     if args.plotName:
         plotname = args.plotName
@@ -633,9 +697,26 @@ def printVarOps():
 
     print("-----------------------------------------------------------------------------------------------------\n")
         
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+def yearToEra(year):
+    if year in ["2016", "2016post", "2017", "2018"]:
+        return "2"
+    elif year in ["2022", "2022post", "2023", "2023post"]:
+        return "3"
+    else:
+        return ""
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
+def isBkgdMC(name):
+    global procToSubProc
+    subProcesses = ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L", "WZto2L2Q", "WZto3LNu", "WZtoLNu2Q", "WWto2L2Nu", "WWto4Q", "WWtoLNu2Q", "WtoLNu-4Jets", "DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50", "TTto2L2Nu", "TTto4Q", "TTtoLNu2Q", "TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"]
+
+    return (name in procToSubProc.keys()) or name in subProcesses
+
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 if __name__ == "__main__":
     args = parseArgs()
     main(args)
