@@ -3,7 +3,7 @@
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = True
 
-from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, TH2F, TMultiGraph, THStack
+from ROOT import TCanvas, TH1F, TFile, gStyle, TLegend, TH2F, TMultiGraph, THStack, gPad
 import os
 import sys
 import argparse
@@ -143,11 +143,22 @@ def parseArgs():
     elif "RUN2" in args.years:
         args.years = ["2016","2016post", "2017", "2018"]
 
+    processes = []
     if "SIG_DEF" in args.processes:
-        args.processes = ["M250", "M1000", "M3000", "M5000"]
+        processes.extend(["M250", "M1000", "M3000", "M5000"])
     elif "SIG_ALL" in args.processes:
-        args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
+        processes.extend(["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"])
+    if "BKGD" in args.processes:
+        processes.extend(["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"])
+    elif "BKGDnoQCD" in args.processes:
+        processes.extend(["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"])
+    for proc in args.processes:
+        if proc in ["SIG_DEF", "SIG_ALL", "BKGD", "BKGDnoQCD"]:
+            continue
+        processes.append(proc)
+    args.processes = processes
 
+        
 
     if "ALL" in args.channel:
         args.channel = ["ETau", "MuTau", "TauTau"]
@@ -225,7 +236,7 @@ def getFileList(args):
                 filename = args.inDir
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = str(os.environ["SIG_R" + yearToEra(year)])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                     filelist["ALL"].append(filename)
                 elif proc in procToSubProc.keys():
@@ -244,7 +255,7 @@ def getFileList(args):
                 filename = args.inDir
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = str(os.environ["SIG_R" + yearToEra(year)])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                 else:
                     filename += proc + "_" + year + ".root"
@@ -256,13 +267,15 @@ def getFileList(args):
 
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = str(os.environ["SIG_R" + yearToEra(year)])
-                    filename = args.inDir + "taustarToTauZ_" + proc.lower() + "_"
-                    filelist[proc].append(filename + year + ".root")
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                    else:
+                        filename = args.inDir
+                    filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
+                    filelist[proc].append(filename)
                 elif proc in procToSubProc.keys():
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
-                            filename = str(os.environ["BKGD_" + year])
+                            filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                         else:
                             filename = args.inDir
                         filename += subProc + "_"
@@ -273,8 +286,10 @@ def getFileList(args):
             filelist[mass] = []
             for year in args.years:
                 if args.inDir == "DEF":
-                    filename = str(os.environ["SIG_R" + yearToEra(year)])
-                filename = args.inDir + "taustarToTauZ_m" + mass + "_"
+                    filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                else:
+                    filename = args.inDir
+                filename += "taustarToTauZ_m" + mass + "_"
                 filelist[mass].append(filename + year + ".root")
     elif args.plotEach == "SP":
         for proc in args.processes:
@@ -282,7 +297,7 @@ def getFileList(args):
                 filelist[subProc] = []
                 for year in args.years:
                     if args.inDir == "DEF":
-                        filename = str(os.environ["BKGD_" + year])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                     else:
                         filename = args.inDir
                     filename += subProc + "_" + year + ".root"
@@ -339,9 +354,9 @@ def plot1D(filelist, args):
         fileNames = []
 
     for hNum, hName in enumerate(hNameList):        
-        hists.append(TH1F("h_"+hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
+        hists.append(TH1F(hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         if args.effCut:
-            numHists.append(TH1F("h_"+hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
+            numHists.append(TH1F(hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
         
         if args.plotEach in ["CH", "DM", "SJ"]:
             fileNames = filelist["ALL"]
@@ -409,7 +424,7 @@ def plot1D(filelist, args):
         #END FILE
         
         if isBkgdMC(hName) and args.stack:
-            bkgdStack.Add(hists[hName])
+            bkgdStack.Add(hists[hNum])
             bHistNums.append(hNum)
         else:
             hists[hNum].SetLineColor(getColor(args.palette, hNum))
@@ -422,8 +437,8 @@ def plot1D(filelist, args):
             if args.normalize:
                 hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
 
-        if makeLegend:
-            leg.AddEntry(hists[hNum], hName, "L")
+            if makeLegend:
+                leg.AddEntry(hists[hNum], hName, "L")
 
         if hists[hNum].GetMaximum() > maxVal:
             maxVal = hists[hNum].GetMaximum()
@@ -434,13 +449,6 @@ def plot1D(filelist, args):
     if args.stack:
         maxVal = max(maxVal, bkgdStack.GetMaximum())
     maxVal = maxVal * 1.1
-    
-
-    if args.stack:
-        stackPalette = getPalette(args.sPalette)
-        gStyle.SetPalette(len(stackPalette), stackPalette)
-        bkgdStack.SetMaxium(maxVal)
-        bkgdStack.Draw("PFC STACK")
 
     for hN, hist in enumerate(hists):
         if args.effCut: #NB, can't have both effcut and stack arguments
@@ -457,13 +465,28 @@ def plot1D(filelist, args):
             if args.stack and hN in bHistNums:
                 continue
             hist.SetMaximum(maxVal)
-            if hN == 0 and not args.stack:
+            if hN == 0:
                 hist.Draw("HIST")
             else:
                 hist.Draw("HIST SAME")
+
+    if args.stack:
+        stackPalette = getPalette(args.sPalette)
+        gStyle.SetPalette(len(stackPalette), array('i', stackPalette))
+        bkgdStack.SetMaximum(maxVal)
+        bkgdStack.Draw("PFC PLC STACK SAME")
+        if makeLegend:
+            leg.AddEntry(bkgdStack)
     
     if makeLegend:
-        leg.Draw()
+        if args.stack:
+            leg = gPad.BuildLegend(0.7, 0.7, 0.9, 0.9, plotEachToLeg[args.plotEach])
+            if len(hists) > 5:
+                leg.SetNColumns(2)
+        else:
+            if len(hists) > 5:
+                leg.SetNColumns(2)
+            leg.Draw()
         
     if args.logScale:
         if "X" in args.logScale:
