@@ -91,7 +91,7 @@ def parseArgs():
     global varToPlotParams, plotEachToLeg
     argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters. ")
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
-    argparser.add_argument("-i", "--inDir", required=True, help="A directory to find the input root files")
+    argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
@@ -106,7 +106,7 @@ def parseArgs():
     argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
     argparser.add_argument("-s", "--stack", action="store_true", help="If specified, background samples will be stacked")
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
-    argparser.add_argument("--sPalette", choices=getPalettes(), default="stack", help="If --stack, what palette to use for the background MC stack")
+    argparser.add_argument("--sPalette", choices=getPalettes(), default="sydney", help="If --stack, what palette to use for the background MC stack")
     argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.'SAME' + multiple vars will plot all the vars on the same 1D hist")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
@@ -242,7 +242,7 @@ def getFileList(args):
                 elif proc in procToSubProc.keys():
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
-                            filename = str(os.environ["BKGD_" + year])
+                            filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                         else:
                             filename = args.inDir
                         filename += subProc + "_" + year + ".root"
@@ -304,6 +304,7 @@ def getFileList(args):
                     filelist[subProc].append(filename)
 
     return filelist
+
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def plot1D(filelist, args):
@@ -339,7 +340,9 @@ def plot1D(filelist, args):
 
     bkgdStack = THStack("bkgds", titleStr)
     bHistNums = []
-
+    bHistEntries = []
+    bHistNames = []
+    
     hNameList = []
     if args.plotEach == "CH":
         hNameList = args.channel
@@ -353,6 +356,7 @@ def plot1D(filelist, args):
         hNameList = filelist.keys()
         fileNames = []
 
+    palColN = 0
     for hNum, hName in enumerate(hNameList):        
         hists.append(TH1F(hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         if args.effCut:
@@ -362,7 +366,7 @@ def plot1D(filelist, args):
             fileNames = filelist["ALL"]
         else:
             fileNames = filelist[hName]
-
+            
         for filename in fileNames:
             inFile = TFile.Open(filename, "r")
             if inFile == "None":
@@ -424,21 +428,27 @@ def plot1D(filelist, args):
         #END FILE
         
         if isBkgdMC(hName) and args.stack:
-            bkgdStack.Add(hists[hNum])
             bHistNums.append(hNum)
+            bHistEntries.append(hists[hNum].GetEntries())
+            bHistNames.append(hName)
         else:
-            hists[hNum].SetLineColor(getColor(args.palette, hNum))
+            hists[hNum].SetLineColor(getColor(args.palette, palColN))
             hists[hNum].SetLineWidth(3)
             
             if args.effCut:
-                numHists[hNum].SetLineColor(getColor(args.palette, hNum))
+                numHists[hNum].SetLineColor(getColor(args.palette, palColN))
                 numHists[hNum].SetLineWidth(3)
 
             if args.normalize:
                 hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
 
             if makeLegend:
-                leg.AddEntry(hists[hNum], hName, "L")
+                if hName[0]=="M":
+                    name = "m_{#tau*}=" + hName[1:]
+                else:
+                    name = hName
+                leg.AddEntry(hists[hNum], name, "L")
+            palColN += 1
 
         if hists[hNum].GetMaximum() > maxVal:
             maxVal = hists[hNum].GetMaximum()
@@ -447,7 +457,17 @@ def plot1D(filelist, args):
     canv.Clear()    
     
     if args.stack:
-        maxVal = max(maxVal, bkgdStack.GetMaximum())
+        stackPalette = getPalette(args.sPalette)
+        
+        #Add hists to stack in order from least to greatest number of entries so the stack renders in log scales
+        ordBkgdHNums = [i[0] for i in sorted(enumerate(bHistEntries), key=lambda x:x[1])]
+        for num, idx in enumerate(ordBkgdHNums):
+            hists[idx].SetLineColor(stackPalette[num])
+            hists[idx].SetFillColor(stackPalette[num])
+            bkgdStack.Add(hists[bHistNums[idx]])
+            leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
+            
+    maxVal = max(maxVal, bkgdStack.GetMaximum())
     maxVal = maxVal * 1.1
 
     for hN, hist in enumerate(hists):
@@ -474,19 +494,15 @@ def plot1D(filelist, args):
         stackPalette = getPalette(args.sPalette)
         gStyle.SetPalette(len(stackPalette), array('i', stackPalette))
         bkgdStack.SetMaximum(maxVal)
-        bkgdStack.Draw("PFC PLC STACK SAME")
-        if makeLegend:
-            leg.AddEntry(bkgdStack)
+        if len(bHistNums) == len(hists):
+            bkgdStack.Draw("PFC PLC")
+        else:
+            bkgdStack.Draw("PFC PLC SAME")
     
     if makeLegend:
-        if args.stack:
-            leg = gPad.BuildLegend(0.7, 0.7, 0.9, 0.9, plotEachToLeg[args.plotEach])
-            if len(hists) > 5:
-                leg.SetNColumns(2)
-        else:
-            if len(hists) > 5:
-                leg.SetNColumns(2)
-            leg.Draw()
+        if len(hists) > 5:
+            leg.SetNColumns(2)
+        leg.Draw()
         
     if args.logScale:
         if "X" in args.logScale:
