@@ -52,6 +52,13 @@ def makeScripts(args, dateStr):
     for year in args.years:
         print("Making configuration files for " + year)
         outDirBase = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + dateStr + "/" + year + "/"
+
+        if not args.justCount:
+            command = "eosmkdir /store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + dateStr
+            stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            command = "eosmkdir " + outDirBase
+            stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            
         
         scriptDir = "Jobs/" + dateStr + "/" + year + "/" 
 
@@ -63,7 +70,11 @@ def makeScripts(args, dateStr):
 
         for proc in args.processes:
             outDir = outDirBase + proc + "/"
-            dirsToMake.append(outDir)
+            #dirsToMake.append(outDir)
+            if not args.justCount:
+                print("Making directory: " + outDir)
+                command = "eosmkdir " + outDir
+                stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             
             dataSets = miniDatasets[year][proc]
             for dataset in dataSets:
@@ -152,9 +163,9 @@ def makeScripts(args, dateStr):
         #End process
     #End year
 
-    print("Ensure that the following directory paths exist fully:")
-    for dir in dirsToMake:
-        print(dir)
+    #print("Ensure that the following directory paths exist fully:")
+    #for dir in dirsToMake:
+    #    print(dir)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 
