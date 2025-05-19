@@ -83,7 +83,10 @@ def makeScripts(args, dateStr):
                 stdout = stdout.strip()
                 inpDsFiles = stdout.split("\n")
 
-                subDataset = dataset[1:dataset.find("TuneCP5")]
+                if dataset.startswith("/"):
+                    subDataset = dataset[1:dataset.find("TuneCP5")]
+                else:
+                    subDataset = dataset[:dataset.find("TuneCP5")]
 
                 nJobs = len(inpDsFiles) // args.filesPerJob
 

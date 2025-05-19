@@ -41,13 +41,16 @@ def haddFiles():
     stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 
     for proc in args.processes:
-        inDir += proc + "/"
+        inDir = IN_DIR_BASE + args.year + "/"+ proc + "/"
 
         print("Starting " + args.year + " " + proc +  " samples...")
         for subproc in sub_processes[proc]:
             print("\thadd'ing " + subproc + " samples")
-            command = "hadd root://cmseos.fnal.gov/" + outDir + subproc + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + subproc + "`"
+            command = "hadd -f9 root://cmseos.fnal.gov/" + outDir + subproc + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + subproc + "`"
             stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            print(stdout)
+            if len(stderr) > 0:
+                print("STDERR ", stderr)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 
