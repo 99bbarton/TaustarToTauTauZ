@@ -4,7 +4,7 @@
 
 import os
 
-run3 = True
+run3 = False
 
 #Taustar masses
 #masses = ["500", "1000", "3000", "5000"]
@@ -25,10 +25,10 @@ if not os.path.isdir("GenFragments"):
 
 for mass in masses:
     #Build filename
-    if run3:
-        filename = "taustarTo"
-    else:
-        filename = "taustarToTau"
+    #if run3:
+    #    filename = "taustarTo"
+    #else:
+    filename = "taustarTo"
     if allowedDecays[0].find("22") >=0:
         filename += "TauGamma"
     elif allowedDecays[0].find("23") >= 0:
