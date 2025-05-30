@@ -27,16 +27,21 @@ varToPlotParams = {
     "Z_JETR"    : ["Z_jetR", "Best jet R", 3, 3, 9],
     "Z_AK4M"    : ["Jet_mass[Z_jetIdxAK4]", "Rec AK4 Jet Mass [GeV]", 30, 60, 120],
     "Z_AK8M"    : ["FatJet_mass[Z_jetIdxAK8]", "Rec AK8 Jet Mass [GeV]", 30, 60, 120],
+    "Z_AK8RAWPT": ["FatJet_pt[Z_jetIdxAK8]*FatJet[Z_jetIdxAK8]_rawFactor", "Raw pT of Z AK8 Jet [GeV]", 60, 0, 3000], 
     "Z_AK8SDM"  : ["FatJet_msoftdrop[Z_jetIdxAK8]", "Rec AK8 Jet Soft Drop Mass [GeV]", 30, 60, 120],
     "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8BTAG" : ["FatJet_btagDeepB[Z_jetIdxAK8]", "FatJet deepB b-tag score", 20, 0, 1],
+    #"TAU_PT"    : [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]"], "tau pT [GeV]", 80, 0, 4000], #NB, must use cut CHANNEL_havePair/haveTrip/isCand
+    "TAU_PT"    : ["Tau_pt[CHANNEL_tauIdx]", "tau pT [GeV]", 50, 0, 2500], #Only includes ETau, MuTau
     "GEN_ZAK4IDX" : ["Gen_z_DATATIER_AK4Idx", "GEN Matched _DATATIER_ AK4 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8IDX" : ["Gen_z_DATATIER_AK8Idx", "GEN Matched _DATATIER_ AK8 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8_M" : ["GenJetAK8_mass[Gen_zGenAK8Idx]", "AK8 Jet Mass of GEN Particles [GeV]", 100, 0, 200],
     "GEN_ZAK4_M" : ["GenJet_mass[Gen_zGenAK4Idx]", "AK4 Jet Mass of Gen Particles [GeV]", 70, 0, 140],
     "GEN_ZDAUDR" : ["Gen_dr_zDaus", "GEN #DeltaR(Z_{d1}, Z_{d2})", 20, 0, 2],
-    "GEN_Z_PT"   : ["GenPart_pt[Gen_zIdx]", "GEN Z pT [GeV]", 80, 0, 4000],
+    "GEN_Z_PT"   : ["GenPart_pt[Gen_zIdx]", "GEN Z pT [GeV]", 60, 0, 3000],
+    "GEN_TSTAU_PT" : ["GenPart_pt[Gen_tsTauIdx]", "GEN #tau_{#tau*} pT [GeV]", 60, 0, 3000],
+    "GEN_TAU_PT" : ["GenPart_pt[Gen_tauIdx]", "GEN #tau_{spec} pT [GeV]", 60, 0, 3000],
     "TAU_VISINVDR": ["Gen_tau_visInvDR", "#DeltaR(tau_vis, tau_inv)]", 10, 0, 0.2],
     "TSTAU_VISINVDR": ["Gen_tsTau_visInvDR", "#DeltaR(tsTau_vis, tsTau_inv)]", 10, 0, 0.2],
     "VISINVDR"      : [["Gen_tau_visInvDR", "Gen_tsTau_visInvDR"], "#DeltaR(#tau_{vis}, #tau_{inv})", 10, 0, 0.1],      
@@ -94,7 +99,7 @@ def parseArgs():
     argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
-    argparser.add_argument("-c", "--channel", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
+    argparser.add_argument("-c", "--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
@@ -257,9 +262,15 @@ def getFileList(args):
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
-                else:
-                    filename += proc + "_" + year + ".root"
-                filelist[year].append(filename)
+                    filelist[year].append(filename)
+                elif proc in procToSubProc.keys():
+                    for subProc in procToSubProc[proc]:
+                        if args.inDir == "DEF":
+                            filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                        else:
+                            filename = args.inDir
+                        filename += subProc + "_"
+                        filelist[year].append(filename + year + ".root")
     elif args.plotEach == "PROC":
         for proc in args.processes:
             filelist[proc] = []
