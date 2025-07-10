@@ -13,6 +13,7 @@ from array import array
 sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
 from Cuts import getCuts
+from mcWeights import getWeight
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -86,7 +87,7 @@ procToSubProc = {
     "WJets" : ["WtoLNu-4Jets"],
     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"],
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto4Q", "TbarWplustoLNu2Q"],
     "QCD" : [],
 }
 
@@ -106,6 +107,7 @@ def parseArgs():
     argparser.add_argument("-b", "--modifyBins", nargs='+', help="Modifying the binning of the produced hists. [1, 6] args allowed in order: nBinsD1, minBinD1, maxBinD1, nBinsD2, minBinD2, maxBinD2" )
     argparser.add_argument("-l", "--logScale", nargs="+", choices=["X","Y","Z"], help="Axis to make log scale")
     argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D hists only)")
+    argparser.add_argument("-w", "--weights", choices=["ALL", "XS", "NONE"], default="NONE", help="Spefify which weights to apply to MC samples")
     argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("-a", "--addCuts", type=str, help="A cut to add to those returned by Cuts::getCuts")
     argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
@@ -163,11 +165,8 @@ def parseArgs():
         processes.append(proc)
     args.processes = processes
 
-        
-
     if "ALL" in args.channel:
         args.channel = ["ETau", "MuTau", "TauTau"]
-
 
     if len(args.vars) == 1:
         args.dataTier = [args.dataTier]
@@ -189,6 +188,10 @@ def parseArgs():
                 varToPlotParams[args.vars[1]][2] = int(val)
             elif i == 4 or i == 5:
                 varToPlotParams[args.vars[1]][i-1] = float(val)
+
+    weights = {}
+    weights["XS"] = args.weights == "ALL" or args.weights == "XS"
+    args.weights = weights
 
     if args.logScale:
         if "Z" in args.logScale and len(args.vars) != 2:
@@ -399,14 +402,18 @@ def plot1D(filelist, args):
                 if args.addCuts:
                     cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
+                
+                year = filename.split("_")[-1].split(".")[0]
+                weight = str(getWeight(hName, year, xs=args.weight["XS"]))
 
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
 
                 if type(plotParams[0]) is str:
                     plotStr = plotParams[0].replace("CHANNEL", ch)  
                     if args.plotEach == "SJ":
-                        plotStr = plotStr.replace("SJIDX", sjIdxFromName[hName])                  
-                    tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
+                        plotStr = plotStr.replace("SJIDX", sjIdxFromName[hName])   
+
+                    tree.Draw(plotStr + ">>+h_"+hName+"_temp", "(" + cutStr + ")*" + weight)
 
                     hists[-1].Add(hTemp)
                     del hTemp
@@ -414,7 +421,7 @@ def plot1D(filelist, args):
                     if args.effCut:
                         hTemp_num = TH1F("h_"+hName+"_temp_num", titleStr, plotParams[2], plotParams[3], plotParams[4])
                         cutStr += " && " + args.effCut
-                        tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
+                        tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", "(" + cutStr + ")*" + weight)
                         numHists[-1].Add(hTemp_num)
                         del hTemp_num
                 elif type(plotParams[0] is list):
@@ -423,7 +430,7 @@ def plot1D(filelist, args):
                             hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
                             
                         plotStr = varVer.replace("CHANNEL", ch)
-                        tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
+                        tree.Draw(plotStr + ">>+h_"+hName+"_temp", "(" + cutStr + ")*" + weight)
 
                         hists[-1].Add(hTemp)
                         del hTemp
@@ -431,7 +438,7 @@ def plot1D(filelist, args):
                         if args.effCut:
                             hTemp_num = TH1F("h_"+hName+"_temp_num", titleStr, plotParams[2], plotParams[3], plotParams[4])
                             cutStr += " && " + args.effCut
-                            tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
+                            tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", "(" + cutStr + ")*" + weight)
                             numHists[-1].Add(hTemp_num)
                             del hTemp_num
             #END CHANNEL
@@ -606,13 +613,16 @@ def plot2D_hists(filelist, args):
                     cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
 
+                year = filename.split("_")[-1].split(".")[0]
+                weight = str(getWeight(hName, year, xs=args.weight["XS"]))
+
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 
                 plotStr = plotParamsD2[0].replace("CHANNEL", ch) + ":" + plotParamsD1[0].replace("CHANNEL", ch)
                 if plotStr.find("dPhi") > 0:
                     plotStr = ch + "_" + ch[0].lower() + ch[1:] + "dPhi"
                 
-                tree.Draw(plotStr + ">>+h_temp_2d", cutStr)
+                tree.Draw(plotStr + ">>+h_temp_2d", "(" + cutStr + ")*" + weight)
 
                 hTemp.SetLineColor(getColor(args.palette, hNum))
                 hTemp.SetMarkerColor(getColor(args.palette, hNum))
