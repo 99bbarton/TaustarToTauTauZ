@@ -15,9 +15,11 @@ def getWeight(process, year, xs=True):
 
     if xs:
         nEvts = nEvents[process][yrTonEventsIdx[year]]
-        xs = crossections[process] / 1000 #xs in pb whereas lumi is fb
+        xs = crossections[process][0] * 1000 
+        #if process.startswith("M"):
+        #    xs = xs*1000
         effLumi = nEvts / xs
-        realLumi = lumis[year[:4]]
+        realLumi = lumis[year[:4]][0]
         weight *= realLumi / effLumi
 
     return weight

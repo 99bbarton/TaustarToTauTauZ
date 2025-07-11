@@ -87,7 +87,7 @@ procToSubProc = {
     "WJets" : ["WtoLNu-4Jets"],
     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto4Q", "TbarWplustoLNu2Q"],
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"], #"TWminustoLNu2Q", "TbarWplusto4Q"
     "QCD" : [],
 }
 
@@ -371,7 +371,8 @@ def plot1D(filelist, args):
         fileNames = []
 
     palColN = 0
-    for hNum, hName in enumerate(hNameList):        
+    for hNum, hName in enumerate(hNameList):
+        print("Plotting", hName)
         hists.append(TH1F(hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
         if args.effCut:
             numHists.append(TH1F(hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
@@ -402,9 +403,14 @@ def plot1D(filelist, args):
                 if args.addCuts:
                     cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
-                
-                year = filename.split("_")[-1].split(".")[0]
-                weight = str(getWeight(hName, year, xs=args.weight["XS"]))
+
+                fileAlone = filename.split("/")[-1]
+                nameYearSepIdx = fileAlone.rfind("_")
+                subProc = fileAlone[:nameYearSepIdx]
+                if "taustar" in subProc:
+                    subProc = subProc.split("_")[-1].upper()
+                year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
+                weight = str(getWeight(subProc, year, xs=args.weights["XS"]))
 
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
 
@@ -485,11 +491,14 @@ def plot1D(filelist, args):
             bkgdStack.Add(hists[bHistNums[idx]])
             leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
             
-    maxVal = max(maxVal, bkgdStack.GetMaximum())
-    maxVal = maxVal * 1.1
+        maxVal = max(maxVal, bkgdStack.GetMaximum())
+        maxVal = maxVal * 1.1
 
-    for hN, hist in enumerate(hists):
-        if args.effCut: #NB, can't have both effcut and stack arguments
+        gStyle.SetPalette(len(stackPalette), array('i', stackPalette))
+        bkgdStack.SetMaximum(maxVal)
+        bkgdStack.Draw("HIST PFC PLC")
+    elif args.effCut: #NB, can't have both effcut and stack arguments
+        for hN, hist in enumerate(hists):
             hist.Sumw2()
             numHists[hN].Sumw2()
             numHists[hN].Divide(hist)
@@ -499,24 +508,19 @@ def plot1D(filelist, args):
                 numHists[hN].Draw("HIST")
             else:
                 numHists[hN].Draw("HIST SAME")
-        else:
-            if args.stack and hN in bHistNums:
+
+        
+    if not args.effCut:
+        print("Normal hist plotting")
+        for hN, hist in enumerate(hists):
+            if hN in bHistNums:
                 continue
             hist.SetMaximum(maxVal)
-            if hN == 0:
+            if not args.stack and hN == 0:
                 hist.Draw("HIST")
             else:
                 hist.Draw("HIST SAME")
-
-    if args.stack:
-        stackPalette = getPalette(args.sPalette)
-        gStyle.SetPalette(len(stackPalette), array('i', stackPalette))
-        bkgdStack.SetMaximum(maxVal)
-        if len(bHistNums) == len(hists):
-            bkgdStack.Draw("PFC PLC")
-        else:
-            bkgdStack.Draw("PFC PLC SAME")
-    
+                
     if makeLegend:
         if len(hists) > 5:
             leg.SetNColumns(2)
@@ -527,7 +531,7 @@ def plot1D(filelist, args):
             canv.SetLogx(True)
         if "Y" in args.logScale:
             canv.SetLogy(True)
-        
+
     canv.Update()
 
     if not args.nP:
@@ -613,8 +617,15 @@ def plot2D_hists(filelist, args):
                     cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
 
-                year = filename.split("_")[-1].split(".")[0]
-                weight = str(getWeight(hName, year, xs=args.weight["XS"]))
+
+                fileAlone = filename.split("/")[-1]
+                nameYearSepIdx = fileAlone.rfind("_")
+                subProc = fileAlone[:nameYearSepIdx]
+                if "taustar" in subProc:
+                    subProc = subProc.split("_")[-1].upper()
+                year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
+                weight = str(getWeight(subProc, year, xs=args.weights["XS"]))
+
 
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 
