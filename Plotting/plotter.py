@@ -112,9 +112,11 @@ def parseArgs():
     argparser.add_argument("-a", "--addCuts", type=str, help="A cut to add to those returned by Cuts::getCuts")
     argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
     argparser.add_argument("-s", "--stack", action="store_true", help="If specified, background samples will be stacked")
+    argparser.add_argument("--sumBkgd", action="store_true", help="If specified, background samples will be combined into a single 'background' category.")
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
     argparser.add_argument("--sPalette", choices=getPalettes(), default="sydney", help="If --stack, what palette to use for the background MC stack")
     argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.'SAME' + multiple vars will plot all the vars on the same 1D hist")
+    argparser.add_argument("--nEvents", action="store_true", help="If specified, the number of events will be added to the legend entry for each hist")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
@@ -205,6 +207,9 @@ def parseArgs():
     if args.effCut and args.stack:
         print("ERROR: Efficiency plotting and background stacking were both specified. These are incompatible!")
         exit(1)
+    if args.sumBkgd and args.stack:
+        print("ERROR: Cannot both sum background together and plot it as a stack. Choose one or the other")
+        exit(1)
 
     if "ALL" in args.save:
         args.save = [".png", ".pdf", ".C"]
@@ -275,6 +280,8 @@ def getFileList(args):
                         filename += subProc + "_"
                         filelist[year].append(filename + year + ".root")
     elif args.plotEach == "PROC":
+        if args.sumBkgd:
+            filelist["Backgrounds"] = []
         for proc in args.processes:
             filelist[proc] = []
             for year in args.years:
@@ -293,7 +300,13 @@ def getFileList(args):
                         else:
                             filename = args.inDir
                         filename += subProc + "_"
-                        filelist[proc].append(filename + year + ".root")
+                        if args.sumBkgd:
+                            filelist["Backgrounds"].append(filename + year + ".root")
+                        else:
+                            filelist[proc].append(filename + year + ".root")
+
+            if len(filelist[proc]) == 0: #If we summedBkgd, per-process lists are left empty for non-signal processes
+                del filelist[proc]
     elif args.plotEach == "MASS": #Really just a special case of PROC above but convenient for e.g. legend making for sig only plotting
         for proc in args.processes:
             mass = proc[1:]
@@ -331,7 +344,10 @@ def plot1D(filelist, args):
     makeLegend = args.plotEach != "NA"
     if makeLegend:
         gStyle.SetOptStat(0)
-        leg = TLegend(0.7, 0.7, 0.9, 0.9, plotEachToLeg[args.plotEach])
+        legTitle = plotEachToLeg[args.plotEach]
+        if args.nEvents:
+            legTitle += ": nEvents"
+        leg = TLegend(0.7, 0.7, 0.9, 0.9, legTitle)
 
     plotParams = varToPlotParams[args.vars[0]]
     if type(plotParams[0]) is str:
@@ -458,6 +474,8 @@ def plot1D(filelist, args):
         else:
             hists[hNum].SetLineColor(getColor(args.palette, palColN))
             hists[hNum].SetLineWidth(3)
+            if hName == "Backgrounds":
+                hists[hNum].SetFillColor(getColor(args.palette, palColN))
             
             if args.effCut:
                 numHists[hNum].SetLineColor(getColor(args.palette, palColN))
@@ -471,6 +489,9 @@ def plot1D(filelist, args):
                     name = "m_{#tau*}=" + hName[1:]
                 else:
                     name = hName
+                if args.nEvents:
+                    name += f": {hists[hNum].Integral():.2e}"
+                
                 leg.AddEntry(hists[hNum], name, "L")
             palColN += 1
 
@@ -492,7 +513,7 @@ def plot1D(filelist, args):
             leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
             
         maxVal = max(maxVal, bkgdStack.GetMaximum())
-        maxVal = maxVal * 1.1
+        maxVal = maxVal * 1.2
 
         gStyle.SetPalette(len(stackPalette), array('i', stackPalette))
         bkgdStack.SetMaximum(maxVal)
@@ -511,10 +532,11 @@ def plot1D(filelist, args):
 
         
     if not args.effCut:
-        print("Normal hist plotting")
+        maxVal = max(maxVal, bkgdStack.GetMaximum()*1.2)
         for hN, hist in enumerate(hists):
             if hN in bHistNums:
                 continue
+            
             hist.SetMaximum(maxVal)
             if not args.stack and hN == 0:
                 hist.Draw("HIST")
@@ -559,7 +581,10 @@ def plot2D_hists(filelist, args):
     makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM"
     if makeLegend:
         gStyle.SetOptStat(0)
-        leg = TLegend(0.65, 0.45, 0.85, 0.65, plotEachToLeg[args.plotEach])
+        legTitle = plotEachToLeg[args.plotEach]
+        if args.nEvents:
+            legTitle += ": nEvents"
+        leg = TLegend(0.65, 0.45, 0.85, 0.65, legTitle)
 
     plotParamsD1 = varToPlotParams[args.vars[0]]
     plotParamsD2 = varToPlotParams[args.vars[1]]
@@ -586,6 +611,7 @@ def plot2D_hists(filelist, args):
         hNameList = filelist.keys()
 
     for hNum, hName in enumerate(hNameList):
+        print("Plotting", hName)
         histToFill = "h_"+args.vars[0] + "_vs_"+args.vars[1]+"_"+hName
         hists.append(TH2F(histToFill, ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4]))
         
@@ -626,7 +652,6 @@ def plot2D_hists(filelist, args):
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
                 weight = str(getWeight(subProc, year, xs=args.weights["XS"]))
 
-
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 
                 plotStr = plotParamsD2[0].replace("CHANNEL", ch) + ":" + plotParamsD1[0].replace("CHANNEL", ch)
@@ -654,7 +679,10 @@ def plot2D_hists(filelist, args):
             if drawStyle.find("CANDLE") < 0:        
                 hists[hNum].SetFillColor(getColor(args.palette, hNum))
 
-            leg.AddEntry(hists[hNum], hName, "F")
+            name = hName
+            if args.nEvents:
+                name += f": {hists[hNum].Integral():.2e}"
+            leg.AddEntry(hists[hNum], name, "F")
         else:
             if args.drawStyle:
                 drawStyle = args.drawStyle
