@@ -14,6 +14,7 @@ sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
 from Cuts import getCuts
 from mcWeights import getWeight
+from datasets import procToSubProc
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -80,16 +81,7 @@ plotEachToLeg = {
     "NA"   : ""
 }
 
-procToSubProc = {
-    "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L"],
-    "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q"],
-    "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
-    "WJets" : ["WtoLNu-4Jets"],
-    "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
-    "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"], #"TWminustoLNu2Q", "TbarWplusto4Q"
-    "QCD" : [],
-}
+
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 

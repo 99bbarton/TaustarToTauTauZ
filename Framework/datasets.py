@@ -1,6 +1,17 @@
 years = ["2022", "2022post", "2023", "2023post"]
 processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
 
+procToSubProc = {
+    "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L"],
+    "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q"],
+    "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
+    "WJets" : ["WtoLNu-4Jets"],
+    "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
+    "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"], #"TWminustoLNu2Q", "TbarWplusto4Q"
+    "QCD" : [],
+}
+
 bkgdDatasets_mini = {
     "2022" : {
         "ZZ" : ["/ZZto2L2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22MiniAODv4-130X_mcRun3_2022_realistic_v5-v2/MINIAODSIM",

@@ -9,9 +9,12 @@ import sys
 import os
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 
 sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
+from mcWeights import getWeights
+from datasets import procToSubProc
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -27,6 +30,11 @@ def parseArgs():
     argparser.add_argument("--palette",choices=getPalettes(), default="line_cool", help="A palette to use for plotting")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots and writing calculated values")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C"], default=[], help="What file types to save plots as. Default not saved.")
+
+    #Below args are for sig / bkgd ratio plots
+    argparser.add_argument("-b", "--backgrounds", nargs = "+", choices=["ALL", "ALLnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help="Which background procsses to consider")
+    argparser.add_argument("--bkgdDir", type=str, help="The directory to find the background samples")
+    argparser.add_argument("--sigPlusBgkd", action="store_true", help="If specified, displayed ratio will be S/(S+B) rather than S/B")
     
     args = argparser.parse_args()  
 
@@ -50,15 +58,24 @@ def parseArgs():
     if "ALL" in args.channel:
         args.channel = ["ETau", "MuTau", "TauTau"]
 
+    if "ALL" in args.backgrounds:
+        args.backgrounds = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
+    elif "ALLnoQCD" in args.backgrounds:
+        args.backgrounds = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"]
+
     return args
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def main(args):
-    binCntrs, binCounts, targHalfWidths = calcBinWidths(args)
-    plotFracContained(args, binCntrs, binCounts)
-    if args.sigFrac:
-        plotSigLBandWidths(args, targHalfWidths)
+    if args.backgrounds:
+        plotSigVsBkgdInL(args)
+    else:
+        binCntrs, binCounts, targHalfWidths = calcBinWidths(args)
+        plotFracContained(args, binCntrs, binCounts)
+        if args.sigFrac:
+            plotSigLBandWidths(args, targHalfWidths)
+    
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -191,6 +208,85 @@ def plotSigLBandWidths(args, targHalfWidths):
     if args.save:
         for fileType in args.save:
             canv.SaveAs("../Plotting/Plots/sigLBandWidths"+ fileType)
+
+## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
+
+def plotSigVsBkgdInL(args):
+    stepSize = 0.05
+
+    nSigInBand = np.zeros(len(args.masses), 1.0 / stepSize)
+    nBkgdInBand = np.zeros(len(args.masses), 1.0 / stepSize)
+    intMasses = []
+
+    print("Processing signal...")
+    for year in args.years:
+        print(" year :", year)
+        for massN, mass in enumerate(args.masses):
+            binCent = float(mass)
+            intMasses.append(int(mass))
+
+            sigFile = TFile.Open("", "r")
+            tree =  sigFile.Get("Events")
+
+            mcWeight = float(getWeights("M" + mass, year, xs=True))
+            
+            for ch in args.channels:
+                for fN, frac in range(0, 1, stepSize):
+                    halfWidth = binCent * frac
+                    reqStr = "(("+ch+"_isCand)&&"
+                    reqStr += "((" + str(binCent - halfWidth) + "<= "+ch+"_minCollM && "+ch+"_minCollM <= " +  str(binCent + halfWidth) + " ) || "
+                    reqStr += "(" + str(binCent - halfWidth) + "<= "+ch+"_maxCollM && "+ch+"_maxCollM <= " +  str(binCent + halfWidth) + " )))"
+                    nSigInBand[massN][fN] += tree.GetEntries(reqStr) * mcWeight
+            
+            sigFile.Close()
+
+    print("Processing backgrounds...")
+    for bkgd in args.backgrounds:
+        print("\tProcess :", bkgd)
+        for subProc in procToSubProc[bkgd]:
+            for year in args.years:
+                bkgdFile = TFile.Open("root://cmsxrootd.fnal.gov/" + args.bkgdDir + subProc + "_" + year + ".root")
+                tree = bkgdFile.Get("Events")
+
+                mcWeight = float(getWeights(subProc, year, xs=True))
+
+                for massN, mass in enumerate(args.masses):
+                    binCent = float(mass)
+                    for ch in args.channels:
+                        for fN, frac in range(0, 1, stepSize):
+                            halfWidth = binCent * frac
+                            reqStr = "(("+ch+"_isCand)&&"
+                            reqStr += "((" + str(binCent - halfWidth) + "<= "+ch+"_minCollM && "+ch+"_minCollM <= " +  str(binCent + halfWidth) + " ) || "
+                            reqStr += "(" + str(binCent - halfWidth) + "<= "+ch+"_maxCollM && "+ch+"_maxCollM <= " +  str(binCent + halfWidth) + " )))"
+                            nSigInBand[massN][fN] += tree.GetEntries(reqStr) * mcWeight
+
+                bkgdFile.Close()
+    
+    print("\nDone retrieving data")
+
+    if args.sigPlusBgkd:
+        nSigInBand = nSigInBand / (nSigInBand + nBkgdInBand)
+    else:
+        nSigInBand = nSigInBand / nBkgdInBand
+
+    fig, ax = plt.subplots()
+    plot = ax.matshow(nSigInBand)
+    ax.colorbar(plot, label="Ratio")
+
+    if args.sigPlusBgkd:
+        ax.set_title("S/(S+B) per Sig. Mass & Bin Width")
+    else:
+        ax.set_title("S/B per Sig. Mass & Bin Width")
+
+    halfFracs = np.linspace(0, 1, stepSize)
+    ax.set_xticks(intMasses, labels=args.masses, ha="center")
+    ax.set_yticks(halfFracs, labels=halfFracs)
+    ax.set_xlabel("Signal Mass [GeV]")
+    ax.set_ylabel("L-Band Fractional Half Width")
+
+    plt.show()
+    response = input("Hit ENTER to close...")
+
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
