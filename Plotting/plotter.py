@@ -461,7 +461,7 @@ def plot1D(filelist, args):
         
         if isBkgdMC(hName) and args.stack:
             bHistNums.append(hNum)
-            bHistEntries.append(hists[hNum].GetEntries())
+            bHistEntries.append(hists[hNum].Integral())
             bHistNames.append(hName)
         else:
             hists[hNum].SetLineColor(getColor(args.palette, palColN))
@@ -482,7 +482,7 @@ def plot1D(filelist, args):
                 else:
                     name = hName
                 if args.nEvents:
-                    name += f": {hists[hNum].Integral():.2e}"
+                    name += f": {hists[hNum].Integral():.2f}"
                 
                 leg.AddEntry(hists[hNum], name, "L")
             palColN += 1
@@ -502,7 +502,10 @@ def plot1D(filelist, args):
             hists[idx].SetLineColor(stackPalette[num])
             hists[idx].SetFillColor(stackPalette[num])
             bkgdStack.Add(hists[bHistNums[idx]])
-            leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
+            if args.nEvents:
+                leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx]+ f": {bHistEntries[idx]:.2f}", "F")
+            else:
+                leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
             
         maxVal = max(maxVal, bkgdStack.GetMaximum())
         maxVal = maxVal * 1.2
@@ -536,7 +539,7 @@ def plot1D(filelist, args):
                 hist.Draw("HIST SAME")
                 
     if makeLegend:
-        if len(hists) > 5:
+        if len(hists) > 5 and not args.nEvents:
             leg.SetNColumns(2)
         leg.Draw()
         
