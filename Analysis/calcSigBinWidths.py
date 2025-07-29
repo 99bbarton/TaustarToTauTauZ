@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
-from mcWeights import getWeights
+from mcWeights import getWeight
 from datasets import procToSubProc
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -34,7 +34,8 @@ def parseArgs():
     #Below args are for sig / bkgd ratio plots
     argparser.add_argument("-b", "--backgrounds", nargs = "+", choices=["ALL", "ALLnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help="Which background procsses to consider")
     argparser.add_argument("--bkgdDir", type=str, help="The directory to find the background samples")
-    argparser.add_argument("--sigPlusBgkd", action="store_true", help="If specified, displayed ratio will be S/(S+B) rather than S/B")
+    argparser.add_argument("--denFunc", choices=["B","S+B","SQRT(B)","SQRT(S+B)", "1"], default="S+B", help="Sets the denominator function to divide signal by in 2D scan of bin widths")
+    argparser.add_argument("--stepSize", default=0.1, type=float, help="Granularity of fractional L-band half widths to scan")
     
     args = argparser.parse_args()  
 
@@ -212,11 +213,15 @@ def plotSigLBandWidths(args, targHalfWidths):
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 def plotSigVsBkgdInL(args):
-    stepSize = 0.05
+    np.set_printoptions(suppress=True)
 
-    nSigInBand = np.zeros(len(args.masses), 1.0 / stepSize)
-    nBkgdInBand = np.zeros(len(args.masses), 1.0 / stepSize)
+    nSigInBand = np.zeros((len(args.masses), int(1.0 / args.stepSize)), dtype=np.float64)
+    nBkgdInBand = np.zeros((len(args.masses), int(1.0 / args.stepSize)), dtype=np.float64)
     intMasses = []
+    halfFracs = []
+    for fN in range(1, int(1.0 / args.stepSize) + 1):
+        frac = fN * args.stepSize
+        halfFracs.append(frac)
 
     print("Processing signal...")
     for year in args.years:
@@ -225,13 +230,13 @@ def plotSigVsBkgdInL(args):
             binCent = float(mass)
             intMasses.append(int(mass))
 
-            sigFile = TFile.Open("", "r")
+            sigFile = TFile.Open(args.inDir + "taustarToTauZ_m" + mass + "_" + year + ".root", "r")
             tree =  sigFile.Get("Events")
 
-            mcWeight = float(getWeights("M" + mass, year, xs=True))
+            mcWeight = float(getWeight("M" + mass, year, xs=False))
             
-            for ch in args.channels:
-                for fN, frac in range(0, 1, stepSize):
+            for ch in args.channel:
+                for fN, frac in enumerate(halfFracs):
                     halfWidth = binCent * frac
                     reqStr = "(("+ch+"_isCand)&&"
                     reqStr += "((" + str(binCent - halfWidth) + "<= "+ch+"_minCollM && "+ch+"_minCollM <= " +  str(binCent + halfWidth) + " ) || "
@@ -245,49 +250,81 @@ def plotSigVsBkgdInL(args):
         print("\tProcess :", bkgd)
         for subProc in procToSubProc[bkgd]:
             for year in args.years:
-                bkgdFile = TFile.Open("root://cmsxrootd.fnal.gov/" + args.bkgdDir + subProc + "_" + year + ".root")
+                bkgdFile = TFile.Open("root://cmsxrootd.fnal.gov//store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/"+year+"/"+args.bkgdDir+"/"+subProc+"_"+year+".root")
                 tree = bkgdFile.Get("Events")
 
-                mcWeight = float(getWeights(subProc, year, xs=True))
+                mcWeight = float(getWeight(subProc, year, xs=True))
 
                 for massN, mass in enumerate(args.masses):
                     binCent = float(mass)
-                    for ch in args.channels:
-                        for fN, frac in range(0, 1, stepSize):
+                    for ch in args.channel:
+                        for fN, frac in enumerate(halfFracs):
                             halfWidth = binCent * frac
                             reqStr = "(("+ch+"_isCand)&&"
                             reqStr += "((" + str(binCent - halfWidth) + "<= "+ch+"_minCollM && "+ch+"_minCollM <= " +  str(binCent + halfWidth) + " ) || "
                             reqStr += "(" + str(binCent - halfWidth) + "<= "+ch+"_maxCollM && "+ch+"_maxCollM <= " +  str(binCent + halfWidth) + " )))"
-                            nSigInBand[massN][fN] += tree.GetEntries(reqStr) * mcWeight
+                            nBkgdInBand[massN][fN] += tree.GetEntries(reqStr) * mcWeight
 
                 bkgdFile.Close()
     
     print("\nDone retrieving data")
+    
+    ratio = np.full_like(nSigInBand, 0, dtype=np.float64)
+    
+    if args.denFunc == "S+B":
+        denom = nSigInBand + nBkgdInBand
+        thresh = denom > 1e-4
+        ratio[thresh] = nSigInBand[thresh] / denom[thresh]
+        title = "S/(S+B) per Sig. Mass & Bin Width"
+        pltFlExt = "SpB"
+    elif args.denFunc == "B":
+        thresh = nBkgdInBin > 1e-4
+        ratio[thresh] = nSigInBand[thresh] / nBkgdInBand[thresh]
+        title = "S/B per Sig. Mass & Bin Width"
+        pltFlExt = "B"
+    elif args.denFunc == "SQRT(B)":
+        denom = np.sqrt(nBkgdInBand)
+        thresh = denom > 1e-4
+        ratio[thresh] = nSigInBand[thresh] / denom[thresh]
+        title = "S/sqrt(B) per Sig. Mass & Bin Width"
+        pltFlExt = "SqrtB"
+    elif args.denFunc == "SQRT(S+B)":
+        denom = np.sqrt(nSigInBand + nBkgdInBand)
+        thresh = denom > 1e-4
+        ratio[thresh] = nSigInBand[thresh] / denom[thresh]
+        title = "S/sqrt(S+B) per Sig. Mass & Bin Width"
+        pltFlExt = "SqrtSpB"
+    elif args.denFunc == "1":
+        ratio = nSigInBand
+        title = "N Signal Events in L-Band per Sig. Mass & Bin Width"
+        pltFlExt= ""
 
-    if args.sigPlusBgkd:
-        nSigInBand = nSigInBand / (nSigInBand + nBkgdInBand)
-    else:
-        nSigInBand = nSigInBand / nBkgdInBand
 
-    fig, ax = plt.subplots()
-    plot = ax.matshow(nSigInBand)
-    ax.colorbar(plot, label="Ratio")
-
-    if args.sigPlusBgkd:
-        ax.set_title("S/(S+B) per Sig. Mass & Bin Width")
-    else:
-        ax.set_title("S/B per Sig. Mass & Bin Width")
-
-    halfFracs = np.linspace(0, 1, stepSize)
-    ax.set_xticks(intMasses, labels=args.masses, ha="center")
-    ax.set_yticks(halfFracs, labels=halfFracs)
+    fig, ax = plt.subplots(figsize=(12,8))
+    plot = ax.imshow(ratio.T)
+    fig.colorbar(plot, label="Ratio")
+    ax.set_title(title)
+    ax.set_xticks(range(len(args.masses)))
+    ax.set_xticklabels(args.masses)
+    ax.set_yticks(range(len(halfFracs)))
+    ax.set_yticklabels(halfFracs)
     ax.set_xlabel("Signal Mass [GeV]")
     ax.set_ylabel("L-Band Fractional Half Width")
 
-    plt.show()
-    response = input("Hit ENTER to close...")
+    plt.tight_layout()
+    plt.savefig("../Plotting/Plots/LBandPlots/sigOver"+ pltFlExt +"inLperMassWidth.png")
 
-
+    fig, ax = plt.subplots(figsize=(12,8))
+    for mN, mass in enumerate(args.masses):
+        plot = ax.plot(ratio[mN], label="m"+mass)
+    ax.set_xticks(range(len(halfFracs)))
+    ax.set_xticklabels(halfFracs)
+    ax.set_xlabel("L-Band Fractional Half Width")
+    ax.set_ylabel("Ratio")
+    ax.legend()
+    #plt.savefig("../Plotting/Plots/LBandPlots/sigOver"+ pltFlExt +"inLvsWidth_m"+mass+".png")
+    plt.savefig("../Plotting/Plots/LBandPlots/sigOver"+ pltFlExt +"inLvsWidthAllMasses.png")
+    
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
 if __name__ == "__main__":
