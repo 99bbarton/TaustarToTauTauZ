@@ -37,7 +37,7 @@ import argparse
 import os
 import sys
 from array import array
-from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle
+from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph
 
 sys.path.append("../Framework/")
 from datasets import processes, procToSubProc
@@ -82,15 +82,10 @@ def parseArgs():
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
-    argparser.add_argument("-b", "--nBins", choices=[2, 3], help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 3 to use L-band + 2 bkgd regions" )
+    argparser.add_argument("-b", "--nBins", type=int, choices=[2, 3], default=3, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 3 to use L-band + 2 bkgd regions" )
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
 
     args = argparser.parse_args()  
-
-    if args.inDir.startswith("/store"):
-        args.inDir = os.environ["ROOTURL"] + args.inDir
-    if args.inDir[-1] != "/":
-        args.inDir += "/"
 
     if "ALL" in args.years:
         args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
@@ -107,11 +102,6 @@ def parseArgs():
     if "ALL" in args.channels:
         args.channels = ["ETau", "MuTau", "TauTau"]
 
-    if "ALL" in args.backgrounds:
-        args.backgrounds = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
-    elif "ALLnoQCD" in args.backgrounds:
-        args.backgrounds = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"]
-
     return args
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -125,25 +115,27 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     baseCutStrs = []
-    baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) )) * WEIGHT") #Bin 0 is L
+    baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))")# * WEIGHT") #Bin 0 is L
     if args.nBins == 3:
-        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_minCollM < LOW_EDGE) ) * WEIGHT") #Bin 1 is low corner in 3-bin scheme
-        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM > HIGH_EDGE) ) * WEIGHT") #Bin 2 is upper corner in 2-bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_minCollM < LOW_EDGE) )")# * WEIGHT") #Bin 1 is low corner in 3-bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM > HIGH_EDGE) )")# * WEIGHT") #Bin 2 is upper corner in 2-bin scheme
     else:
-        baseCutStrs.append("(CHANNEL_isCand && ( (CHANNEL_minCollM < LOW_EDGE) || (CHANNEL_maxCollM > HIGH_EDGE) ) ) * WEIGHT") #Any region outside L is background in 2 bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && ( (CHANNEL_minCollM < LOW_EDGE) || (CHANNEL_maxCollM > HIGH_EDGE) ) )")# * WEIGHT") #Any region outside L is background in 2 bin scheme
 
     massBins = array("f", [float(m) for m in args.masses])
-
-    sigPerM = TH1F("sigPerM", "Events per Signal Mass in L-Band;Signal Mass [GeV];Events", len(args.masses) -1, massBins )
-    bkgdPerM = TH1F("bkgdPerM", "Events per Signal Mass in L-Band;Signal Mass [GeV];Events", len(args.masses) -1, massBins )
+    sigEvtPerMass = []
+    bkgdEvtPerMass = []
 
     for mN, mass in enumerate(args.masses):
         print("Processing mass =", mass)
-        sigHist = TH1F("sig_m"+mass, "Events Passing Selection;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
-        bkgdHist = TH1F("bkgds_m"+mass, "Events Passing Selection;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
+        sigHist = TH1F("sig_m"+mass, "Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
+        bkgdHist = TH1F("bkgds_m"+mass, "Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
 
         lBinEdges = massToLEdges[mass]
 
+        sigEvtPerMass.append(0)
+        bkgdEvtPerMass.append(0)
+        
         for year in args.years:
             print("\t\tProcessing year =", year)
             #First do signal
@@ -151,20 +143,22 @@ def makeEvtPredHists(args):
                 filePath = os.environ["ROOTURL"] + os.environ["SIG_R3"] + "taustarToTauZ_m" + mass + "_" + year + ".root"
             else:
                 filePath = os.environ["ROOTURL"] + os.environ["SIG_R2"] + "taustarToTauZ_m" + mass + "_" + year + ".root"
-            sigFile = TFile(filePath, "r")
+            sigFile = TFile.Open(filePath, "r")
             sigTree = sigFile.Get("Events")
 
             for ch in args.channels:
-                cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
-                cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
-                cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                cutStr = cutStr.replace("WEIGHT", getWeight("M"+mass, year, xs=True))
-                
-                for bin in range(args.nBins):    
+                for bin in range(args.nBins):
+                    cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
+                    cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
+                    cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
+                    #cutStr = cutStr.replace("WEIGHT", str(getWeight("M"+mass, year, xs=True)))
+                    weight = getWeight("M"+mass, year, xs=True)
+                    
                     nEvts = sigTree.GetEntries(cutStr)
-                    sigHist.SetBinContent(bin+1, sigHist.GetBinContent(bin+1) + nEvts )
+                    #sigHist.SetBinContent(bin+1, sigHist.GetBinContent(bin+1) + nEvts, weight )
+                    sigHist.Fill(sigHist.GetBinCenter(bin+1), nEvts*weight)
                     if bin == 0:
-                        sigPerM.SetBinContent(mN+1, sigPerM.GetBinContent(mN+1) + nEvts )
+                        sigEvtPerMass[-1] += nEvts*weight
 
             sigFile.Close()
 
@@ -172,26 +166,25 @@ def makeEvtPredHists(args):
             dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
             for proc in processes:
                 for subProc in procToSubProc[proc]:
-                    bkgdFile = TFile(dirPath + subProc + "_" + year + ".root", "r")
+                    bkgdFile = TFile.Open(dirPath + subProc + "_" + year + ".root", "r")
                     bkgdTree = bkgdFile.Get("Events")
                     
                     for ch in args.channels:
-                        cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
-                        cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
-                        cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                        cutStr = cutStr.replace("WEIGHT", getWeight(subProc, year, xs=True))
-
                         for bin in range(args.nBins):
+                            cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
+                            cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
+                            cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
+                            #cutStr = cutStr.replace("WEIGHT", str(getWeight(subProc, year, xs=True)))
+                            weight = getWeight(subProc, year, xs=True)
                             nEvts = bkgdTree.GetEntries(cutStr)
-                            bkgdHist.SetBinContent(bin+1, bkgdHist.GetBinContent(bin+1) + nEvts)
-                            
+                            #bkgdHist.SetBinContent(bin+1, bkgdHist.GetBinContent(bin+1) + nEvts, weight)
+                            bkgdHist.Fill(bkgdHist.GetBinCenter(bin+1), nEvts*weight)
                             if bin == 0:
-                                bkgdPerM.SetBinContent(mN+1, bkgdPerM.GetBinContent(mN+1) + nEvts)
-                            
+                                bkgdEvtPerMass[-1] += nEvts*weight
+                                
                     bkgdFile.Close()
         #END YEAR
 
-        print("\tDrawing hist...")
         #Done retrieving data for this year, now plot and save histograms
         sigHist.SetLineWidth(3)
         sigHist.SetLineColor(sigCol)
@@ -203,43 +196,48 @@ def makeEvtPredHists(args):
             leg.AddEntry(sigHist, "Signal", "L")
             leg.AddEntry(bkgdHist, "Background", "F")
 
-        maxVal = max(sigHist.GetMaximum(), bkgdHist.GetMaxium())
-        maxVal = 1.1 * maxVal
-        sigHist.SetMaximum(maxVal)
-        bkgdHist.SetMaxium(maxVal)
-
+        stack = THStack("stack","Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events")
+        stack.Add(bkgdHist)
+        stack.Add(sigHist)
+        
         canv.cd()
         canv.Clear()
-        bkgdHist.Draw("HIST")
-        sigHist.Draw("HIST SAME")
+        stack.Draw("NOSTACK HIST")
         leg.Draw()
         canv.Update()
-        canv.SaveAs("../Plots/EventPreds/nEventPred_m"+ mass + ".png")
+        canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_m"+ mass + ".png")
     
         #END MASS
     
-    #Now cumulative hists (events in L per signal mass)
+    #Now cumulative graphs (events in L per signal mass)
     canv.cd()
     canv.Clear()
-    sigPerM.SetLineColor(sigCol)
-    sigPerM.SetLineWidth(2)
-    sigPerM.SetMarkerColor(sigCol)
-    sigPerM.SetMarkerStyle(5)
-    sigPerM.SetMarkerSize(5)
-    bkgdPerM.SetFillColor(bkgdCol)
-    maxVal = max(sigPerM.GetMaximum(), bkgdPerM.GetMaxium())
-    maxVal = 1.1 * maxVal
-    sigPerM.SetMaximum(maxVal)
-    bkgdPerM.SetMaxium(maxVal)
-    bkgdPerM.Draw("HIST")
-    sigPerM.Draw("P0 SAME")
+
+    sigEvtPerMass = array("f", sigEvtPerMass)
+    bkgdEvtPerMass = array("f", bkgdEvtPerMass)
+    sigGraph = TGraph(len(sigEvtPerMass), massBins, sigEvtPerMass)
+    bkgdGraph = TGraph(len(bkgdEvtPerMass), massBins, bkgdEvtPerMass)
+    sigGraph.SetMarkerColor(sigCol)
+    sigGraph.SetMarkerStyle(8)
+    sigGraph.SetMarkerSize(2)
+    bkgdGraph.SetMarkerColor(bkgdCol)
+    bkgdGraph.SetMarkerStyle(8)
+    bkgdGraph.SetMarkerSize(2)
+
+    mg = TMultiGraph()
+    mg.Add(sigGraph)
+    mg.Add(bkgdGraph)
+    mg.SetTitle("Events per Signal Mass in L-Band;Signal Mass [GeV];Events")
+    mg.Draw("AP")
+    
+    
     leg.Clear()
-    leg.AddEntry(sigPerM, "Expected Signal", "LP")
-    leg.AddEntry(bkgdPerM, "Expected Background", "F")
+    leg.AddEntry(sigGraph, "Expected Signal", "P")
+    leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
     canv.Update()
     wait = input("Hit ENTER to save and close plot")
-    canv.SaveAs("../Plots/EventPreds/nEventPred_allMasses.png")
+    canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
