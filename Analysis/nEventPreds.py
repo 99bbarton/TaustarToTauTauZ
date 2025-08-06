@@ -37,6 +37,7 @@ import argparse
 import os
 import sys
 from array import array
+from tabulate import tabulate
 from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph
 
 sys.path.append("../Framework/")
@@ -84,7 +85,7 @@ def parseArgs():
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 3], default=3, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 3 to use L-band + 2 bkgd regions" )
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
-
+    argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
     args = argparser.parse_args()  
 
     if "ALL" in args.years:
@@ -126,6 +127,8 @@ def makeEvtPredHists(args):
     sigEvtPerMass = []
     bkgdEvtPerMass = []
 
+    eventsPerProc = []
+    
     for mN, mass in enumerate(args.masses):
         print("Processing mass =", mass)
         sigHist = TH1F("sig_m"+mass, "Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
@@ -135,6 +138,8 @@ def makeEvtPredHists(args):
 
         sigEvtPerMass.append(0)
         bkgdEvtPerMass.append(0)
+        
+        eventsPerProc.append({"SIG":0,"ZZ":0, "WZ":0, "WW":0, "WJets":0, "DY":0, "TT":0, "ST":0, "QCD":0})
         
         for year in args.years:
             print("\t\tProcessing year =", year)
@@ -151,14 +156,14 @@ def makeEvtPredHists(args):
                     cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                    #cutStr = cutStr.replace("WEIGHT", str(getWeight("M"+mass, year, xs=True)))
+
                     weight = getWeight("M"+mass, year, xs=True)
-                    
                     nEvts = sigTree.GetEntries(cutStr)
-                    #sigHist.SetBinContent(bin+1, sigHist.GetBinContent(bin+1) + nEvts, weight )
+                    
                     sigHist.Fill(sigHist.GetBinCenter(bin+1), nEvts*weight)
                     if bin == 0:
                         sigEvtPerMass[-1] += nEvts*weight
+                        eventsPerProc[-1]["SIG"] += nEvts*weight
 
             sigFile.Close()
 
@@ -174,14 +179,14 @@ def makeEvtPredHists(args):
                             cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
                             cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                            #cutStr = cutStr.replace("WEIGHT", str(getWeight(subProc, year, xs=True)))
+                            
                             weight = getWeight(subProc, year, xs=True)
                             nEvts = bkgdTree.GetEntries(cutStr)
-                            #bkgdHist.SetBinContent(bin+1, bkgdHist.GetBinContent(bin+1) + nEvts, weight)
+                            
                             bkgdHist.Fill(bkgdHist.GetBinCenter(bin+1), nEvts*weight)
                             if bin == 0:
                                 bkgdEvtPerMass[-1] += nEvts*weight
-                                
+                                eventsPerProc[-1][proc] += nEvts*weight
                     bkgdFile.Close()
         #END YEAR
 
@@ -236,10 +241,47 @@ def makeEvtPredHists(args):
     leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
     canv.Update()
-    wait = input("Hit ENTER to save and close plot")
+    #wait = input("Hit ENTER to save and close plot")
     canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
 
+    return eventsPerProc
+
 #----------------------------------------------------------------------------------------------------------------------------------------------#
+
+#Makes a event yields per process and signal mass table
+#courtesy of ChatGPT
+def printExpEvtsTable(masses, event_dicts, latex=False):
+    processes = list(event_dicts[0].keys())
+    
+    total_bkgs = [sum(v for k, v in events.items() if k != "SIG") for events in event_dicts]
+    
+    # Sort background processes by yield at the first mass point (largest first)
+    backgrounds = [p for p in processes if p != "SIG"]
+    backgrounds.sort(key=lambda p: event_dicts[0][p], reverse=True)
+    
+    rows = [["Signal"] + [f"{events['SIG']:.2f}" for events in event_dicts]]
+    
+    if not latex:
+        rows.append(["-" * 10] + ["-" * 10 for _ in masses])  
+
+    for proc in backgrounds:
+        rows.append([proc] + [f"{events[proc]:.2f}" for events in event_dicts])
+    
+    rows.append(["Total Background"] + [f"{tb:.2f}" for tb in total_bkgs])
+    
+    headers = ["Process"] + masses
+    
+    if latex:
+        latex_table = tabulate(rows, headers=headers, tablefmt="latex_booktabs")
+        latex_table = latex_table.replace("---------- & ---------- & ---------- & ---------- & ---------- \\\\", "\\midrule")
+        print(latex_table)
+    else:
+        print(tabulate(rows, headers=headers, tablefmt="grid"))
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 #Utility function to aid updating massToLEdges dict from massToLHalfWidths
 def printLEdges():
@@ -256,4 +298,5 @@ if __name__ == "__main__":
     if args.printLEdges:
         printLEdges
     else:
-        makeEvtPredHists(args)
+        evtsPerProc = makeEvtPredHists(args)
+        printExpEvtsTable(args.masses, evtsPerProc, args.latex)

@@ -339,7 +339,10 @@ def plot1D(filelist, args):
         legTitle = plotEachToLeg[args.plotEach]
         if args.nEvents:
             legTitle += ": nEvents"
-        leg = TLegend(0.7, 0.7, 0.9, 0.9, legTitle)
+        if args.plotEach == "PROC" and len(filelist.keys()) > 6:
+            leg = TLegend(0.7, 0.5, 0.9, 0.9, legTitle)
+        else:
+            leg = TLegend(0.7, 0.7, 0.9, 0.9, legTitle)
 
     plotParams = varToPlotParams[args.vars[0]]
     if type(plotParams[0]) is str:
@@ -539,7 +542,7 @@ def plot1D(filelist, args):
                 hist.Draw("HIST SAME")
                 
     if makeLegend:
-        if len(hists) > 5 and not args.nEvents:
+        if len(hists) > 5 and not (args.nEvents or args.stack):
             leg.SetNColumns(2)
         leg.Draw()
         
