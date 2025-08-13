@@ -1,36 +1,36 @@
 #Make histograms of the number of signal and background in each bin (0=signal L-band)
 
-###########################################################
-#                      >          <                     + #                      
-#                      >          <                   +   #                      
-#                      >          <       2         +     #                      
-#                      >          <               +       #                      
-#          NOT         >          <             +         #                      
-#       POSSIBLE       >          <           +           #                      
-#                      >          <         +             #                      
-#                      >          <       +               #                      
-# <<<<<<<<<<<<<<<<<<<<<<          <     +                 #                     
-#                            0    <   +                   #                 
-#                                 < +                     #                   
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>                       #                     
-#                               +                         #                    
-#                             +                           #                   
-#                           +                             #                   
-#                         +                               #                    
-#           1           +                                 #                    
-#                     +                                   #                    
-#                   +               NOT                   #                     
-#                 +               POSSIBLE                #                     
-#               +                                         #                     
-#             +                                           #                     
-#           +                                             #                     
-#         +                                               #                    
-#       +                                                 #                 
-#     +                                                   #               
-#   +                                                     #                
-# +                                                       #                      
-###########################################################
-
+  ###########################################################
+  #                      >          <                     + #                      
+  #                      >          <                   +   #                       
+  #                      >          <       2         +     #                      
+#M#                      >          <               +       #                      
+#A#          3           >          <             +         #                      
+#X#                      >          <           +           #                      
+  #                      >          <         +             #                      
+  #                      >          <       +               #                      
+  # <<<<<<<<<<<<<<<<<<<<<<          <     +                 #                     
+  #                            0    <   +                   #                 
+  #                                 < +                     #                   
+  # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>                       #                     
+  #                               +                         #                    
+  #                             +                           #                   
+  #                           +                             #                   
+  #                         +                               #                    
+  #           1           +                                 #                    
+  #                     +                                   #                    
+  #                   +               NOT                   #                      
+  #                 +               POSSIBLE                #                     
+  #               +                                         #                     
+  #             +                                           #                     
+  #           +                                             #                     
+  #         +                                               #                    
+  #       +                                                 #                 
+  #     +                                                   #                
+  #   +                                                     #                
+  # +                                                       #                      
+  ###########################################################
+                                                   #MIN
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 import argparse
@@ -46,6 +46,24 @@ from mcWeights import getWeight
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
+#These are the symmetric L-band edges, i.e. mass +/- (halfWidth*mass)
+massToLEdges_asymm = {
+    "250" : [175.0, 325.0],
+    "500" : [350.0, 650.0],
+    "750" : [525.0, 975.0],
+    "1000" : [700.0, 1300.0],
+    "1500" : [1300.0, 2250.0],
+    "2000" : [1500.0, 3000.0],
+    "2500" : [1500.0, 4500.0],
+    "3000" : [1700.0, 5400.0],
+    "3500" : [2000.0, 6300.0],
+    "4000" : [2250.0, 7200.0],
+    "4500" : [2500.0, 8100.0],
+    "5000" : [2750.0, 9000.0]
+}
+
+
+#These are the symmetric L-band edges, i.e. mass +/- (halfWidth*mass)
 massToLEdges = {
     "250" : [175.0, 325.0],
     "500" : [350.0, 650.0],
@@ -83,7 +101,9 @@ def parseArgs():
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
-    argparser.add_argument("-b", "--nBins", type=int, choices=[2, 3], default=3, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 3 to use L-band + 2 bkgd regions" )
+    argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
+    argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
+    argparser.add_argument("-l", "--log", action="store_true", help="Specify to set the y-axis of plots to log scale.")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
     args = argparser.parse_args()  
@@ -116,12 +136,13 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     baseCutStrs = []
-    baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))")# * WEIGHT") #Bin 0 is L
-    if args.nBins == 3:
-        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_minCollM < LOW_EDGE) )")# * WEIGHT") #Bin 1 is low corner in 3-bin scheme
-        baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM > HIGH_EDGE) )")# * WEIGHT") #Bin 2 is upper corner in 2-bin scheme
+    baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))")# * WEIGHT") #Bin 0 is L
+    if args.nBins == 4:
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1 is low corner in 4-bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2 is upper right triangle in 4-bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3 is upper left square in 4-bin scheme
     else:
-        baseCutStrs.append("(CHANNEL_isCand && ( (CHANNEL_minCollM < LOW_EDGE) || (CHANNEL_maxCollM > HIGH_EDGE) ) )")# * WEIGHT") #Any region outside L is background in 2 bin scheme
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )")# * WEIGHT") #Any region outside L is background in 2 bin scheme
 
     massBins = array("f", [float(m) for m in args.masses])
     sigEvtPerMass = []
@@ -134,7 +155,10 @@ def makeEvtPredHists(args):
         sigHist = TH1F("sig_m"+mass, "Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
         bkgdHist = TH1F("bkgds_m"+mass, "Events Passing Selection: m"+mass+" Binning;2D Collinear Mass Plane Bin Number; Events", args.nBins, -0.5, -0.5 + args.nBins)
 
-        lBinEdges = massToLEdges[mass]
+        if args.asymm:
+            lBinEdges = massToLEdges_asymm[mass]
+        else:
+            lBinEdges = massToLEdges[mass]
 
         sigEvtPerMass.append(0)
         bkgdEvtPerMass.append(0)
@@ -208,6 +232,8 @@ def makeEvtPredHists(args):
         canv.cd()
         canv.Clear()
         stack.Draw("NOSTACK HIST")
+        if args.log:
+            canv.SetLogy(True)
         leg.Draw()
         canv.Update()
         canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_m"+ mass + ".png")
@@ -234,16 +260,16 @@ def makeEvtPredHists(args):
     mg.Add(bkgdGraph)
     mg.SetTitle("Events per Signal Mass in L-Band;Signal Mass [GeV];Events")
     mg.Draw("AP")
-    
+    if args.log:
+        canv.SetLogy(True)
     
     leg.Clear()
     leg.AddEntry(sigGraph, "Expected Signal", "P")
     leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
     canv.Update()
-    #wait = input("Hit ENTER to save and close plot")
     canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
-
+    
     return eventsPerProc
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#

@@ -17,7 +17,7 @@ def getWeight(process, year, xs=True):
         nEvts = nEvents[process][yrTonEventsIdx[year]]
         xs = crossections[process][0] *1000 #xs in pb but lumi in fb 
         if process.startswith("M"):
-            xs = xs*100
+            xs = xs*1
         effLumi = nEvts / xs
         realLumi = lumis[year[:4]][0]
         weight *= (realLumi / effLumi)

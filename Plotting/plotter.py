@@ -57,7 +57,7 @@ varToPlotParams = {
     "COS2DPHI"  : ["cos(CHANNEL_CHANNELDPhi)*cos(CHANNEL_CHANNELDPhi)", "cos^2(#Delta#phi)", 63, 0, 6.3],
     "COSDPHI"      : ["cos(CHANNEL_CHANNELDPhi)","cos(#Delta#phi)", 20, -1, 1],
     "SINDPHI"      : ["sin(CHANNEL_CHANNELDPhi)","sin(#Delta#phi)", 20, -1, 1],
-    "DPHI"      : ["CHANNEL_CHANNELDPhi","#Delta#phi", 32, 0, 6.4 ],
+    "DPHI"      : ["CHANNEL_CHANNELDPhi","#Delta#phi", 16, 0, 3.2 ],
     "TAUSDR"    : ["CHANNEL_CHANNELDR", "#DeltaR(#tau_{1},#tau_{2}))", 50, 0, 5],
     "BOOST_DR"  : ["Boost_dR", "#DeltaR(Z_{subJet1},Z_{subJet2})", 50, 0, 5],
     "BOOST_DPHI"  : ["Boost_dPhi", "#Delta#phi(Z_{subJet1},Z_{subJet2})", 16, 0, 6.4],
