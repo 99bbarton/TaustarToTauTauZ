@@ -825,3 +825,32 @@ def lookupNEvents():
 
 
 
+def printDatasetsLaTeX():
+
+    for year, processes in bkgdDatasets_mini.items():
+        print(f"%% === {year} datasets ===")
+        print("\\resizebox{\\textwidth}{!}{%")
+        print("\\begin{table}[htbp]")
+        print("  \\centering")
+        print(f"  \\caption{{MC datasets for {year}}}")
+        print("  \\begin{tabular}{|l|l|}")
+        print("    \\hline")
+        print("    Process & Dataset \\\\")
+        print("    \\hline")
+
+        for process, datasets in processes.items():
+            first = True
+            for ds in datasets:
+                ds = ds.replace("_", "\_")
+                if first:
+                    print(f"    {process} & {ds} \\\\")
+                    first = False
+                else:
+                    print(f"     & {ds} \\\\")
+            print("    \\hline")
+
+        print("  \\end{tabular}")
+        print("    }")
+        print(f"  \\label{{tab:datasets_{year}}}")
+        print("\\end{table}")
+        print("\n")
