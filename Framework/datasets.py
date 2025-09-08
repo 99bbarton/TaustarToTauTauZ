@@ -28,6 +28,21 @@ procToSubProc_run3 = {
     "QCD" : ["QCD_PT-80to120","QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
 }
 
+#Conversion used for V0 processing. Included for backwards compatibility
+procToSubProc_run3_legacy = {
+    "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L"],
+    "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q"],
+    "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
+    "WJets" : ["WtoLNu-4Jets"],
+    "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
+    "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
+    "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"], #"TWminustoLNu2Q", "TbarWplusto4Q"
+    "QCD" : [],
+}
+
+
+
+
 bkgdDatasets_mini = {
     "2016" : {
         "ZZ" : ["/ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",

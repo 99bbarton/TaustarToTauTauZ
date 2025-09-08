@@ -41,7 +41,7 @@ from tabulate import tabulate
 from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph
 
 sys.path.append("../Framework/")
-from datasets import processes, procToSubProc
+from datasets import processes, procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
 from mcWeights import getWeight
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -106,6 +106,7 @@ def parseArgs():
     argparser.add_argument("-l", "--log", action="store_true", help="Specify to set the y-axis of plots to log scale.")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
+    argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy Run3 process-to-subprocess translation (for V0 processing)")
     args = argparser.parse_args()  
 
     if "ALL" in args.years:
@@ -194,7 +195,14 @@ def makeEvtPredHists(args):
             #Now do backgrounds
             dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
             for proc in processes:
-                for subProc in procToSubProc[proc]:
+                if year in ["2022", "2022post", "2023", "2023post"]:
+                    if args.legacy:
+                        subProcs = procToSubProc_run3_legacy[proc]
+                    else:
+                        subProcs = procToSubProc_run3[proc]
+                else:
+                    subProcs = procToSubProc_run2[proc]
+                for subProc in subProcs:
                     bkgdFile = TFile.Open(dirPath + subProc + "_" + year + ".root", "r")
                     bkgdTree = bkgdFile.Get("Events")
                     
