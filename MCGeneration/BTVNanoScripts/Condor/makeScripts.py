@@ -208,6 +208,8 @@ def makeScripts(args, dateStr, hasSB):
                     #End executable creation
 
                     with open(scriptDir + "jobConfig_" + subDataset + str(jobN) + ".jdl", "w+") as jdlFile:
+                        if era == 2:
+                            jdlFile.write('+ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"\n')
                         jdlFile.write('universe = vanilla\n')
                         jdlFile.write("Executable = run_" + subDataset + str(jobN) + ".sh\n")
                         jdlFile.write('should_transfer_files = YES\n')
@@ -215,9 +217,9 @@ def makeScripts(args, dateStr, hasSB):
                         jdlFile.write('Output = condor_PFNano-Nano_$(Cluster)_$(Process).stdout\n')
                         jdlFile.write('Error = condor_PFNano-Nano_$(Cluster)_$(Process).stderr\n')
                         jdlFile.write('Log = condor_PFNano-Nano_$(Cluster)_$(Process).log\n')
-                        jdlFile.write('Queue 1\n')
                         if era == 2:
-                            jdlFile.write('+ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"\n')
+                            jdlFile.write('+REQUIRED_OS = "rhel7"\n')
+                        jdlFile.write('Queue 1\n')
                     #End jdl creation
                 #End jobN
             #End dataset
