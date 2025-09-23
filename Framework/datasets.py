@@ -811,32 +811,26 @@ def getSubProcs(year, proc):
 
 def lookupNEvents():
 
-        baseQuery = 'dasgoclient -query="dataset='
+    baseQuery = 'dasgoclient -query="dataset='
 
-        for year in years:
-                for proc in processes:
-                        if proc == "QCD":
-                                continue
-
-                        dsNames = bkgdDatasets_mini[year][proc]
-
-
-                        for ds in dsNames:
-                                command = 'dasgoclient -query="dataset=' + ds + '" -json'
-                                stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-                                loaded = json.loads(stdout.strip())
-                                if 'nevents' in loaded[1]['dataset'][0].keys():
-                                        result = loaded[1]['dataset'][0]
-                                elif 'nevents' in loaded[2]['dataset'][0].keys():
-                                        result = loaded[2]['dataset'][0]
-
-                                nEvts = result['nevents']
-                                subname = ds[1:ds.find("_TuneCP5")]
-                                nEventsTemp[subname].append(nEvts)
-                                print(year, subname, nEvts)
+    for year in years:
+        for proc in processes:
+            dsNames = bkgdDatasets_mini[year][proc]
+            for ds in dsNames:
+                command = 'dasgoclient -query="dataset=' + ds + '" -json'
+                stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+                loaded = json.loads(stdout.strip())
+                if 'nevents' in loaded[1]['dataset'][0].keys():
+                    result = loaded[1]['dataset'][0]
+                elif 'nevents' in loaded[2]['dataset'][0].keys():
+                    result = loaded[2]['dataset'][0]
+                nEvts = result['nevents']
+                subname = ds[1:ds.find("_TuneCP5")]
+                nEventsTemp[subname].append(nEvts)
+                print(year, subname, nEvts)
 
 
-        pprint(nEventsTemp)
+    pprint(nEventsTemp)
 
 
 
