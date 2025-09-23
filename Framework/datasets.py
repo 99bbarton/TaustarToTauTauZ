@@ -745,38 +745,11 @@ nEvents = {
 }
 
 #helper dict for year to idx in lists of nEvents above
-yrTonEventsIdx = {"2022" : 0, "2022post": 1, "2023": 2, "2023post": 3 }
+yrTonEventsIdx = {"2016" : 0, "2016post" : 1, "2017" : 2, "2018" : 3, "2022" : 4, "2022post": 5, "2023": 6, "2023post": 7}
 
 
-##############################################################################
-#Below is a tool to get the number of events in each dataset (i.e. create nEvents above)
 
-#subproc : [2022, 2022post, 2023, 2023post] nEvents
-nEventsTemp = {
-        "ZZto2L2Nu" : [],
-        "ZZto2L2Q" : [],
-        "ZZto2Nu2Q" : [],
-        "ZZto4L" : [],
-        "WZto2L2Q" : [],
-        "WZto3LNu" : [],
-        "WZtoLNu2Q" : [],
-        "WWto2L2Nu" : [],
-        "WWto4Q" : [],
-        "WWtoLNu2Q" : [],
-        "WtoLNu-4Jets" : [],
-        "DYto2L-2Jets_MLL-10to50" : [],
-        "DYto2L-2Jets_MLL-50" : [],
-        "TTto2L2Nu" : [],
-        "TTto4Q" : [],
-        "TTtoLNu2Q" : [],
-        "TBbarQ_t-channel_4FS" : [],
-        "TWminusto2L2Nu" : [],
-        "TWminustoLNu2Q" : [],
-        "TbarBQ_t-channel_4FS" : [],
-        "TbarWplusto2L2Nu" : [],
-        "TbarWplusto4Q" : [],
-        "TbarWplustoLNu2Q" : []
-}
+
 
 
 import subprocess
@@ -809,11 +782,15 @@ def getSubProcs(year, proc):
         return procToSubProc_run3[proc]
 
 
-def lookupNEvents():
+##############################################################################
+#Below is a tool to get the number of events in each dataset (i.e. create nEvents above) which maps
+#subproc : [2016, 2016post, 2017, 2018, 2022, 2022post, 2023, 2023post] nEvents
 
+def lookupNEvents():
+    nEventsTemp = {}
     baseQuery = 'dasgoclient -query="dataset='
 
-    for year in years:
+    for yrIdx, year in enumerate(years):
         for proc in processes:
             dsNames = bkgdDatasets_mini[year][proc]
             for ds in dsNames:
@@ -825,8 +802,15 @@ def lookupNEvents():
                 elif 'nevents' in loaded[2]['dataset'][0].keys():
                     result = loaded[2]['dataset'][0]
                 nEvts = result['nevents']
-                subname = ds[1:ds.find("_TuneCP5")]
-                nEventsTemp[subname].append(nEvts)
+                if ds.find("_TuneCP5") > 0:
+                    subname = ds[1:ds.find("_TuneCP5")]
+                else:
+                    subname = ds[1:ds.find("_")]
+
+                if subname not in nEventsTemp.keys():
+                    nEventsTemp[subname] = [0, 0, 0, 0, 0, 0, 0, 0]
+        
+                nEventsTemp[subname][yrIdx] += nEvts
                 print(year, subname, nEvts)
 
 
