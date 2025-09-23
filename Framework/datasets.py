@@ -14,7 +14,7 @@ procToSubProc_run2 = {
     "DY" : ["DYJetsToLL_M-10to50", "DYJetsToLL_M-50"],
     "TT" : ["TTTo2L2Nu", "TTToHadronic", "TTToSemiLeptonic", "TTJets"], 
     "ST" : ["ST_tW_antitop_5f_inclusiveDecays", "ST_tW_top_5f_inclusiveDecays", "ST_s-channel_4f_hadronicDecays", "ST_s-channel_4f_leptonDecays", "ST_t-channel_antitop_4f_InclusiveDecays", "ST_t-channel_top_4f_InclusiveDecays"],
-    "QCD" : ["QCD_Pt_80to120","QCD_Pt_120to170","QCD_Pt_170to300","QCD_Pt_300to470","QCD_Pt_470to600","QCD_Pt_600to800","QCD_Pt_800to1000","QCD_Pt_1000to1400","QCD_Pt_1400to1800","QCD_Pt_1800to2400","QCD_Pt_2400to3200","QCD_Pt_3200toinf"]
+    "QCD" : ["QCD_Pt_80to120","QCD_Pt_120to170","QCD_Pt_170to300","QCD_Pt_300to470","QCD_Pt_470to600","QCD_Pt_600to800","QCD_Pt_800to1000","QCD_Pt_1000to1400","QCD_Pt_1400to1800","QCD_Pt_1800to2400","QCD_Pt_2400to3200","QCD_Pt_3200toInf"]
 }
 
 procToSubProc_run3 = {
@@ -51,8 +51,7 @@ bkgdDatasets_mini = {
                 "/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",
                 "/ZZTo4Q_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM"
         ],
-        "WZ" : [
-                "/WZTo2Q2Nu_4f_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",
+        "WZ" : ["/WZTo2Q2Nu_4f_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",
                 "/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",
                 "/WZTo3LNu_5f_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM",
                 "/WZTo4Q_4f_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2/MINIAODSIM"
@@ -100,14 +99,14 @@ bkgdDatasets_mini = {
                 "/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM",
                 "/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM",
                 "/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM",
-                "/QCD_Pt_3200toinf_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM"
+                "/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM"
         ]
     },
     "2016post" : {
         "ZZ" : ["/ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM",
                 "/ZZTo2Nu2Q_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM",
                 "/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM",
-                "/ZZTo4L_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM",
+                "/ZZTo4L_5f_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM",
                 "/ZZTo4Q_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM"
         ],
         "WZ" : ["/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2/MINIAODSIM",
@@ -156,7 +155,7 @@ bkgdDatasets_mini = {
                 "/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM",
                 "/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM",
                 "/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM",
-                "/QCD_Pt_3200toinf_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM"
+                "/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM"
         ]
     },
     "2017" : {
@@ -224,7 +223,7 @@ bkgdDatasets_mini = {
                 "/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM",
                 "/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM",
                 "/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM",
-                "/QCD_Pt_3200toinf_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"
+                "/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"
         ]
     },
     "2018" : {
@@ -285,7 +284,7 @@ bkgdDatasets_mini = {
                 #"/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM"
         ],
         "QCD" : ["/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
-                "/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
+                #"/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM", #Doesn't exist... why???
                 "/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
                 "/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
                 "/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
@@ -295,7 +294,7 @@ bkgdDatasets_mini = {
                 "/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
                 "/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
                 "/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM",
-                "/QCD_Pt_3200toinf_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM"
+                "/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1/MINIAODSIM"
         ]
     },
     "2022" : {
@@ -385,8 +384,8 @@ bkgdDatasets_mini = {
                         "/Wto2Q-2Jets_PTQQ-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM",
                         "/Wto2Q-2Jets_PTQQ-600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM",
                         "/Wto2Q-2Jets_PTQQ-100to200_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM",
-                        "/Wto2Q-2Jets_PTQQ-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM",
-                        "/Wto2Q-2Jets_PTQQ-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM",
+                        "/Wto2Q-2Jets_PTQQ-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v3/MINIAODSIM",
+                        "/Wto2Q-2Jets_PTQQ-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v3/MINIAODSIM",
                         "/Wto2Q-2Jets_PTQQ-600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v6-v1/MINIAODSIM"
                 ],
                 "DY" : [#"/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/Run3Summer22EEMiniAODv4-130X_mcRun3_2022_realistic_postEE_v5-v2/MINIAODSIM"
@@ -744,12 +743,124 @@ nEvents = {
         "M5000" : [50000, 150000, 50000, 25000]
 }
 
+
+
+nEvents = {
+ 'DYJetsToLL_M-10to50': [25799525, 23706672, 316134, 99288125, 0, 0, 0, 0],
+ 'DYJetsToLL_M-50': [95170542, 82448537, 103344974, 96233328, 0, 0, 0, 0],
+ 'DYto2L-2Jets_MLL-10to50': [0, 0, 0, 0, 70087610, 226070829, 200673913, 200673913],
+ 'DYto2L-2Jets_MLL-50': [0, 0, 0, 0, 72913933, 215642133, 156185509, 156185509],
+ 'QCD_PT-1000to1400': [0, 0, 0, 0, 2447668, 8134126, 11956000, 5976000],
+ 'QCD_PT-120to170': [0, 0, 0, 0, 1418925, 12777149, 17964000, 8964000],
+ 'QCD_PT-1400to1800': [0, 0, 0, 0, 1488524, 4289440, 3596000, 1794000],
+ 'QCD_PT-170to300': [0, 0, 0, 0, 805272, 12269545, 17889000, 8934000],
+ 'QCD_PT-1800to2400': [0, 0, 0, 0, 693521, 2453207, 1760000, 900000],
+ 'QCD_PT-2400to3200': [0, 0, 0, 0, 195024, 789885, 1200000, 581000],
+ 'QCD_PT-300to470': [0, 0, 0, 0, 967072, 23799073, 34626000, 17354000],
+ 'QCD_PT-3200': [0, 0, 0, 0, 100000, 473821, 478000, 240000],
+ 'QCD_PT-470to600': [0, 0, 0, 0, 976760, 21104245, 16738000, 8382000],
+ 'QCD_PT-600to800': [0, 0, 0, 0, 7839456, 28354580, 40658000, 20342000],
+ 'QCD_PT-800to1000': [0, 0, 0, 0, 4400187, 15425400, 23856000, 11908000],
+ 'QCD_PT-80to120': [0, 0, 0, 0, 983532, 29570284, 17979000, 8967000],
+ 'QCD_Pt_1000to1400': [19077000, 19892000, 19631814, 19730000, 0, 0, 0, 0],
+ 'QCD_Pt_120to170': [28652000, 27348000, 29854280, 0, 0, 0, 0, 0],
+ 'QCD_Pt_1400to1800': [11000000, 10722000, 5685270, 10982000, 0, 0, 0, 0],
+ 'QCD_Pt_170to300': [27953000, 29926000, 29829920, 29676000, 0, 0, 0, 0],
+ 'QCD_Pt_1800to2400': [5262000, 5236000, 2923941, 5491000, 0, 0, 0, 0],
+ 'QCD_Pt_2400to3200': [2999000, 2848000, 1910526, 2997000, 0, 0, 0, 0],
+ 'QCD_Pt_300to470': [54096000, 55264000, 53798780, 57910000, 0, 0, 0, 0],
+ 'QCD_Pt_3200toInf': [1000000, 996000, 757837, 1000000, 0, 0, 0, 0],
+ 'QCD_Pt_470to600': [50782000, 52408000, 27881028, 52448000, 0, 0, 0, 0],
+ 'QCD_Pt_600to800': [61972000, 65088000, 66134964, 67508000, 0, 0, 0, 0],
+ 'QCD_Pt_800to1000': [35527000, 37782000, 39529008, 37160000, 0, 0, 0, 0],
+ 'QCD_Pt_80to120': [29743000, 29938000, 28430936, 29685000, 0, 0, 0, 0],
+ 'ST_s-channel_4f_hadronicDecays': [4700000, 5300000, 9652000, 16391000, 0, 0, 0, 0],
+ 'ST_s-channel_4f_leptonDecays': [5518000, 5471000, 9883805, 19365999, 0, 0, 0, 0],
+ 'ST_t-channel_antitop_4f_InclusiveDecays': [31024000, 30609000, 69921000, 95833000, 0, 0, 0, 0],
+ 'ST_t-channel_top_4f_InclusiveDecays': [55961000, 63073000, 129903000, 178756000, 0, 0, 0, 0],
+ 'ST_tW_antitop_5f_inclusiveDecays': [2300000, 2554000, 7977430, 7749000, 0, 0, 0, 0],
+ 'ST_tW_top_5f_inclusiveDecays': [2300000, 2491000, 7794186, 7956000, 0, 0, 0, 0],
+ 'TBbarQ_t-channel_4FS': [0, 0, 0, 0, 2973675, 10178237, 5908000, 2954000],
+ 'TTJets': [5047017, 5068919, 154280331, 306142112, 0, 0, 0, 0],
+ 'TTTo2L2Nu': [37505000, 43630000, 960752, 146010000, 0, 0, 0, 0],
+ 'TTToHadronic': [97600000, 109380000, 41729120, 343248000, 0, 0, 0, 0],
+ 'TTToSemiLeptonic': [144974000, 144974000, 41221873, 478982000, 0, 0, 0, 0],
+ 'TTto2L2Nu': [0, 0, 0, 0, 23802613, 84809345, 48104000, 24556000],
+ 'TTto4Q': [0, 0, 0, 0, 53475524, 179665017, 104963000, 52849000],
+ 'TTtoLNu2Q': [0, 0, 0, 0, 66502405, 268023449, 152653000, 63875000],
+ 'TWminusto2L2Nu': [0, 0, 0, 0, 2387056, 8065364, 4985000, 2479000],
+ 'TWminusto4Q': [0, 0, 0, 0, 3862005, 13460118, 7919000, 3934000],
+ 'TWminustoLNu2Q': [0, 0, 0, 0, 4743971, 16687478, 9650268, 4943378],
+ 'TbarBQ_t-channel_4FS': [0, 0, 0, 0, 1433215, 5185208, 2878000, 1488000],
+ 'TbarWplusto2L2Nu': [0, 0, 0, 0, 2327688, 8260009, 4907000, 2488000],
+ 'TbarWplusto4Q': [0, 0, 0, 0, 3762952, 13447890, 7970000, 3976000],
+ 'TbarWplustoLNu2Q': [0, 0, 0, 0, 4366467, 16485994, 9550671, 5146630],
+ 'WJetsToLNu': [28880770, 28268221, 30008250, 29117828, 0, 0, 0, 0],
+ 'WJetsToQQ_HT-200to400': [8000572, 7065076, 15968057, 14494966, 0, 0, 0, 0],
+ 'WJetsToQQ_HT-400to600': [5144427, 4455853, 9927793, 9335298, 0, 0, 0, 0],
+ 'WJetsToQQ_HT-600to800': [7668058, 6793578, 14667933, 13633226, 0, 0, 0, 0],
+ 'WJetsToQQ_HT-800toInf': [7740501, 6769101, 14722417, 13581343, 0, 0, 0, 0],
+ 'WWTo1L1Nu2Q': [0, 0, 5054286, 0, 0, 0, 0, 0],
+ 'WWTo1L1Nu2Q_4f': [20071678, 19976139, 0, 40272013, 0, 0, 0, 0],
+ 'WWTo2L2Nu': [3018000, 2900000, 0, 9994000, 0, 0, 0, 0],
+ 'WWTo2L2Nu_NNPDF31': [0, 0, 2000000, 0, 0, 0, 0, 0],
+ 'WWTo4Q_4f': [19875566, 19814659, 0, 39674916, 0, 0, 0, 0],
+ 'WWTo4Q_NNPDF31': [0, 0, 2000000, 0, 0, 0, 0, 0],
+ 'WWto2L2Nu': [0, 0, 0, 0, 6135192, 22428584, 12951000, 6363000],
+ 'WWto4Q': [0, 0, 0, 0, 28443500, 100600382, 55514000, 27871000],
+ 'WWtoLNu2Q': [0, 0, 0, 0, 27258240, 94010944, 53695000, 26345000],
+ 'WZTo2Q2L_mllmin4p0': [15678816, 13526954, 29091996, 28576996, 0, 0, 0, 0],
+ 'WZTo2Q2Nu': [0, 0, 30748033, 0, 0, 0, 0, 0],
+ 'WZTo2Q2Nu_4f': [2718497, 2191743, 0, 5014621, 0, 0, 0, 0],
+ 'WZTo3LNu': [0, 0, 976400, 9821283, 0, 0, 0, 0],
+ 'WZTo3LNu_5f': [18105398, 20810003, 0, 0, 0, 0, 0, 0],
+ 'WZTo4Q_4f': [9311867, 7991006, 16867170, 17184320, 0, 0, 0, 0],
+ 'WZto2L2Q': [0, 0, 0, 0, 4167791, 14954528, 8366000, 4267000],
+ 'WZto3LNu': [0, 0, 0, 0, 2797132, 9716360, 20784000, 10316000],
+ 'WZto4Q-1Jets-4FS': [0, 0, 0, 0, 474324, 1515455, 988913, 512425],
+ 'WZtoLNu2Q': [0, 0, 0, 0, 8902752, 30143700, 17797000, 8780000],
+ 'Wto2Q-2Jets_PTQQ-100to200_1J': [0, 0, 0, 0, 47882401, 164476337, 99168259, 49283320],
+ 'Wto2Q-2Jets_PTQQ-100to200_2J': [0, 0, 0, 0, 50997629, 168080776, 93399260, 50912674],
+ 'Wto2Q-2Jets_PTQQ-200to400_1J': [0, 0, 0, 0, 10451114, 35583153, 20312664, 10537053],
+ 'Wto2Q-2Jets_PTQQ-200to400_2J': [0, 0, 0, 0, 21578883, 83784741, 44363704, 23163107],
+ 'Wto2Q-2Jets_PTQQ-400to600_1J': [0, 0, 0, 0, 485235, 1520440, 912601, 485595],
+ 'Wto2Q-2Jets_PTQQ-400to600_2J': [0, 0, 0, 0, 1398803, 5381767, 3123225, 1453896],
+ 'Wto2Q-2Jets_PTQQ-600_1J': [0, 0, 0, 0, 476865, 1561975, 960155, 500652],
+ 'Wto2Q-2Jets_PTQQ-600_2J': [0, 0, 0, 0, 494446, 1633562, 974387, 493358],
+ 'WtoLNu-2Jets': [0, 0, 0, 0, 82197865, 288582950, 200092037, 95603855],
+ 'WtoLNu-4Jets': [0, 0, 0, 0, 87204163, 342750582, 191075090, 94639090],
+ 'ZZTo2L2Nu': [16862000, 15928000, 8744768, 56886000, 0, 0, 0, 0],
+ 'ZZTo2Nu2Q_5f': [2476951, 2468807, 0, 0, 0, 0, 0, 0],
+ 'ZZTo2Q2L_mllmin4p0': [16060738, 13740600, 29521496, 29357938, 0, 0, 0, 0],
+ 'ZZTo2Q2Nu': [0, 0, 62172314, 19813764, 0, 0, 0, 0],
+ 'ZZTo4L': [49691000, 0, 16075000, 99191000, 0, 0, 0, 0],
+ 'ZZTo4L_5f': [0, 20757608, 0, 0, 0, 0, 0, 0],
+ 'ZZTo4Q_5f': [1241583, 1270030, 2512535, 2535895, 0, 0, 0, 0],
+ 'ZZto2L2Nu': [0, 0, 0, 0, 14553603, 50721078, 29787000, 14931000],
+ 'ZZto2L2Q': [0, 0, 0, 0, 14664788, 49084483, 29757000, 14919000],
+ 'ZZto2Nu2Q': [0, 0, 0, 0, 2932294, 10466912, 5955000, 2979000],
+ 'ZZto4L': [0, 0, 0, 0, 14644284, 61330176, 29832000, 14625000],
+ 'ZZto4Q-1Jets': [0, 0, 0, 0, 2161649, 3504194, 3132585, 1907178],
+ "M250" :  [50000, 150000, 50000, 25000],
+        "M500" : [50000, 150000, 50000, 25000],
+        "M750" : [50000, 150000, 50000, 25000],
+        "M1000" : [50000, 150000, 50000, 25000],
+        "M1250" : [50000, 150000, 50000, 25000],
+        "M1500" : [50000, 150000, 50000, 25000],
+        "M1750" : [50000, 150000, 50000, 25000],
+        "M2000" : [50000, 150000, 50000, 25000],
+        "M2500" : [50000, 150000, 50000, 25000],
+        "M3000" : [50000, 150000, 50000, 25000],
+        "M3500" : [50000, 150000, 50000, 25000],
+        "M4000" : [50000, 150000, 50000, 25000],
+        "M4500" : [50000, 150000, 50000, 25000],
+        "M5000" : [50000, 150000, 50000, 25000]   
+}
+
+
+
 #helper dict for year to idx in lists of nEvents above
 yrTonEventsIdx = {"2016" : 0, "2016post" : 1, "2017" : 2, "2018" : 3, "2022" : 4, "2022post": 5, "2023": 6, "2023post": 7}
-
-
-
-
 
 
 import subprocess
@@ -790,18 +901,26 @@ def lookupNEvents():
     nEventsTemp = {}
     baseQuery = 'dasgoclient -query="dataset='
 
+
+    zeroEventStr = "The following years - datasets return zero events:"
+    
     for yrIdx, year in enumerate(years):
         for proc in processes:
             dsNames = bkgdDatasets_mini[year][proc]
             for ds in dsNames:
                 command = 'dasgoclient -query="dataset=' + ds + '" -json'
                 stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-                loaded = json.loads(stdout.strip())
-                if 'nevents' in loaded[1]['dataset'][0].keys():
-                    result = loaded[1]['dataset'][0]
-                elif 'nevents' in loaded[2]['dataset'][0].keys():
-                    result = loaded[2]['dataset'][0]
-                nEvts = result['nevents']
+                if len(stdout) == 0:
+                    print("No stdout when querying for " + ds)
+                    
+                idxInRes = stdout.find("nevents")
+                if idxInRes < 0:
+                    print("\n\nWARNING: nevents not found in query result for", ds)
+                    continue
+                endIdx = stdout.find(",", idxInRes, idxInRes + 30)
+                nEvts = int(stdout[idxInRes + 9: endIdx].strip())
+                
+                #nEvts = result['nevents']
                 if ds.find("_TuneCP5") > 0:
                     subname = ds[1:ds.find("_TuneCP5")]
                 else:
@@ -813,8 +932,12 @@ def lookupNEvents():
                 nEventsTemp[subname][yrIdx] += nEvts
                 print(year, subname, nEvts)
 
+                if nEvts == 0:
+                    zeroEventStr += "\n" + year + " - " + ds
+
 
     pprint(nEventsTemp)
+    print("\n\n", zeroEventStr)
 
 
 
