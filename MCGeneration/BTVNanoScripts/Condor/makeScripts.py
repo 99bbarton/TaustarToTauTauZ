@@ -18,18 +18,26 @@ def parseArgs():
     argparser.add_argument("--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
     args = argparser.parse_args()
 
+    hasSB = [False, False]
     if "ALL" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250", "M500", "M750", "M1000", "M1500", "M2000", "M2500", "M3000", "M3500", "M4000", "M4500", "M5000"]
-        hasSB = (True, True)
+        hasSB = [True, True]
     elif "BKGD" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
-        hasSB = (False, True)
+        hasSB = [False, True]
     elif "BKGDnoQCD" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"]
-        hasSB = (False, True)
+        hasSB = [False, True]
     elif "SIG" in args.processes:
         args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
-        hasSB = (True, False)
+        hasSB = [True, False]
+    else:
+        for proc in args.processes:
+            if proc.startswith("M"):
+                hasSB[0] = True
+            else:
+                hasSB[1] = True
+    
 
     if "ALL" in args.years:
         args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
@@ -60,7 +68,8 @@ def main(args):
 
 def makeScripts(args, dateStr, hasSB):
     dirsToMake = []
-    
+
+    os.system("mkdir Jobs/" + dateStr)
     for year in args.years:
         if year in ["2016", "2016post", "2017", "2018"]:
             era = 2
@@ -86,7 +95,6 @@ def makeScripts(args, dateStr, hasSB):
         
         scriptDir = "Jobs/" + dateStr + "/" + year + "/" 
 
-        os.system("mkdir Jobs/" + dateStr)
         os.system("mkdir Jobs/" + dateStr + "/" + year)
 
         if era == 3:
@@ -94,7 +102,7 @@ def makeScripts(args, dateStr, hasSB):
             cmssw_nano = "CMSSW_14_1_1"
         else: 
             cmssw_pfNano = "CMSSW_10_6_29"
-            cmssw_nano = "CMSSW_14_1_1"
+            cmssw_nano = "CMSSW_10_6_30_patch1"
 
         for proc in args.processes:
             if proc.startswith("M"):
@@ -118,9 +126,15 @@ def makeScripts(args, dateStr, hasSB):
                 inpDsFiles = stdout.split("\n")
 
                 if dataset.startswith("/"):
-                    subDataset = dataset[1:dataset.find("TuneCP5")]
+                    if dataset.find("TuneCP5") > 0:
+                        subDataset = dataset[1:dataset.find("TuneCP5")]
+                    else:
+                        subDataset = dataset[1:dataset.find("_")+1]
                 else:
-                    subDataset = dataset[:dataset.find("TuneCP5")]
+                    if dataset.find("TuneCP5") > 0:
+                        subDataset = dataset[:dataset.find("TuneCP5")]
+                    else:
+                        subDataset = dataset[:dataset.find("_")+1]
 
                 nJobs = len(inpDsFiles) // args.filesPerJob
 
@@ -175,11 +189,13 @@ def makeScripts(args, dateStr, hasSB):
                         executable.write("cd PhysicsTools/NanoAODTools/condor/\n")
                         if era == 2: 
                             executable.write("mv $HOME/" + cmssw_pfNano + "/src/PhysicsTools/PFNano/" + subDataset +"*.root .\n")
+                            executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
+                            executable.write("python condorScript.py " + year + "\n")
                         else:
                             executable.write("mv $HOME/" + cmssw_pfNano + "/src/btvnano-prod/" + subDataset +"*.root .\n")
-                        executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
-                        #Perform the NanoAOD-tools processing of the new custom nano+PF files
-                        executable.write("python3 condorScript.py " + year + "\n")
+                            executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
+                            #Perform the NanoAOD-tools processing of the new custom nano+PF files
+                            executable.write("python3 condorScript.py " + year + "\n")
                         executable.write("ls $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
                         #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
@@ -201,7 +217,7 @@ def makeScripts(args, dateStr, hasSB):
                         jdlFile.write('Log = condor_PFNano-Nano_$(Cluster)_$(Process).log\n')
                         jdlFile.write('Queue 1\n')
                         if era == 2:
-                            jdlFile.write('+DesiredOS = "SL7"')
+                            jdlFile.write('+ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"\n')
                     #End jdl creation
                 #End jobN
             #End dataset
