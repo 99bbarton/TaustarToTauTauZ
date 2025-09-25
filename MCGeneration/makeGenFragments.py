@@ -53,6 +53,7 @@ for mass in masses:
             fragmentFile.write("from Configuration.Generator.MCTunesRun3ECM13p6TeV.PythiaCP5Settings_cfi import *\n")
         else:
             fragmentFile.write("from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *\n")
+            fragmentFile.write("from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *\n")
         fragmentFile.write("generator = cms.EDFilter('Pythia8ConcurrentGeneratorFilter',\n")
         fragmentFile.write("                        maxEventsToPrint = cms.untracked.int32(1),\n")
         fragmentFile.write("                        pythiaPylistVerbosity = cms.untracked.int32(1),\n")
@@ -74,5 +75,7 @@ for mass in masses:
         fragmentFile.write("            '4000015:m0 = " + mass + "'),\n")
         fragmentFile.write("                        parameterSets = cms.vstring('pythia8CommonSettings',\n")
         fragmentFile.write("                                                    'pythia8CP5Settings',\n")
+        if not run3:
+            fragmentFile.write("                                                    'pythia8PSweightsSettings',\n")
         fragmentFile.write("                                                    'processParameters',\n")
         fragmentFile.write("                                                    )))\n")

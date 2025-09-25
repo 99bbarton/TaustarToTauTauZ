@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 from Configuration.Generator.Pythia8CommonSettings_cfi import *
 from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
+from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *
 generator = cms.EDFilter('Pythia8ConcurrentGeneratorFilter',
                         maxEventsToPrint = cms.untracked.int32(1),
                         pythiaPylistVerbosity = cms.untracked.int32(1),
@@ -15,8 +16,9 @@ generator = cms.EDFilter('Pythia8ConcurrentGeneratorFilter',
             'ExcitedFermion:Lambda= 10000',
             '4000015:onMode = off',
             '4000015:onIfMatch = 15 23',
-            '4000015:m0 = 2000'),
+            '4000015:m0 = 4500'),
                         parameterSets = cms.vstring('pythia8CommonSettings',
                                                     'pythia8CP5Settings',
+                                                    'pythia8PSweightsSettings',
                                                     'processParameters',
                                                     )))
