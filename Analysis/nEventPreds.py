@@ -98,7 +98,7 @@ massToLHalfWidths = {
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
-    argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
+    argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
@@ -169,10 +169,7 @@ def makeEvtPredHists(args):
         for year in args.years:
             print("\t\tProcessing year =", year)
             #First do signal
-            if year in ["2022", "2022post", "2023", "2023post"]:
-                filePath = os.environ["ROOTURL"] + os.environ["SIG_R3"] + "taustarToTauZ_m" + mass + "_" + year + ".root"
-            else:
-                filePath = os.environ["ROOTURL"] + os.environ["SIG_R2"] + "taustarToTauZ_m" + mass + "_" + year + ".root"
+            filePath = os.environ["ROOTURL"] + os.environ["SIG_"+year] + "taustarToTauZ_m" + mass + "_" + year + ".root"
             sigFile = TFile.Open(filePath, "r")
             sigTree = sigFile.Get("Events")
 
