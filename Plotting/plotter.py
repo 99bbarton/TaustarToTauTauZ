@@ -14,7 +14,7 @@ sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
 from Cuts import getCuts
 from mcWeights import getWeight
-from datasets import procToSubProc
+from datasets import procToSubProc_run3_legacy, procToSubProc_run2, procToSubProc_run3, yearToEra
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -67,6 +67,7 @@ varToPlotParams = {
     "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120],
     "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 10, 0.5, 10.5],
     "RECL_PT"   : ["ZReClJ_pt", "Re-clustered Z Jet pT [GeV]]", 60, 0, 3000],
+    "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5]
     
 }
 
@@ -92,6 +93,7 @@ def parseArgs():
     argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
+    argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy i.e. V0 proc->subProc translation for run3")
     argparser.add_argument("-c", "--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
@@ -238,12 +240,21 @@ def getFileList(args):
         filelist["ALL"] = []
         for proc in args.processes:
             for year in args.years:
+                era = yearToEra(year)
+                if era == "2":
+                    procToSubProc = procToSubProc_run2
+                elif args.legacy:
+                    procToSubProc = procToSubProc_run3_legacy
+                else:
+                    procToSubProc = procToSubProc_run3
+                    
                 filename = args.inDir
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                     filelist["ALL"].append(filename)
+                    
                 elif proc in procToSubProc.keys():
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
@@ -256,6 +267,14 @@ def getFileList(args):
     elif args.plotEach == "YEAR":
         for year in args.years:
             filelist[year] = []
+            era = yearToEra(year)
+            if era == "2":
+                procToSubProc = procToSubProc_run2
+            elif args.legacy:
+                procToSubProc = procToSubProc_run3_legacy
+            else:
+                procToSubProc = procToSubProc_run3
+                
             for proc in args.processes:
                 filename = args.inDir
                 if proc.startswith("M"):
@@ -271,13 +290,22 @@ def getFileList(args):
                             filename = args.inDir
                         filename += subProc + "_"
                         filelist[year].append(filename + year + ".root")
+                        
     elif args.plotEach == "PROC":
         if args.sumBkgd:
             filelist["Backgrounds"] = []
         for proc in args.processes:
             filelist[proc] = []
             for year in args.years:
+                era = yearToEra(year)
+                if era == "2":
+                    procToSubProc = procToSubProc_run2
+                elif args.legacy:
+                    procToSubProc = procToSubProc_run3_legacy
+                else:
+                    procToSubProc = procToSubProc_run3
 
+                
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
@@ -285,6 +313,7 @@ def getFileList(args):
                         filename = args.inDir
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                     filelist[proc].append(filename)
+                    
                 elif proc in procToSubProc.keys():
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
@@ -299,6 +328,7 @@ def getFileList(args):
 
             if len(filelist[proc]) == 0: #If we summedBkgd, per-process lists are left empty for non-signal processes
                 del filelist[proc]
+                
     elif args.plotEach == "MASS": #Really just a special case of PROC above but convenient for e.g. legend making for sig only plotting
         for proc in args.processes:
             mass = proc[1:]
@@ -310,11 +340,44 @@ def getFileList(args):
                     filename = args.inDir
                 filename += "taustarToTauZ_m" + mass + "_"
                 filelist[mass].append(filename + year + ".root")
+                
     elif args.plotEach == "SP":
+        #Since run2 and run3 have diff proc->subProc naming, need to proceed differently
         for proc in args.processes:
-            for subProc in procToSubProc[proc]:
+            subProcs = {"2": [], "3" : []}
+            doneEras = []
+            for year in args.years:
+                era = yearToEra(year)
+                if era in doneEras:
+                    continue
+                
+                if era == "2":
+                    procToSubProc = procToSubProc_run2
+                elif args.legacy:
+                    procToSubProc = procToSubProc_run3_legacy
+                else:
+                    procToSubProc = procToSubProc_run3
+                
+                subProcs[era].extend(procToSubProc[proc])
+                doneEras.append(era)
+
+            #Do independently for run2 and run3 since naming of subprocs is different
+            for subProc in subProcs["2"]:
                 filelist[subProc] = []
                 for year in args.years:
+                    if yearToEra(year) != "2":
+                        continue
+                    if args.inDir == "DEF":
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                    else:
+                        filename = args.inDir
+                    filename += subProc + "_" + year + ".root"
+                    filelist[subProc].append(filename)
+            for subProc in subProcs["3"]:
+                filelist[subProc] = []
+                for year in args.years:
+                    if yearToEra(year) != "3":
+                        continue
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                     else:
@@ -394,11 +457,21 @@ def plot1D(filelist, args):
             fileNames = filelist[hName]
             
         for filename in fileNames:
-            inFile = TFile.Open(filename, "r")
-            if inFile == "None":
+            try:
+                inFile = TFile.Open(filename, "r")
+            except:
                 print("ERROR: Could not read file " + inFile)
                 continue
-            tree = inFile.Get("Events")
+            try:
+                tree = inFile.Get("Events")
+                if tree.GetEntries() == 0:
+                    print("Warning: TTree was empty for file:", filename)
+                    inFile.Close()
+                    continue
+            except:
+                print('Warning: No tree called "Events" in file:', filename)
+                inFile.Close()
+                continue
 
             for ch in args.channel:
                 if args.plotEach == "CH" and ch != hName:
@@ -462,7 +535,7 @@ def plot1D(filelist, args):
             inFile.Close()
         #END FILE
         
-        if isBkgdMC(hName) and args.stack:
+        if (not hName.startswith("M")) and args.stack:
             bHistNums.append(hNum)
             bHistEntries.append(hists[hNum].Integral())
             bHistNames.append(hName)
@@ -794,26 +867,9 @@ def printVarOps():
 
     print("-----------------------------------------------------------------------------------------------------\n")
         
-## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
-
-def yearToEra(year):
-    if year in ["2016", "2016post", "2017", "2018"]:
-        return "2"
-    elif year in ["2022", "2022post", "2023", "2023post"]:
-        return "3"
-    else:
-        return ""
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-def isBkgdMC(name):
-    global procToSubProc
-    subProcesses = ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L", "WZto2L2Q", "WZto3LNu", "WZtoLNu2Q", "WWto2L2Nu", "WWto4Q", "WWtoLNu2Q", "WtoLNu-4Jets", "DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50", "TTto2L2Nu", "TTto4Q", "TTtoLNu2Q", "TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"]
-
-    return (name in procToSubProc.keys()) or name in subProcesses
-
-
-## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 if __name__ == "__main__":
     args = parseArgs()
     main(args)
