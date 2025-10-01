@@ -90,7 +90,7 @@ def parseArgs():
     argparser = argparse.ArgumentParser(description="Make a large variety of plots corresponding to provided parameters. ")
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
     argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
-    argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2015","2016", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
+    argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
     argparser.add_argument("-c", "--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
@@ -241,7 +241,7 @@ def getFileList(args):
                 filename = args.inDir
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                     filelist["ALL"].append(filename)
                 elif proc in procToSubProc.keys():
@@ -260,7 +260,7 @@ def getFileList(args):
                 filename = args.inDir
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
                     filelist[year].append(filename)
                 elif proc in procToSubProc.keys():
@@ -280,7 +280,7 @@ def getFileList(args):
 
                 if proc.startswith("M"):
                     if args.inDir == "DEF":
-                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                        filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
                     else:
                         filename = args.inDir
                     filename += "taustarToTauZ_" + proc.lower() + "_" + year + ".root"
@@ -305,7 +305,7 @@ def getFileList(args):
             filelist[mass] = []
             for year in args.years:
                 if args.inDir == "DEF":
-                    filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_R" + yearToEra(year)])
+                    filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["SIG_" + year])
                 else:
                     filename = args.inDir
                 filename += "taustarToTauZ_m" + mass + "_"
