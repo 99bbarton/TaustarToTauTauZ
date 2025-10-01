@@ -12,7 +12,7 @@ def haddFiles():
     argparser = argparse.ArgumentParser(description="Tool to hadd the outputs of the Condor jobs together")
     argparser.add_argument("-d", "--date", required=True, type=str, help="The date in the form e.g. 1Apr2025 that the jobs were created on")
     argparser.add_argument("-y", "--year", required=True, choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"], help="What year the jobs correspond to")
-    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
+    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
     argparser.add_argument("-v", "--version", required=True, type=str, help="A unique string to denote the new file area on EOS.")
     argparser.add_argument("-l", "--legacy", required=False, action="store_true", help="If specified, uses old version of procToSubProc for Run3")
     args = argparser.parse_args()
@@ -48,7 +48,10 @@ def haddFiles():
     
     
     for proc in args.processes:
-        inDir = inDirBase + proc + "/"
+        if not proc.startswith("M"):
+            inDir = inDirBase + proc + "/"
+        else:
+            inDir = inDirBase
 
         print("Starting " + args.year + " " + proc +  " samples...")
         
