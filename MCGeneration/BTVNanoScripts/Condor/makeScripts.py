@@ -213,7 +213,7 @@ def makeScripts(args, dateStr, hasSB):
                         jdlFile.write('universe = vanilla\n')
                         jdlFile.write("Executable = run_" + subDataset + str(jobN) + ".sh\n")
                         if era == 2:
-                            jdlFile.write('request_memory = 4000\n')
+                            jdlFile.write('request_memory = 5000\n')
                         jdlFile.write('should_transfer_files = YES\n')
                         jdlFile.write('when_to_transfer_output = ON_EXIT\n')
                         jdlFile.write('Output = condor_PFNano-Nano_$(Cluster)_$(Process).stdout\n')
