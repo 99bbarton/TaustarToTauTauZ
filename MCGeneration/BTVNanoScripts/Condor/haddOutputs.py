@@ -57,7 +57,7 @@ def haddFiles():
         
         if proc.startswith("M"):
             print("\thadd'ing " + proc + " samples")
-            command = "hadd -f9 root://cmseos.fnal.gov/" + outDir + "/taustarToTauZ_" + proc.lower() + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + proc.lower() + "`"
+            command = "hadd -f9 root://cmseos.fnal.gov/" + outDir + "/taustarToTauZ_" + proc.lower() + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + proc.lower() + "_`"
             stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             print(stdout)
             if len(stderr) > 0:
