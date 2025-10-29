@@ -1,3 +1,14 @@
+#Script to compare created configs to completed .root output file lists and make resubmission jobs
+#Jobs needing resubmission are split into halves so as to reduce their required running time
+#To produce the completed job file lists, from the original job submission directory, do e.g.
+
+# for proc in DY QCD ST TT WJets WW WZ ZZ; do eosls $TSTTZ/BackgroundMC/PFNano/JobOutputs/25Sep2025/2022/$proc; done > doneFileList.txt
+
+#Script mostly from ChatGPT
+
+
+
+
 #!/usr/bin/env python3
 import argparse
 import subprocess
@@ -16,10 +27,10 @@ EOS_BASE_PATH = "$TSTTZ/BackgroundMC/PFNano/JobOutputs"
 
 def get_finished_jobs(date, year, proc, subproc):
     """Get list of finished jobs for a given subprocess under a category."""
-    eos_path = f"{EOS_BASE_PATH}/{date}/{year}/{proc}/"
-    eos_path = os.path.expandvars(eos_path)
+    eosJobList_path = f"./Jobs/{date}/{year}/doneFileList.txt"
+    eosJobList_path = os.path.expandvars(eosJobList_path)
     try:
-        output = subprocess.check_output(["eosls", eos_path], text=True)
+        output = subprocess.check_output(["cat", eosJobList_path], text=True)
     except subprocess.CalledProcessError:
         print(f"Could not access EOS path: {eos_path}")
         return set()
@@ -31,7 +42,7 @@ def get_finished_jobs(date, year, proc, subproc):
 
 def get_total_jobs(date, year, subproc):
     """Get list of total jobs (local .sh files) for a given subprocess."""
-    job_dir = Path(f"./Jobs/{date}/{year}")
+    job_dir = Path(f"./Jobs/{date}/{year}/")
     if not job_dir.exists():
         print(f"Missing directory: {job_dir}")
         return set()
@@ -129,7 +140,7 @@ def split_job_script(job_script_path, year):
         with open(new_script_path, "w") as f:
             f.writelines(prologue + half_blocks + epilog)
         os.chmod(new_script_path, 0o755)
-        print(f"Created split script: {new_script_path.relative_to(Path.cwd())}")
+        print(f"Created split script: {new_script_path}")
 
         jdl_name = f"jobConfig_{proc_name}_{year}_{jobnum}re{idx}.jdl"
         jdl_path = resub_dir / jdl_name
