@@ -38,8 +38,9 @@ import os
 import sys
 from array import array
 from tabulate import tabulate
-from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph, ROOT
-ROOT.ROOT.EnableImplicitMT()  # use all available cores for ROOT internal parallelism
+
+from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph, EnableImplicitMT
+EnableImplicitMT()  # use all available cores for ROOT internal parallelism
 
 sys.path.append("../Framework/")
 from datasets import processes, procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
@@ -129,7 +130,7 @@ def parseArgs():
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
-#Reworked version of the original function to improve file I/O efficiency
+#Reworked version of original function to change loop ordering for improved file I/O efficiency
 def makeEvtPredHists(args):
     canv = TCanvas("canv_binScheme", "N Events in 2D Collinear Mass Bins", 1200, 800)
     leg = TLegend(0.7, 0.7, 0.9, 0.9)
@@ -138,42 +139,39 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     baseCutStrs = []
-    baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ((LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM<=HIGH_EDGE) || (LOW_EDGE<=CHANNEL_maxCollM && CHANNEL_maxCollM<=HIGH_EDGE)))")
+    baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))")
     if args.nBins == 4:
-        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM<LOW_EDGE))")
-        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_minCollM>HIGH_EDGE))")
-        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM>HIGH_EDGE)&&(CHANNEL_minCollM<LOW_EDGE))")
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM < LOW_EDGE) )")
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_minCollM > HIGH_EDGE) )")
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )")
     else:
-        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ((CHANNEL_maxCollM<LOW_EDGE)||(CHANNEL_minCollM>HIGH_EDGE)||((CHANNEL_maxCollM>HIGH_EDGE)&&(CHANNEL_minCollM<LOW_EDGE))))")
+        baseCutStrs.append("(CHANNEL_isCand && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ZReClJ_nSJs<4 && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )")
 
+    # prepare histograms for each mass
     massBins = array("f", [float(m) for m in args.masses])
-    sigHists, bkgdHists = {}, {}
-    sigEvtPerMass, bkgdEvtPerMass = {}, {}
-    eventsPerProc = {}
+    sigHists = {}
+    bkgdHists = {}
+    sigEvtPerMass = {m: 0 for m in args.masses}
+    bkgdEvtPerMass = {m: 0 for m in args.masses}
+    eventsPerProc = {m: {"SIG": 0, "ZZ": 0, "WZ": 0, "WW": 0, "WJets": 0, "DY": 0, "TT": 0, "ST": 0, "QCD": 0} for m in args.masses}
 
-    for m in args.masses:
-        sigHists[m] = TH1F(f"sig_m{m}", f"Signal m{m};2D Collinear Mass Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
-        bkgdHists[m] = TH1F(f"bkgd_m{m}", f"Background m{m};2D Collinear Mass Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
-        sigEvtPerMass[m] = 0
-        bkgdEvtPerMass[m] = 0
-        eventsPerProc[m] = {"SIG":0,"ZZ":0,"WZ":0,"WW":0,"WJets":0,"DY":0,"TT":0,"ST":0,"QCD":0}
+    for mass in args.masses:
+        sigHists[mass] = TH1F(f"sig_m{mass}", f"Signal m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
+        bkgdHists[mass] = TH1F(f"bkgd_m{mass}", f"Background m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
 
     for year in args.years:
-        print(f"\n>>> Processing year: {year}")
+        print(f"Processing year = {year}")
 
         for mass in args.masses:
-            if args.asymm:
-                lBinEdges = massToLEdges_asymm[mass]
-            else:
-                lBinEdges = massToLEdges[mass]
-
+            print(f"\tProcessing mass = {mass}")
             filePath = os.environ["ROOTURL"] + os.environ["SIG_" + year] + f"taustarToTauZ_m{mass}_{year}.root"
             sigFile = TFile.Open(filePath, "r")
             sigTree = sigFile.Get("Events")
 
-            if not sigTree or sigTree.GetEntries() == 0:
-                print(f"Warning: Empty or missing signal tree for mass {mass}, year {year}")
-                continue
+            if args.asymm:
+                lBinEdges = massToLEdges_asymm[mass]
+            else:
+                lBinEdges = massToLEdges[mass]
 
             for ch in args.channels:
                 for bin in range(args.nBins):
@@ -187,7 +185,6 @@ def makeEvtPredHists(args):
                     if bin == 0:
                         sigEvtPerMass[mass] += nEvts * weight
                         eventsPerProc[mass]["SIG"] += nEvts * weight
-
             sigFile.Close()
 
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
@@ -197,39 +194,41 @@ def makeEvtPredHists(args):
             else:
                 subProcs = procToSubProc_run2[proc]
 
-            chain = TChain("Events")
-            n_added = 0
             for subProc in subProcs:
                 filePath = dirPath + subProc + "_" + year + ".root"
-                if not os.path.exists(filePath):
-                    print(f"Warning: Missing file {filePath}")
+                bkgdFile = TFile.Open(filePath, "r")
+                try:
+                    bkgdTree = bkgdFile.Get("Events")
+                    if not bkgdTree or bkgdTree.GetEntries() == 0:
+                        print("Warning: empty or missing Events tree:", filePath)
+                        bkgdFile.Close()
+                        continue
+                except:
+                    print("Warning: could not read tree in", filePath)
+                    bkgdFile.Close()
                     continue
-                added = chain.Add(filePath)
-                if added:
-                    n_added += 1
 
-            if n_added == 0 or chain.GetEntries() == 0:
-                print(f"Warning: No valid events for {proc} in {year}")
-                continue
+                for mass in args.masses:
+                    if args.asymm:
+                        lBinEdges = massToLEdges_asymm[mass]
+                    else:
+                        lBinEdges = massToLEdges[mass]
 
-            for mass in args.masses:
-                if args.asymm:
-                    lBinEdges = massToLEdges_asymm[mass]
-                else:
-                    lBinEdges = massToLEdges[mass]
+                    for ch in args.channels:
+                        for bin in range(args.nBins):
+                            cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
+                            cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
+                            cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
-                for ch in args.channels:
-                    for bin in range(args.nBins):
-                        cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
-                        cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
-                        cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                        weight = getWeight(proc, year, xs=True)
-                        nEvts = chain.GetEntries(cutStr)
+                            weight = getWeight(subProc, year, xs=True)
+                            nEvts = bkgdTree.GetEntries(cutStr)
 
-                        bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(bin + 1), nEvts * weight)
-                        if bin == 0:
-                            bkgdEvtPerMass[mass] += nEvts * weight
-                            eventsPerProc[mass][proc] += nEvts * weight
+                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(bin + 1), nEvts * weight)
+                            if bin == 0:
+                                bkgdEvtPerMass[mass] += nEvts * weight
+                                eventsPerProc[mass][proc] += nEvts * weight
+
+                bkgdFile.Close()
 
     for i, mass in enumerate(args.masses):
         sigHist = sigHists[mass]
@@ -243,7 +242,7 @@ def makeEvtPredHists(args):
             leg.AddEntry(sigHist, "Signal", "L")
             leg.AddEntry(bkgdHist, "Background", "F")
 
-        stack = THStack(f"stack_m{mass}", f"Events Passing Selection: m{mass};2D Coll Mass Bin;Events")
+        stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass};Bin;Events")
         stack.Add(bkgdHist)
         stack.Add(sigHist)
 
@@ -284,6 +283,7 @@ def makeEvtPredHists(args):
     canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
 
     return [eventsPerProc[m] for m in args.masses]
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
