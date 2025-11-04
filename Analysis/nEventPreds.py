@@ -201,7 +201,16 @@ def makeEvtPredHists(args):
                     subProcs = procToSubProc_run2[proc]
                 for subProc in subProcs:
                     bkgdFile = TFile.Open(dirPath + subProc + "_" + year + ".root", "r")
-                    bkgdTree = bkgdFile.Get("Events")
+                    try:
+                        bkgdTree = bkgdFile.Get("Events")
+                        if bkgdTree.GetEntries() == 0:
+                            print("Warning: TTree was empty for file: " + dirPath + subProc + "_" + year + ".root")
+                            bkgdFile.Close()
+                            continue
+                    except:
+                        print('Warning: No tree called "Events" in file: ' + dirPath + subProc + "_" + year + ".root")
+                        bkgdFile.Close()
+                        continue
                     
                     for ch in args.channels:
                         for bin in range(args.nBins):

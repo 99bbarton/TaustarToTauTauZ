@@ -178,6 +178,7 @@ def main():
         help="Which samples to process"
     )
     parser.add_argument("-s", "--split", action="store_true", help="Split unfinished job scripts into halves")
+    parser.add_argument("-j", "--justCount", action="store_true", help="If specified, won't make new config files")
     args = parser.parse_args()
 
     years_to_run = expand_years(args.years)
@@ -213,11 +214,35 @@ def main():
 
                     if missing:
                         print(f"{len(missing)} jobs missing for {subproc}:")
+                        
+                        if args.justCount:
+                            continue
+                        
                         for jobnum in missing:
                             job_file = Path(f"./Jobs/{date}/{year}/run_{subproc}_{jobnum}.sh")
                             print(f"  {job_file.name}")
+                            resub_dir = job_file.parent / "Resubmission"
+                            resub_dir.mkdir(parents=True, exist_ok=True)
+
                             if args.split and job_file.exists():
+                                # Split unfinished job into two halves
                                 split_job_script(job_file, year)
+                            elif job_file.exists():
+                                # Copy the original job script into Resubmission
+                                new_job_path = resub_dir / job_file.name
+                                os.system(f"cp {job_file} {new_job_path}")
+                                print(f"Copied {job_file.name} to {new_job_path}")
+
+                                # Check for a matching JDL file and copy if it exists
+                                jdl_name = f"jobConfig_{subproc}_{jobnum}.jdl"
+                                jdl_path = job_file.parent / jdl_name
+                                if jdl_path.exists():
+                                    new_jdl_path = resub_dir / jdl_name
+                                    os.system(f"cp {jdl_path} {new_jdl_path}")
+                                    print(f"Copied {jdl_name} to {new_jdl_path}")
+                                else:
+                                    print(f"No matching JDL found for {subproc} job {jobnum}.")
+
                     else:
                         print(f"All jobs finished successfully for {subproc}.")
 
