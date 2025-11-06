@@ -189,6 +189,7 @@ def makeEvtPredHists(args):
 
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in processes:
+            print(f"\tProcessing proc = {proc}")
             if year in ["2022", "2022post", "2023", "2023post"]:
                 subProcs = procToSubProc_run3_legacy[proc] if args.legacy else procToSubProc_run3[proc]
             else:

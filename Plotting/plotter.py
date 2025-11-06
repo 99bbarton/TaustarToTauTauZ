@@ -67,8 +67,9 @@ varToPlotParams = {
     "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120],
     "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 10, 0.5, 10.5],
     "RECL_PT"   : ["ZReClJ_pt", "Re-clustered Z Jet pT [GeV]]", 60, 0, 3000],
-    "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5]
-    
+    "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5],
+    "MET_PT"    : ["MET_pt", "MET pT [GeV]", 100, 0, 1000],
+    "MET_E"     : ["MET_sumEt", "MET Scalar Sum [GeV]", 100, 0, 1000]
 }
 
 plotEachToLeg = {
@@ -728,7 +729,7 @@ def plot2D_hists(filelist, args):
                 plotStr = plotParamsD2[0].replace("CHANNEL", ch) + ":" + plotParamsD1[0].replace("CHANNEL", ch)
                 if plotStr.find("dPhi") > 0:
                     plotStr = ch + "_" + ch[0].lower() + ch[1:] + "dPhi"
-                
+
                 tree.Draw(plotStr + ">>+h_temp_2d", "(" + cutStr + ")*" + weight)
 
                 hTemp.SetLineColor(getColor(args.palette, hNum))
