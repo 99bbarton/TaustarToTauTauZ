@@ -54,7 +54,9 @@ massToLEdges_asymm = {
     "500" : [350.0, 650.0],
     "750" : [525.0, 975.0],
     "1000" : [700.0, 1300.0],
+    "1250" : [1000.0, 1600.0], #TODO optimize this
     "1500" : [1300.0, 2250.0],
+    "1750" : [1500.0, 2500.0], #TODO optimize this
     "2000" : [1500.0, 3000.0],
     "2500" : [1500.0, 4500.0],
     "3000" : [1700.0, 5400.0],
@@ -71,7 +73,9 @@ massToLEdges = {
     "500" : [350.0, 650.0],
     "750" : [525.0, 975.0],
     "1000" : [700.0, 1300.0],
+    "1250" : [875.0, 1625.0],
     "1500" : [750.0, 2250.0],
+    "1750" : [875.0, 2625.0]
     "2000" : [1000.0, 3000.0],
     "2500" : [500.0, 4500.0],
     "3000" : [600.0, 5400.0],
@@ -86,7 +90,9 @@ massToLHalfWidths = {
     "500"  : 0.3,
     "750"  : 0.3,
     "1000" : 0.3,
+    "1250" : 0.3,
     "1500" : 0.5,
+    "1750" : 0.5,
     "2000" : 0.5,
     "2500" : 0.8,
     "3000" : 0.8,
@@ -101,7 +107,7 @@ massToLHalfWidths = {
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
-    argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
+    argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "SIG_MID", "250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
     argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
@@ -119,9 +125,11 @@ def parseArgs():
         args.years = ["2016","2016post", "2017", "2018"]
     
     if "ALL" in args.masses:
-        args.masses = ["250","500","750","1000","1500","2000","2500","3000","3500","4000","4500","5000"]
+        args.masses = ["250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"]
     elif "SIG_DEF" in args.masses:
         args.masses = ["250", "1000", "3000", "5000"]
+    elif "SIG_MID" in args.masses:
+        args.masses = ["1000", "1250", "1500", "1750", "2000"]
 
     if "ALL" in args.channels:
         args.channels = ["ETau", "MuTau", "TauTau"]

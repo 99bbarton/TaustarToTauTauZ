@@ -12,7 +12,7 @@ from datasets import bkgdDatasets_mini, sigDatasets_mini
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Tool to make the .sh and .jdl scripts necessary to add PF info to background MC samples and then process them with nanoAOD-tools")
-    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
+    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "RUN2", "RUN3", "2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"], help="Which years to process")
     argparser.add_argument("-f", "--filesPerJob", required=False, type=int, default=10, help="The number of miniAOD dataset files to process per Condor job")
     argparser.add_argument("--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
@@ -29,7 +29,7 @@ def parseArgs():
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"]
         hasSB = [False, True]
     elif "SIG" in args.processes:
-        args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
+        args.processes = ["M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
         hasSB = [True, False]
     else:
         for proc in args.processes:
