@@ -65,7 +65,7 @@ process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mc2017_realistic_v9', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mcRun2_asymptotic_v17', '') #BBARTON
 
 # Path and EndPath definitions
 process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
