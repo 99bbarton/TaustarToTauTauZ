@@ -12,31 +12,34 @@ def haddFiles():
     argparser = argparse.ArgumentParser(description="Tool to hadd the outputs of the Condor jobs together")
     argparser.add_argument("-d", "--date", required=True, type=str, help="The date in the form e.g. 1Apr2025 that the jobs were created on")
     argparser.add_argument("-y", "--year", required=True, choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"], help="What year the jobs correspond to")
-    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
+    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
     argparser.add_argument("-v", "--version", required=True, type=str, help="A unique string to denote the new file area on EOS.")
     argparser.add_argument("-l", "--legacy", required=False, action="store_true", help="If specified, uses old version of procToSubProc for Run3")
     args = argparser.parse_args()
 
     if "BKGD" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
-        inDirBase = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + args.date + "/"
-        outDirBase = "/store/user/bbarton/TaustarToTauTauZ//BackgroundMC/PFNano/"
     elif "BKGDnoQCD" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"]
-        inDirBase = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + args.date + "/"
-        outDirBase = "/store/user/bbarton/TaustarToTauTauZ//BackgroundMC/PFNano/"
     elif "SIG" in args.processes:
         args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
-        inDirBase = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/JobOutputs/" + args.date + "/"
-        outDirBase = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/"
-    
-    inDirBase = inDirBase + args.year + "/"
-    outDir = outDirBase + args.year + "/" + args.version + "/"
+    else:
+        doSig = False
+        doBkgd = False
+        for proc in args.processes:
+            doSig = proc.startswith("M") or doSig
+            doBkgd = (not proc.startswith("M")) or doBkgd
+                
 
-    print("Making output directory: " + outDir) 
-    command  = "eosmkdir " + outDir
-    stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-
+    if doSig:
+        print("Making output directory: /store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/" + args.year + "/" + args.version + "/") 
+        command  = "eosmkdir /store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/" + args.year + "/" + args.version + "/"
+        stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    if doBkgd:
+         print("Making output directory: /store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/" + args.year + "/" + args.version + "/")
+         command  = "eosmkdir /store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/" + args.year + "/" + args.version + "/"
+         stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        
 
     if args.year in ["2016", "2016post", "2017", "2018"]:
         procToSubProc = procToSubProc_run2
@@ -48,11 +51,13 @@ def haddFiles():
     
     
     for proc in args.processes:
-        if not proc.startswith("M"):
-            inDir = inDirBase + proc + "/"
+        if proc.startswith("M"):
+            inDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/JobOutputs/" + args.date + "/" + args.year + "/"
+            outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/" + args.year + "/" + args.version + "/"
         else:
-            inDir = inDirBase
-
+            inDir = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + args.date + "/" + args.year + "/" + proc + "/"
+            outDir = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/" + args.year + "/" + args.version + "/"
+            
         print("Starting " + args.year + " " + proc +  " samples...")
         
         if proc.startswith("M"):
