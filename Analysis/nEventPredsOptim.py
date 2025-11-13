@@ -40,7 +40,7 @@ from array import array
 from tabulate import tabulate
 
 from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph, EnableImplicitMT
-EnableImplicitMT()  # use all available cores for ROOT internal parallelism
+#EnableImplicitMT()  # use all available cores for ROOT internal parallelism
 
 sys.path.append("../Framework/")
 from datasets import processes, procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
@@ -75,7 +75,7 @@ massToLEdges = {
     "1000" : [700.0, 1300.0],
     "1250" : [875.0, 1625.0],
     "1500" : [750.0, 2250.0],
-    "1750" : [875.0, 2625.0]
+    "1750" : [875.0, 2625.0],
     "2000" : [1000.0, 3000.0],
     "2500" : [500.0, 4500.0],
     "3000" : [600.0, 5400.0],

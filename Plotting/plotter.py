@@ -150,7 +150,7 @@ def parseArgs():
     processes = []
     if "SIG_DEF" in args.processes:
         processes.extend(["M250", "M1000", "M3000", "M5000"])
-    elif "SIG_MID" in argsp.processes:
+    elif "SIG_MID" in args.processes:
         processes.extend(["M1000", "M1250", "M1500", "M1750", "M2000"])
     elif "SIG_ALL" in args.processes:
         processes.extend(["M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"])

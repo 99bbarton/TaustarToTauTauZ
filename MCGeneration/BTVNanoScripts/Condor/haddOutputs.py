@@ -61,16 +61,26 @@ def haddFiles():
         print("Starting " + args.year + " " + proc +  " samples...")
         
         if proc.startswith("M"):
+            command = "xrdfsls -u " + inDir + " | grep " + proc.lower() + "_"
+            stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            if len(stdout) < 1:
+                print("WARNING: No input files for " + proc)
+                continue
             print("\thadd'ing " + proc + " samples")
-            command = "hadd -f9 root://cmseos.fnal.gov/" + outDir + "/taustarToTauZ_" + proc.lower() + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + proc.lower() + "_`"
+            command = "hadd -f9 -j 4 root://cmseos.fnal.gov/" + outDir + "/taustarToTauZ_" + proc.lower() + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + proc.lower() + "_`"
             stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             print(stdout)
             if len(stderr) > 0:
                 print("STDERR ", stderr)
         else:
             for subproc in procToSubProc[proc]:
+                command = "xrdfsls -u " + inDir + " | grep " + subproc
+                stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+                if len(stdout) < 1:
+                    print("WARNING: No input files for " + subproc)
+                    continue
                 print("\thadd'ing " + subproc + " samples")
-                command = "hadd -f9 root://cmseos.fnal.gov/" + outDir + subproc + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + subproc + "`"
+                command = "hadd -f9 -j 4 root://cmseos.fnal.gov/" + outDir + subproc + "_" + args.year + ".root `xrdfsls -u " + inDir + " | grep " + subproc + "`"
                 stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
                 print(stdout)
                 if len(stderr) > 0:

@@ -25,8 +25,9 @@ procToSubProc_run3 = {
     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
     "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS"],
-    "QCD" : ["QCD_PT-80to120","QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
-    #"QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
+    "QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to\
+1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
+    #"QCD" : ["QCD_PT-80to120","QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
 }
 
 #Conversion used for V0 processing. Included for backwards compatibility
