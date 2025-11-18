@@ -54,7 +54,7 @@ varToPlotParams = {
     "VIS_M"     : ["CHANNEL_visM", "Visible Mass [GeV]", 106, 200, 5500], 
     "MIN_COL_M" : ["CHANNEL_minCollM", "Min Collinear Mass [GeV]", 116, 200, 6000], #50 GeV/bin default
     "MAX_COL_M" : ["CHANNEL_maxCollM", "Max Collinear Mass [GeV]", 116, 200, 6000],
-    "COS2DPHI"  : ["cos(CHANNEL_CHANNELDPhi)*cos(CHANNEL_CHANNELDPhi)", "cos^2(#Delta#phi)", 63, 0, 6.3],
+    "COS2DPHI"  : ["cos(CHANNEL_CHANNELDPhi)*cos(CHANNEL_CHANNELDPhi)", "cos^2(#Delta#phi)", 20, 0, 1],
     "COSDPHI"      : ["cos(CHANNEL_CHANNELDPhi)","cos(#Delta#phi)", 20, -1, 1],
     "SINDPHI"      : ["sin(CHANNEL_CHANNELDPhi)","sin(#Delta#phi)", 20, -1, 1],
     "DPHI"      : ["CHANNEL_CHANNELDPhi","#Delta#phi", 16, 0, 3.2 ],
@@ -159,7 +159,7 @@ def parseArgs():
     elif "BKGDnoQCD" in args.processes:
         processes.extend(["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"])
     for proc in args.processes:
-        if proc in ["SIG_DEF", "SIG_ALL", "BKGD", "BKGDnoQCD"]:
+        if proc in ["SIG_DEF", "SIG_MID", "SIG_ALL", "BKGD", "BKGDnoQCD"]:
             continue
         processes.append(proc)
     args.processes = processes
