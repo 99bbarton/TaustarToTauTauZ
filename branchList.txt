@@ -61,6 +61,25 @@ ZReClJ_sjPt            |  F   | pt of the Z subjets (AK4 clustering results)    
 ZReClJ_sjEta           |  F   | eta of the Z subjets (AK4 clustering results)                                                                            | ZJetReclusterProducer.py
 ZReClJ_sjPhi           |  F   | phi of the Z subjets (AK4 clustering results)                                                                            | ZJetReclusterProducer.py
 ZReClJ_sjMass          |  F   | mass of the Z subjets (AK4 clustering results)                                                                           | ZJetReclusterProducer.py
+TauTau_tau1Idx         |  I   | Index to Taus of the best hadronic tau (sorted by vsJets, pt)                                                            | TauTauProducer.py   
+TauTau_tau2Idx         |  I   | Index to Taus of second best hadronic tau (sorted by vsJets, pt, and DR>0.4 from best tau)                               | TauTauProducer.py   
+TauTau_tau1Prongs      |  I   | Number if prongs of tau1 (1 or 3)                                                                                        | TauTauProducer.py   
+TauTau_tau2Prongs      |  I   | Number if prongs of tau2 (1 or 3)                                                                                        | TauTauProducer.py   
+TauTau_havePair        |  O   | True if have two good taus                                                                                               | TauTauProducer.py   
+TauTau_TauTauDR        |  F   | DeltaR between the two taus                                                                                              | TauTauProducer.py   
+TauTau_TauTauDPhi      |  F   | Delta phi between the two taus                                                                                           | TauTauProducer.py   
+TauTau_visM            |  F   | Visible mass of the tau pair                                                                                             | TauTauProducer.py   
+TauTau_sign            |  I   | The product of tau1.charge and tau2.charge                                                                               | TauTauProducer.py   
+TauTau_haveTrip        |  O   | True if have two good taus and a Z                                                                                       | TauTauProducer.py   
+TauTau_minCollM        |  F   | The smaller collinear mass of tau1+nu+Z or tau2+nu+Z. Uses best Z of recl vs reco Z mass                                 | TauTauProducer.py   
+TauTau_maxCollM        |  F   | The larger collinear mass of either tau1+nu+Z or tau2+nu+Z. Uses best Z of recl vs reco Z mass                           | TauTauProducer.py   
+TauTau_isCand          |  O   | True if the event is good tau+tau+Z event                                                                                | TauTauProducer.py   
+TauTau_trigMatchTau    |  O   | True if the event passes the single tau trigger and one tau matches to the trigObj                                       | TauTauProducer.py   
+TauTau_trigMatchTauTau |  O   | True if the event passes the d-tau trigger and both taus matche to the trigObj                                           | TauTauProducer.py   
+TauTau_tauESCorr       |  F   | The energy scale correction applied to the tau [down1, nom1, up1, down2, nom2, up2]                                      | TauTauProducer.py   
+TauTau_tauVsESF        |  F   | DeepTau tau vs e SFs [down1, nom1, up1, down2, nom2, up2]                                                                | TauTauProducer.py   
+TauTau_tauVsMuSF       |  F   | DeepTau tau vs mu SFs [down1, nom1, up1, down2, nom2, up2]                                                               | TauTauProducer.py   
+TauTau_tauVsJetSF      |  F   | DeepTau tau vs jet SFs [down1, nom1, up1, down2, nom2, up2]                                                              | TauTauProducer.py   
 MuTau_muIdx            |  I   | Index to Muons of muon                                                                                                   | MuTauProducer.py    
 MuTau_tauIdx           |  I   | Index to Taus of hadronic tau                                                                                            | MuTauProducer.py    
 MuTau_tauProngs        |  I   | Number if prongs of tau (1 or 3)                                                                                         | MuTauProducer.py    
@@ -68,11 +87,10 @@ MuTau_havePair         |  O   | True if have a good mu and tau                  
 MuTau_MuTauDR          |  F   | DeltaR betwenn mu and tau                                                                                                | MuTauProducer.py    
 MuTau_MuTauDPhi        |  F   | Delta phi between the muon and tau                                                                                       | MuTauProducer.py    
 MuTau_visM             |  F   | Visible mass of the mu+tau pair                                                                                          | MuTauProducer.py    
+MuTau_sign             |  I   | The product of tau.charge and mu.charge                                                                                  | MuTauProducer.py    
 MuTau_haveTrip         |  O   | True if have a good mu, tau, and Z                                                                                       | MuTauProducer.py    
-MuTau_minCollM         |  F   | The smaller collinear mass of e+nu+Z or tau+nu+z                                                                         | MuTauProducer.py    
-MuTau_maxCollM         |  F   | The larger collinear mass of either mu+nu+Z or tau+nu+Z                                                                  | MuTauProducer.py    
-MuTau_highPtGenMatch   |  O   | True if the higher pt tau decay matched to the GEN taustar tau                                                           | MuTauProducer.py    
-MuTau_highPtCollM      |  F   | Either the min or max coll m, whichever was from the higher pt tau decay                                                 | MuTauProducer.py    
+MuTau_minCollM         |  F   | The smaller collinear mass of e+nu+Z or tau+nu+z. Uses best Z of recl vs reco Z mass                                     | MuTauProducer.py    
+MuTau_maxCollM         |  F   | The larger collinear mass of either mu+nu+Z or tau+nu+Z. Uses best Z of recl vs reco Z mass                              | MuTauProducer.py    
 MuTau_tauESCorr        |  F   | The energy scale correction applied to the tau [down, nom, up]                                                           | MuTauProducer.py    
 MuTau_tauVsESF         |  F   | DeepTau tau vs e SFs [down, nom, up]                                                                                     | MuTauProducer.py    
 MuTau_tauVsMuSF        |  F   | DeepTau tau vs mu SFs [down, nom, up]                                                                                    | MuTauProducer.py    
@@ -81,6 +99,20 @@ MuTau_muIDSF           |  F   | Muon ID SFs [down, nom, up]                     
 MuTau_trigMatchTau     |  O   | True if the tau matches the single-tau trigger obj                                                                       | MuTauProducer.py    
 MuTau_trigMatchMuTau   |  O   | True if the reco mu and tau fired the mu-tau cross trigger                                                               | MuTauProducer.py    
 MuTau_isCand           |  O   | True if the event is good mu+tau+Z event                                                                                 | MuTauProducer.py    
+ObjCnt_nBTags          |  I   | Number of b-tagged jets in the event                                                                                     | ObjCounter.py       
+ObjCnt_nElMatch        |  O   | True if the number of electrons in the event matches the channel and Z DM                                                | ObjCounter.py       
+ObjCnt_nMuMatch        |  O   | True if the number of muons in the event matches the channel and Z DM                                                    | ObjCounter.py       
+ObjCnt_nJetsMatch      |  O   | True if the number of jets in th event matches the channel and Z DM                                                      | ObjCounter.py       
+ZReClJ2_pow            |  I   | The power used in the reclustering step (-1=anti-kt, 0=cambridge-aachen, 1=kt)                                           | ZReCl2.py           
+ZReClJ2_pt             |  F   | pt of the overall reclustered Z->AK8 Jet                                                                                 | ZReCl2.py           
+ZReClJ2_eta            |  F   | eta of the overall reclustered Z->AK8 Jet                                                                                | ZReCl2.py           
+ZReClJ2_phi            |  F   | phi of the overall reclustered Z->AK8 Jet                                                                                | ZReCl2.py           
+ZReClJ2_mass           |  F   | m of the overall reclustered Z->AK8 Jet                                                                                  | ZReCl2.py           
+ZReClJ2_nSJs           |  I   | The number of AK4 subjets after reclustering                                                                             | ZReCl2.py           
+ZReClJ2_sjPt           |  F   | pt of the Z subjets (AK4 clustering results)                                                                             | ZReCl2.py           
+ZReClJ2_sjEta          |  F   | eta of the Z subjets (AK4 clustering results)                                                                            | ZReCl2.py           
+ZReClJ2_sjPhi          |  F   | phi of the Z subjets (AK4 clustering results)                                                                            | ZReCl2.py           
+ZReClJ2_sjMass         |  F   | mass of the Z subjets (AK4 clustering results)                                                                           | ZReCl2.py           
 Z_dm                   |  I   | 0 = hadronic, 1=electrons, 2=muons, 3=taus. -1 by default                                                                | ZProducer.py        
 Z_d1Idx                |  I   | Idx to first daughter of Z in either Muons or Electrons collection (if Z_dm == 1 or Z_dm == 2). -1 default               | ZProducer.py        
 Z_d2Idx                |  I   | Idx to second daughter of Z in either Muons or Electrons collection (depending on if Z_dm == 1 or Z_dm == 2). -1 default | ZProducer.py        
@@ -101,50 +133,6 @@ Z_nMuMu                |  I   | Number of candidate mumu pairs found            
 Z_isCand               |  O   | True if Z is a good candidate (DM, mass, etc)                                                                            | ZProducer.py        
 Z_eIDSFs               |  F   | [down1, nom1, up1, down2, nom2, up2] SFs for Z daughter el ID if DM==1                                                   | ZProducer.py        
 Z_muIDSFs              |  F   | [down1, nom1, up1, down2, nom2, up2] SFs for Z daughter mu ID if DM==2                                                   | ZProducer.py        
-ObjCnt_nBTags          |  I   | Number of b-tagged jets in the event                                                                                     | ObjCounter.py       
-ObjCnt_nElMatch        |  O   | True if the number of electrons in the event matches the channel and Z DM                                                | ObjCounter.py       
-ObjCnt_nMuMatch        |  O   | True if the number of muons in the event matches the channel and Z DM                                                    | ObjCounter.py       
-ObjCnt_nJetsMatch      |  O   | True if the number of jets in th event matches the channel and Z DM                                                      | ObjCounter.py       
-ETau_eIdx              |  I   | Index to Electrons of electron                                                                                           | ETauProducer.py     
-ETau_tauIdx            |  I   | Index to Taus of hadronic tau                                                                                            | ETauProducer.py     
-ETau_tauProngs         |  I   | Number of prongs of tau (1 or 3)                                                                                         | ETauProducer.py     
-ETau_havePair          |  O   | True if have a good e and tau                                                                                            | ETauProducer.py     
-ETau_ETauDR            |  F   | Delta R between electron and tau                                                                                         | ETauProducer.py     
-ETau_ETauDPhi          |  F   | Delta phi between the electron and tau                                                                                   | ETauProducer.py     
-ETau_visM              |  F   | Visible mass of the e+tau pair                                                                                           | ETauProducer.py     
-ETau_highPtGenMatch    |  O   | True if the higher pt tau decay matched to the GEN taustar tau                                                           | ETauProducer.py     
-ETau_highPtCollM       |  F   | Either the min or max coll m, whichever was from the higher pt tau decay                                                 | ETauProducer.py     
-ETau_haveTrip          |  O   | True if have a good e, tau, and Z                                                                                        | ETauProducer.py     
-ETau_minCollM          |  F   | The smaller collinear mass of either e+nu+Z or tau+nu+Z                                                                  | ETauProducer.py     
-ETau_maxCollM          |  F   | The larger collinear mass of either e+nu+Z or tau+nu+Z                                                                   | ETauProducer.py     
-ETau_tauESCorr         |  F   | The energy scale correction applied to the tau [down, nom, up]                                                           | ETauProducer.py     
-ETau_tauVsESF          |  F   | DeepTau tau vs e SFs [down, nom, up]                                                                                     | ETauProducer.py     
-ETau_tauVsMuSF         |  F   | DeepTau tau vs mu SFs [down, nom, up]                                                                                    | ETauProducer.py     
-ETau_tauVsJetSF        |  F   | DeepTau tau vs jet SFs [down, nom, up]                                                                                   | ETauProducer.py     
-ETau_eIDSF             |  F   | Electron ID SFs [down, nom, up]                                                                                          | ETauProducer.py     
-ETau_trigMatchTau      |  O   | True if the tau matches the single-tau trigger obj                                                                       | ETauProducer.py     
-ETau_trigMatchETau     |  O   | True if the reco el and tau fired the e-tau cross trigger                                                                | ETauProducer.py     
-ETau_isCand            |  O   | True if the event is good e+tau+Z event                                                                                  | ETauProducer.py     
-TauTau_tau1Idx         |  I   | Index to Taus of the best hadronic tau (sorted by vsJets, pt)                                                            | TauTauProducer.py   
-TauTau_tau2Idx         |  I   | Index to Taus of second best hadronic tau (sorted by vsJets, pt, and DR>0.4 from best tau)                               | TauTauProducer.py   
-TauTau_tau1Prongs      |  I   | Number if prongs of tau1 (1 or 3)                                                                                        | TauTauProducer.py   
-TauTau_tau2Prongs      |  I   | Number if prongs of tau2 (1 or 3)                                                                                        | TauTauProducer.py   
-TauTau_havePair        |  O   | True if have two good taus                                                                                               | TauTauProducer.py   
-TauTau_TauTauDR        |  F   | DeltaR between the two taus                                                                                              | TauTauProducer.py   
-TauTau_TauTauDPhi      |  F   | Delta phi between the two taus                                                                                           | TauTauProducer.py   
-TauTau_visM            |  F   | Visible mass of the tau pair                                                                                             | TauTauProducer.py   
-TauTau_haveTrip        |  O   | True if have two good taus and a Z                                                                                       | TauTauProducer.py   
-TauTau_minCollM        |  F   | The smaller collinear mass of tau1+nu+Z or tau2+nu+Z                                                                     | TauTauProducer.py   
-TauTau_maxCollM        |  F   | The larger collinear mass of either tau1+nu+Z or tau2+nu+Z                                                               | TauTauProducer.py   
-TauTau_highPtGenMatch  |  O   | True if the higher pt tau decay matched to the GEN taustar tau                                                           | TauTauProducer.py   
-TauTau_highPtCollM     |  F   | Either the min or max coll m, whichever was from the higher pt tau decay                                                 | TauTauProducer.py   
-TauTau_isCand          |  O   | True if the event is good tau+tau+Z event                                                                                | TauTauProducer.py   
-TauTau_trigMatchTau    |  O   | True if the event passes the single tau trigger and one tau matches to the trigObj                                       | TauTauProducer.py   
-TauTau_trigMatchTauTau |  O   | True if the event passes the d-tau trigger and both taus matche to the trigObj                                           | TauTauProducer.py   
-TauTau_tauESCorr       |  F   | The energy scale correction applied to the tau [down1, nom1, up1, down2, nom2, up2]                                      | TauTauProducer.py   
-TauTau_tauVsESF        |  F   | DeepTau tau vs e SFs [down1, nom1, up1, down2, nom2, up2]                                                                | TauTauProducer.py   
-TauTau_tauVsMuSF       |  F   | DeepTau tau vs mu SFs [down1, nom1, up1, down2, nom2, up2]                                                               | TauTauProducer.py   
-TauTau_tauVsJetSF      |  F   | DeepTau tau vs jet SFs [down1, nom1, up1, down2, nom2, up2]                                                              | TauTauProducer.py   
 Boost_n                |  I   | The number of boosed jets stored (i.e. len of array variables below). Set to 3 currently.                                | BoostProducer.py    
 Boost_pt               |  F   | Boosted jet pt. First idx is parent FatJet, second idx is leading SubJet, third sub-leading SubJet                       | BoostProducer.py    
 Boost_eta              |  F   | Boosted jet eta. First idx is parent FatJet, second idx is leading SubJet, third sub-leading SubJet                      | BoostProducer.py    
@@ -153,5 +141,24 @@ Boost_dR               |  F   | DeltaR between the boosted subJets              
 Boost_dPhi             |  F   | DeltaPhi between the boosted subJets                                                                                     | BoostProducer.py    
 Fin_ch                 |  I   | 0=tautau, 1=etau, 2=mutau. -1 otherwise. Includes check that ==1 CH_isCand is TRUE                                       | FinalProducer.py    
 Fin_justRel            |  O   | True if there are no extra leptons/tauhs/z                                                                               | FinalProducer.py    
+ETau_eIdx              |  I   | Index to Electrons of electron                                                                                           | ETauProducer.py     
+ETau_tauIdx            |  I   | Index to Taus of hadronic tau                                                                                            | ETauProducer.py     
+ETau_tauProngs         |  I   | Number of prongs of tau (1 or 3)                                                                                         | ETauProducer.py     
+ETau_havePair          |  O   | True if have a good e and tau                                                                                            | ETauProducer.py     
+ETau_ETauDR            |  F   | Delta R between electron and tau                                                                                         | ETauProducer.py     
+ETau_ETauDPhi          |  F   | Delta phi between the electron and tau                                                                                   | ETauProducer.py     
+ETau_visM              |  F   | Visible mass of the e+tau pair                                                                                           | ETauProducer.py     
+ETau_sign              |  I   | The product of tau.charge and el.charge                                                                                  | ETauProducer.py     
+ETau_haveTrip          |  O   | True if have a good e, tau, and Z                                                                                        | ETauProducer.py     
+ETau_minCollM          |  F   | The smaller collinear mass of either e+nu+Z or tau+nu+Z. Uses best Z of recl vs reco Z mass                              | ETauProducer.py     
+ETau_maxCollM          |  F   | The larger collinear mass of either e+nu+Z or tau+nu+Z. Uses best Z of recl vs reco Z mass                               | ETauProducer.py     
+ETau_tauESCorr         |  F   | The energy scale correction applied to the tau [down, nom, up]                                                           | ETauProducer.py     
+ETau_tauVsESF          |  F   | DeepTau tau vs e SFs [down, nom, up]                                                                                     | ETauProducer.py     
+ETau_tauVsMuSF         |  F   | DeepTau tau vs mu SFs [down, nom, up]                                                                                    | ETauProducer.py     
+ETau_tauVsJetSF        |  F   | DeepTau tau vs jet SFs [down, nom, up]                                                                                   | ETauProducer.py     
+ETau_eIDSF             |  F   | Electron ID SFs [down, nom, up]                                                                                          | ETauProducer.py     
+ETau_trigMatchTau      |  O   | True if the tau matches the single-tau trigger obj                                                                       | ETauProducer.py     
+ETau_trigMatchETau     |  O   | True if the reco el and tau fired the e-tau cross trigger                                                                | ETauProducer.py     
+ETau_isCand            |  O   | True if the event is good e+tau+Z event                                                                                  | ETauProducer.py     
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
