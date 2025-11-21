@@ -38,9 +38,9 @@ import os
 import sys
 from array import array
 from tabulate import tabulate
+from math import sqrt
 
-from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph, EnableImplicitMT
-#EnableImplicitMT()  # use all available cores for ROOT internal parallelism
+from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, THStack, TMultiGraph, TGraphErrors
 
 sys.path.append("../Framework/")
 from datasets import processes, procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
@@ -160,12 +160,17 @@ def makeEvtPredHists(args):
     sigHists = {}
     bkgdHists = {}
     sigEvtPerMass = {m: 0 for m in args.masses}
+    sigEvtErrPerMass = {m: 0 for m in args.masses}
     bkgdEvtPerMass = {m: 0 for m in args.masses}
+    bkgdEvtErrPerMass = {m: 0 for m in args.masses}
     eventsPerProc = {m: {"SIG": 0, "ZZ": 0, "WZ": 0, "WW": 0, "WJets": 0, "DY": 0, "TT": 0, "ST": 0, "QCD": 0} for m in args.masses}
+    eventsErrPerProc = {m: {"SIG": 0, "ZZ": 0, "WZ": 0, "WW": 0, "WJets": 0, "DY": 0, "TT": 0, "ST": 0, "QCD": 0} for m in args.masses}
 
     for mass in args.masses:
         sigHists[mass] = TH1F(f"sig_m{mass}", f"Signal m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
+        sigHists[mass].Sumw2()
         bkgdHists[mass] = TH1F(f"bkgd_m{mass}", f"Background m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
+        bkgdHists[mass].Sumw2()
 
     for year in args.years:
         print(f"Processing year = {year}")
@@ -194,6 +199,8 @@ def makeEvtPredHists(args):
                         sigEvtPerMass[mass] += nEvts * weight
                         eventsPerProc[mass]["SIG"] += nEvts * weight
             sigFile.Close()
+            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass])
+            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"])
 
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in processes:
@@ -238,10 +245,14 @@ def makeEvtPredHists(args):
                                 eventsPerProc[mass][proc] += nEvts * weight
 
                 bkgdFile.Close()
+                bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass])
+                eventsErrPerProc[mass][proc] = sqrt( eventsPerProc[mass][proc])
 
     for i, mass in enumerate(args.masses):
         sigHist = sigHists[mass]
+        sigHist.Sumw2()
         bkgdHist = bkgdHists[mass]
+        bkgdHist.Sumw2()
         sigHist.SetLineWidth(3)
         sigHist.SetLineColor(sigCol)
         bkgdHist.SetLineColor(bkgdCol)
@@ -251,13 +262,20 @@ def makeEvtPredHists(args):
             leg.AddEntry(sigHist, "Signal", "L")
             leg.AddEntry(bkgdHist, "Background", "F")
 
-        stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass};Bin;Events")
-        stack.Add(bkgdHist)
-        stack.Add(sigHist)
+        #stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass};Bin;Events")
+        #stack.Add(bkgdHist)
+        #stack.Add(sigHist)
 
         canv.cd()
         canv.Clear()
-        stack.Draw("NOSTACK HIST")
+        if sigHist.GetMaximum() > bkgdHist.GetMaximum():
+            sigHist.Draw("HIST E2")
+            bkgdHist.Draw("HIST E2 SAME")
+        else:
+            bkgdHist.Draw("HIST E2")
+            sigHist.Draw("HIST E2 SAME")
+
+        #stack.Draw("NOSTACK HIST")
         if args.log:
             canv.SetLogy(True)
         leg.Draw()
@@ -267,15 +285,19 @@ def makeEvtPredHists(args):
     canv.cd()
     canv.Clear()
     sigEvtArr = array("f", [sigEvtPerMass[m] for m in args.masses])
+    sigEvtErrArr = array("f", [sigEvtErrPerMass[m] for m in args.masses] )
     bkgdEvtArr = array("f", [bkgdEvtPerMass[m] for m in args.masses])
-    sigGraph = TGraph(len(sigEvtArr), massBins, sigEvtArr)
-    bkgdGraph = TGraph(len(bkgdEvtArr), massBins, bkgdEvtArr)
+    bkgdEvtErrArr = array("f", [bkgdEvtErrPerMass[m] for m in args.masses])
+    sigGraph = TGraphErrors(len(sigEvtArr), massBins, sigEvtArr, None, sigEvtErrArr)
+    bkgdGraph = TGraphErrors(len(bkgdEvtArr), massBins, bkgdEvtArr, None, bkgdEvtErrArr)
     sigGraph.SetMarkerColor(sigCol)
     sigGraph.SetMarkerStyle(8)
     sigGraph.SetMarkerSize(2)
+    sigGraph.SetLineColor(sigCol)
     bkgdGraph.SetMarkerColor(bkgdCol)
     bkgdGraph.SetMarkerStyle(8)
     bkgdGraph.SetMarkerSize(2)
+    bkgdGraph.SetLineColor(bkgdCol)
 
     mg = TMultiGraph()
     mg.Add(sigGraph)
