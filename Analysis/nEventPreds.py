@@ -135,7 +135,7 @@ def parseArgs():
         args.masses = ["1000", "1250", "1500", "1750", "2000"]
 
     if "ALL" in args.processes:
-        args.processes = processes
+        args.processes = allProcs
 
     if "ALL" in args.channels:
         args.channels = ["ETau", "MuTau", "TauTau"]
@@ -154,17 +154,17 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     baseCutStrs = []
-    baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 &&Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
+    baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     if args.nBins == 4:
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
+        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
         #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
+        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
         #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55&&Z_pt>300&&CHANNEL_CHANNELDR>1.5&& (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
+        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55&&Z_pt>300&& ObjCnt_nBTags<2 && ObjCnt_nMuMatch&&CHANNEL_CHANNELDR>1.5 && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
         #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
     else:
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && CHANNEL_CHANNELDR>1.5 && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
+        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
         #baseCutStrs.append("(CHANNEL_isCand && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
         
     # prepare histograms for each mass
