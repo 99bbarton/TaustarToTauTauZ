@@ -1,6 +1,6 @@
 #Tool to provide the event weight for MC samples
 
-from datasets import nEvents, crossections_2016, crossections_2017, crossections_2018, crossections_run3, yrTonEventsIdx
+from datasets import nEvents, crossections_2016, crossections_2017, crossections_2018, crossections_run3, yrTonEventsIdx, years_run3
 
 #year : [lumi, err] in fb^-1 
 #values from: https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun2
@@ -17,7 +17,8 @@ lumis = {
     "2022" : [7.98, 0.112],
     "2022post" : [26.67, 0.373],
     "2023" : [17.79, 0.231],
-    "2023post" : [9.45, 0.123]
+    "2023post" : [9.45, 0.123],
+    "2024" : [109, 2.18]   #NB: LUMI POG does not provide a lumi uncertainty for 2024. Using 2% here as a conservative (bigger than all other years) value
 }
 
 def getWeight(process, year, xs=True):
@@ -46,4 +47,15 @@ def getWeight(process, year, xs=True):
     #print(process, weight)
     return weight
 
+#def getSystStr(year, channel, lumi="NOM", tauES="NOM", tauID="NOM", eID="NOM", muID="NOM", trig="NOM", PDF="NOM"):
+#    systDict = {"lumi":1, "tauES":1, "tauID":1, "eID":1, "muID":1, "trig":1, "PDF":1}
+#    syst = 1.0
 
+#Systematics (applicability domain):
+#Lumi 
+#Tau Energy scale
+#Tau ID
+#E ID (ETau, Z_ee)
+#Mu ID (MuTau, Z_mumu)
+#Trigger SF (run3)
+#PDF reweighting (signal)
