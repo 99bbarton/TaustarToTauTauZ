@@ -34,8 +34,11 @@ varToPlotParams = {
     "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8BTAG" : ["FatJet_btagDeepB[Z_jetIdxAK8]", "FatJet deepB b-tag score", 20, 0, 1],
-    #"TAU_PT"    : [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]"], "tau pT [GeV]", 80, 0, 4000], #NB, must use cut CHANNEL_havePair/haveTrip/isCand
-    "TAU_PT"    : ["Tau_pt[CHANNEL_tauIdx]", "tau pT [GeV]", 50, 0, 2500], #Only includes ETau, MuTau
+    "TAU_PT"    : [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]"], "tau pT [GeV]", 80, 0, 4000], #NB, must use cut CHANNEL_havePair/haveTrip/isCand
+    "EL_PT"     : ["Electron_pt[ETau_eIdx]", "Electron pT [GeV]", 50, 0, 1000], #Only ETau
+    "MU_PT"     : ["Muon_pt[MuTau_muIdx]", "Muon pT [GeV]", 50, 0, 1000], #Only MuTau
+    "TAULEGS_PT": [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]", "Electron_pt[ETau_eIdx]", "Muon_pt[MuTau_muIdx]"],"Tau-Legs (e/#mu/#tau_{h}) pT [GeV]", 50, 0, 1000],
+    #"TAU_PT"    : ["Tau_pt[CHANNEL_tauIdx]", "tau pT [GeV]", 50, 0, 2500], #Only includes ETau, MuTau
     "GEN_ZAK4IDX" : ["Gen_z_DATATIER_AK4Idx", "GEN Matched _DATATIER_ AK4 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8IDX" : ["Gen_z_DATATIER_AK8Idx", "GEN Matched _DATATIER_ AK8 Idx", 5, -0.5, 5.5],
     "GEN_ZAK8_M" : ["GenJetAK8_mass[Gen_zGenAK8Idx]", "AK8 Jet Mass of GEN Particles [GeV]", 100, 0, 200],
@@ -65,7 +68,7 @@ varToPlotParams = {
     "BOOST_PHI" : ["Boost_phi[SJIDX]", "SubJet #phi in Z Ref. Frame", 10, -3.14, 3.14],
     "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5],
     "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120],
-    "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 10, 0.5, 10.5],
+    "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 30, 0.5, 30.5],
     "RECL_PT"   : ["ZReClJ_pt", "Re-clustered Z Jet pT [GeV]]", 60, 0, 3000],
     "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5],
     "MET_PT"    : ["MET_pt", "MET pT [GeV]", 100, 0, 1000],

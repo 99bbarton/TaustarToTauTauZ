@@ -109,7 +109,7 @@ def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "SIG_MID", "250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
-    argparser.add_argument("-p", "--processes", nargs="+", choices=allProcs.extend("ALL"), default="ALL", help="Which bkgd processes to include.")
+    argparser.add_argument("-p", "--processes", type=str, nargs="+", choices=allProcs.append("ALL"), default=["ALL"], help="Which bkgd processes to include.")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
     argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
@@ -119,7 +119,7 @@ def parseArgs():
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
     argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy Run3 process-to-subprocess translation (for V0 processing)")
     args = argparser.parse_args()  
-
+    
     if "ALL" in args.years:
         args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
     elif "RUN3" in args.years:
@@ -135,12 +135,14 @@ def parseArgs():
         args.masses = ["1000", "1250", "1500", "1750", "2000"]
 
     if "ALL" in args.processes:
+        allProcs.remove("ALL")
         args.processes = allProcs
 
     if "ALL" in args.channels:
         args.channels = ["ETau", "MuTau", "TauTau"]
 
 
+    
     return args
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -153,19 +155,16 @@ def makeEvtPredHists(args):
     sigCol = 603
     bkgdCol = 921
 
+    baseCuts = "(CHANNEL_isCand && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > 200 "
     baseCutStrs = []
-    baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
+    baseCutStrs.append(baseCuts + " && CHANNEL_CHANNELDPhi<2.8 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     if args.nBins == 4:
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
-        #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
-        #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55&&Z_pt>300&& ObjCnt_nBTags<2 && ObjCnt_nMuMatch&&CHANNEL_CHANNELDR>1.5 && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
-        #baseCutStrs.append("(CHANNEL_isCand && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
+        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
+        baseCutStrs.append(baseCuts + " && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
+        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
     else:
-        baseCutStrs.append("(CHANNEL_isCand && MET_pt > 200 && Z_dauDR<0.55 && Z_pt>300 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
-        #baseCutStrs.append("(CHANNEL_isCand && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
+        baseCutStrs.append(baseCuts + " && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
         
     # prepare histograms for each mass
     massBins = array("f", [float(m) for m in args.masses])
@@ -205,18 +204,18 @@ def makeEvtPredHists(args):
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                     if args.CR:
                         if ch == "ETau":
-                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) && Tau_pt[ETau_tauIdx] > 100 )"
                         elif ch == "MuTau":
-                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) && Tau_pt[MuTau_tauIdx] > 100 )"
                         else:
-                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
                     else:
                         if ch == "ETau":
-                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) && Tau_pt[ETau_tauIdx] > 100 )"
                         elif ch == "MuTau":
-                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) && Tau_pt[MuTau_tauIdx] > 100 )"
                         else:
-                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) )"
+                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
                     weight = getWeight("M" + mass, year, xs=True)
                     nEvts = sigTree.GetEntries(cutStr)
 
