@@ -20,7 +20,7 @@ def parseArgs():
 
     hasSB = [False, False]
     if "ALL" in args.processes:
-        args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250", "M500", "M750", "M1000", "M1500", "M2000", "M2500", "M3000", "M3500", "M4000", "M4500", "M5000"]
+        args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250", "M500", "M750", "M1000", "M1250", "M1500", "M1750", "M2000", "M2500", "M3000", "M3500", "M4000", "M4500", "M5000"]
         hasSB = [True, True]
     elif "BKGD" in args.processes:
         args.processes = ["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"]
@@ -124,6 +124,7 @@ def makeScripts(args, dateStr, hasSB):
                 stdout, stderr  = subprocess.Popen(dasCommand, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
                 stdout = stdout.strip()
                 inpDsFiles = stdout.split("\n")
+                print(inpDsFiles)
 
                 if dataset.startswith("/"):
                     if dataset.find("TuneCP5") > 0:
@@ -148,7 +149,7 @@ def makeScripts(args, dateStr, hasSB):
                     start = jobN*args.filesPerJob
                     jobFiles = inpDsFiles[start: start + args.filesPerJob]
 
-                    with open(scriptDir + "run_" + subDataset + str(jobN) + ".sh", "w+") as executable:
+                    with open(scriptDir + "run_" + subDataset + year + "_" + str(jobN) + ".sh", "w+") as executable:
                         executable.write("#!/bin/bash\n")
                         executable.write("set -x\n")
                         executable.write("OUTDIR="+ outDir + "\n")
@@ -211,7 +212,7 @@ def makeScripts(args, dateStr, hasSB):
                         if era == 2:
                             jdlFile.write('+ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"\n')
                         jdlFile.write('universe = vanilla\n')
-                        jdlFile.write("Executable = run_" + subDataset + str(jobN) + ".sh\n")
+                        jdlFile.write("Executable = run_" + subDataset + year + "_" + str(jobN) + ".sh\n")
                         if era == 2:
                             jdlFile.write('request_memory = 5000\n')
                         jdlFile.write('should_transfer_files = YES\n')

@@ -47,7 +47,7 @@ def get_total_jobs(date, year, subproc):
         print(f"Missing directory: {job_dir}")
         return set()
 
-    pattern = re.compile(rf"run_{subproc}_(\d+)\.sh$")
+    pattern = re.compile(rf"run_{subproc}_{year}_(\d+)\.sh$")
     total_jobs = {int(m.group(1)) for fname in os.listdir(job_dir) if (m := pattern.match(fname))}
     return total_jobs
 
@@ -71,6 +71,7 @@ def make_jdl_file(jdl_path: Path, executable_name: str, year: str):
 
     if year in years_run2:
         contents += '+REQUIRED_OS = "rhel7"\n'
+        contents += 'request_memory = 5000\n'
 
     contents += "Queue 1\n"
 
@@ -219,7 +220,7 @@ def main():
                             continue
                         
                         for jobnum in missing:
-                            job_file = Path(f"./Jobs/{date}/{year}/run_{subproc}_{jobnum}.sh")
+                            job_file = Path(f"./Jobs/{date}/{year}/run_{subproc}_{year}_{jobnum}.sh")
                             print(f"  {job_file.name}")
                             resub_dir = job_file.parent / "Resubmission"
                             resub_dir.mkdir(parents=True, exist_ok=True)
