@@ -22,20 +22,20 @@ procToSubProc_run2 = {
 }
 
 #For V2+ processig
-# procToSubProc_run3 = {
-#     "ZZ" : ["ZZ"],
-#     "WZ" : ["WZ"],
-#     "WW" : ["WW"],
-#     "WJets" : ["WtoLNu-2Jets", "WtoLNu-4Jets", "Wto2Q-2Jets_PTQQ-100to200_1J", "Wto2Q-2Jets_PTQQ-200to400_1J", "Wto2Q-2Jets_PTQQ-400to600_1J", "Wto2Q-2Jets_PTQQ-600_1J", "Wto2Q-2Jets_PTQQ-100to200_2J", "Wto2Q-2Jets_PTQQ-200to400_2J", "Wto2Q-2Jets_PTQQ-400to600_2J", "Wto2Q-2Jets_PTQQ-600_2J"],
-#     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
-#     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-#     "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS"],
-#     "QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to\
-# 1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
-# }
+procToSubProc_run3 = {
+     "ZZ" : ["ZZ"],
+     "WZ" : ["WZ"],
+     "WW" : ["WW"],
+     "WJets" : ["WtoLNu-2Jets", "WtoLNu-4Jets", "Wto2Q-2Jets_PTQQ-100to200_1J", "Wto2Q-2Jets_PTQQ-200to400_1J", "Wto2Q-2Jets_PTQQ-400to600_1J", "Wto2Q-2Jets_PTQQ-600_1J", "Wto2Q-2Jets_PTQQ-100to200_2J", "Wto2Q-2Jets_PTQQ-200to400_2J", "Wto2Q-2Jets_PTQQ-400to600_2J", "Wto2Q-2Jets_PTQQ-600_2J"],
+     "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
+     "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
+     "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS"],
+     "QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to\
+ 1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
+ }
 
 #TODO change this to "legacy" once V2 processing occurs
-procToSubProc_run3 = {
+procToSubProc_run3_legacy = {
     "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L", "ZZto4Q-1Jets"],
     "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q", "WZto4Q-1Jets-4FS"],
     "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
@@ -45,18 +45,6 @@ procToSubProc_run3 = {
     "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS"],
     "QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to\
 1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
-}
-
-#Conversion used for V0 processing. Included for backwards compatibility
-procToSubProc_run3_legacy = {
-   "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L"],
-   "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q"],
-   "WW" : ["WWto2L2Nu", "WWto4Q", "WWtoLNu2Q"],
-   "WJets" : ["WtoLNu-4Jets"],
-   "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
-   "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-   "ST" : ["TBbarQ_t-channel_4FS", "TWminusto2L2Nu", "TbarBQ_t-channel_4FS", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q"], #"TWminustoLNu2Q", "TbarWplusto4Q"
-   "QCD" : [],
 }
 
 

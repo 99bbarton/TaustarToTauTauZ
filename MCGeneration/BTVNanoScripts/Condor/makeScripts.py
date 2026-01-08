@@ -124,7 +124,7 @@ def makeScripts(args, dateStr, hasSB):
                 stdout, stderr  = subprocess.Popen(dasCommand, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
                 stdout = stdout.strip()
                 inpDsFiles = stdout.split("\n")
-                print(inpDsFiles)
+                #print(inpDsFiles)
 
                 if dataset.startswith("/"):
                     if dataset.find("TuneCP5") > 0:
