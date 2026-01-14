@@ -55,9 +55,9 @@ massToLEdges_asymm = {
     "500" : [350.0, 650.0],
     "750" : [525.0, 975.0],
     "1000" : [700.0, 1300.0],
-    "1250" : [1000.0, 1600.0], #TODO optimize this
+    "1250" : [1000.0, 1600.0], 
     "1500" : [1300.0, 2250.0],
-    "1750" : [1500.0, 2500.0], #TODO optimize this
+    "1750" : [1500.0, 2500.0], 
     "2000" : [1500.0, 3000.0],
     "2500" : [1500.0, 4500.0],
     "3000" : [1700.0, 5400.0],
@@ -128,7 +128,7 @@ def parseArgs():
         args.years = ["2016","2016post", "2017", "2018"]
     
     if "ALL" in args.masses:
-        args.masses = ["250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"]
+        args.masses = ["250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000"] #,"4500","5000"] #Drop highest masses from defaults because of too low event yields 
     elif "SIG_DEF" in args.masses:
         args.masses = ["250", "1000", "3000", "5000"]
     elif "SIG_MID" in args.masses:
@@ -155,7 +155,11 @@ def makeEvtPredHists(args):
     sigCol = 603
     bkgdCol = 921
 
-    baseCuts = "(CHANNEL_isCand && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && ObjCnt_nMuMatch && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > 200 "
+    baseCuts = "(CHANNEL_isCand && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > 200 "
+    if args.CR:
+        baseCuts += "&& CHANNEL_sign > 0"
+    else:
+        baseCuts += "&& CHANNEL_sign < 0"
     baseCutStrs = []
     baseCutStrs.append(baseCuts + " && CHANNEL_CHANNELDPhi<2.8 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
@@ -202,20 +206,27 @@ def makeEvtPredHists(args):
                     cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                    if args.CR:
-                        if ch == "ETau":
-                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) && Tau_pt[ETau_tauIdx] > 100 )"
-                        elif ch == "MuTau":
-                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) && Tau_pt[MuTau_tauIdx] > 100 )"
-                        else:
-                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
+                    if ch == "ETau":
+                        cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                    elif ch == "MuTau":
+                        cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                     else:
-                        if ch == "ETau":
-                            cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) && Tau_pt[ETau_tauIdx] > 100 )"
-                        elif ch == "MuTau":
-                            cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) && Tau_pt[MuTau_tauIdx] > 100 )"
-                        else:
-                            cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
+                        cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
+                        
+                    #if args.CR:
+                    #    if ch == "ETau":
+                    #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) && Tau_pt[ETau_tauIdx] > 100 )"
+                    #    elif ch == "MuTau":
+                    #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) && Tau_pt[MuTau_tauIdx] > 100 )"
+                    #    else:
+                    #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
+                    #else:
+                    #    if ch == "ETau":
+                    #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) && Tau_pt[ETau_tauIdx] > 100 )"
+                    #    elif ch == "MuTau":
+                    #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) && Tau_pt[MuTau_tauIdx] > 100 )"
+                    #    else:
+                    #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
                     weight = getWeight("M" + mass, year, xs=True)
                     nEvts = sigTree.GetEntries(cutStr)
 
@@ -260,20 +271,28 @@ def makeEvtPredHists(args):
                             cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
                             cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
-                            if args.CR:
-                                if ch == "ETau":
-                                    cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) )"
-                                elif ch == "MuTau":
-                                    cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) )"
-                                else:
-                                    cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) )"
+
+                            if ch == "ETau":
+                                cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                            elif ch == "MuTau":
+                                cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                             else:
-                                if ch == "ETau":
-                                    cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) )"
-                                elif ch == "MuTau":
-                                    cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) )"
-                                else:
-                                    cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) )"
+                                cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
+                            
+                                                        #if args.CR:
+                            #    if ch == "ETau":
+                            #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) )"
+                            #    elif ch == "MuTau":
+                            #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) )"
+                            #    else:
+                            #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) )"
+                            #else:
+                            #    if ch == "ETau":
+                            #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) )"
+                            #    elif ch == "MuTau":
+                            #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) )"
+                            #    else:
+                            #       cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) )"
 
                             weight = getWeight(subProc, year, xs=True)
                             nEvts = bkgdTree.GetEntries(cutStr)
@@ -389,7 +408,7 @@ def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
     
     # Sort background processes by yield at the first mass point (largest first)
     backgrounds = [p for p in processes if p != "SIG"]
-    backgrounds.sort(key=lambda p: event_dicts[0][p], reverse=True)
+    backgrounds.sort(key=lambda p: event_dicts[3][p], reverse=True)
     
     rows = [["Signal"] + [f"{events['SIG']:.3f}+/-{sqrt(events['SIG']):.3f}" for events in event_dicts]]
     

@@ -34,7 +34,7 @@ varToPlotParams = {
     "Z_AK4IDX"  : ["Z_jetIdxAK4", "Rec AK4 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8IDX"  : ["Z_jetIdxAK8", "Rec AK8 Jet Idx", 5, -0.5, 5.5],
     "Z_AK8BTAG" : ["FatJet_btagDeepB[Z_jetIdxAK8]", "FatJet deepB b-tag score", 20, 0, 1],
-    "TAU_PT"    : [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]"], "tau pT [GeV]", 80, 0, 4000], #NB, must use cut CHANNEL_havePair/haveTrip/isCand
+    "TAU_PT"    : [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau2Idx]"], "tau pT [GeV]", 80, 0, 4000], #NB, must use cut CHANNEL_havePair/haveTrip/isCand
     "EL_PT"     : ["Electron_pt[ETau_eIdx]", "Electron pT [GeV]", 50, 0, 1000], #Only ETau
     "MU_PT"     : ["Muon_pt[MuTau_muIdx]", "Muon pT [GeV]", 50, 0, 1000], #Only MuTau
     "TAULEGS_PT": [["Tau_pt[CHANNEL_tauIdx]", "Tau_pt[CHANNEL_tau1Idx]", "Tau_pt[CHANNEL_tau1Idx]", "Electron_pt[ETau_eIdx]", "Muon_pt[MuTau_muIdx]"],"Tau-Legs (e/#mu/#tau_{h}) pT [GeV]", 50, 0, 1000],
@@ -559,7 +559,7 @@ def plot1D(filelist, args):
                 hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
 
             if makeLegend:
-                if hName[0]=="M":
+                if hName[0]=="M" and hName != "MuTau":
                     name = "m_{#tau*}=" + hName[1:]
                 else:
                     name = hName
