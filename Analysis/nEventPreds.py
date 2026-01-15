@@ -103,6 +103,25 @@ massToLHalfWidths = {
     "5000" : 0.8
 }
 
+#Z_pt, tau_pt, vis_m, MET_pt, el_pt, mu_pt
+massToThreshs = {
+    "250" : [250, 25, 150, 75, 0.5, 20, 20],
+    "500" : [300, 50, 175, 100, 0.5, 20, 20],
+    "750" : [350, 75, 200, 125, 0.5, 20, 40],
+    "1000" : [350, 75, 200, 125, 0.5, 50, 40],
+    "1250" : [400, 75, 200, 150, 0.4, 75, 40],
+    "1500" : [400, 100, 225, 175, 0.4, 100, 60],
+    "1750" : [400, 100, 250, 200, 0.35, 100, 60],
+    "2000" : [500, 100, 250, 250, 0.35, 100, 60],
+    "2500" : [500, 100, 275, 250, 0.3, 100, 60],
+    "3000" : [500, 100, 275, 250, 0.3, 100, 60],
+    "3500" : [500, 100, 275, 250, 0.3, 100, 60],
+    "4000" : [500, 100, 275, 250, 0.3, 100, 60],
+    "4500" : [500, 100, 275, 250, 0.3, 100, 60],
+    "5000" : [500, 100, 275, 250, 0.3, 100, 60]
+}
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 def parseArgs():
@@ -156,6 +175,8 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     baseCuts = "(CHANNEL_isCand && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > 200 "
+    #Below version intended for per-signal-mass specific cuts
+    #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.CR:
         baseCuts += "&& CHANNEL_sign > 0"
     else:
@@ -208,11 +229,24 @@ def makeEvtPredHists(args):
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                     if ch == "ETau":
                         cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                     elif ch == "MuTau":
                         cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                     else:
                         cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
+
+                    #Replace per-mass specific thresholds
+                    #cutStr = cutStr.replace("REMETPT", str(massToThreshs[mass][3]))
+                    #cutStr = cutStr.replace("REZPT", str(massToThreshs[mass][0]))
+                    #cutStr = cutStr.replace("REVISM", str(massToThreshs[mass][2]))
+                    #cutStr = cutStr.replace("RETAUPT", str(massToThreshs[mass][1]))
+                    #cutStr = cutStr.replace("REEPT", str(massToThreshs[mass][4]))
+                    #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
                         
+                    
+                    ## The below block was necessary before CHANNEL_sign branches were added (i.e. prior to V2 processing)    
                     #if args.CR:
                     #    if ch == "ETau":
                     #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) && Tau_pt[ETau_tauIdx] > 100 )"
@@ -274,12 +308,23 @@ def makeEvtPredHists(args):
 
                             if ch == "ETau":
                                 cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                                #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                             elif ch == "MuTau":
                                 cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                                #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                             else:
                                 cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
-                            
-                                                        #if args.CR:
+                                #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
+
+                            #Replace per-mass specific thresholds
+                            #cutStr = cutStr.replace("REMETPT", str(massToThreshs[mass][3]))
+                            #cutStr = cutStr.replace("REZPT", str(massToThreshs[mass][0]))
+                            #cutStr = cutStr.replace("REVISM", str(massToThreshs[mass][2]))
+                            #cutStr = cutStr.replace("RETAUPT", str(massToThreshs[mass][1]))
+                            #cutStr = cutStr.replace("REEPT", str(massToThreshs[mass][4]))
+                            #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
+
+                            #if args.CR:
                             #    if ch == "ETau":
                             #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) )"
                             #    elif ch == "MuTau":
