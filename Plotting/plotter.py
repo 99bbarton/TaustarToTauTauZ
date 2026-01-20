@@ -67,9 +67,9 @@ varToPlotParams = {
     "BOOST_PT" : ["Boost_pt[SJIDX]", "SubJet pT in Z Ref. Frame [GeV]", 60, 0, 60],
     "BOOST_PHI" : ["Boost_phi[SJIDX]", "SubJet #phi in Z Ref. Frame", 10, -3.14, 3.14],
     "BOOST_ETA" : ["Boost_eta[SJIDX]", "SubJet #eta in Z Ref. Frame [GeV]", 10, -2.5, 2.5],
-    "RECL_M"    : ["ZReClJ_mass", "Re-clustered Z Jet Mass [GeV]", 60, 60, 120],
-    "RECL_N"    : ["ZReClJ_nSJs", "Number of re-clustered AK4 SubJets", 30, 0.5, 30.5],
-    "RECL_PT"   : ["ZReClJ_pt", "Re-clustered Z Jet pT [GeV]]", 60, 0, 3000],
+    "RECL_M"    : ["ZReClJ_mass", "Reclustered Z Jet Mass [GeV]", 60, 60, 120],
+    "RECL_N"    : ["ZReClJ_nSJs", "Number of reclustered AK4 SubJets", 30, 0.5, 30.5],
+    "RECL_PT"   : ["ZReClJ_pt", "Reclustered Z Jet pT [GeV]]", 60, 0, 3000],
     "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5],
     "MET_PT"    : ["MET_pt", "MET pT [GeV]", 100, 0, 1000],
     "MET_E"     : ["MET_sumEt", "MET Scalar Sum [GeV]", 100, 0, 1000]
@@ -441,8 +441,8 @@ def plot1D(filelist, args):
     if args.plotEach == "CH":
         hNameList = args.channel
     elif args.plotEach == "DM":
-        hNameList = ["ee", "mumu", "had"]
-        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
+        hNameList = ["ee", "mumu", "AK8"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "AK8" : 0}
     elif args.plotEach == "SJ":
         hNameList = ["LeadingSubJet", "SubLeadingSubJet"]
         sjIdxFromName ={"LeadingSubJet":"1", "SubLeadingSubJet":"2"}
@@ -682,8 +682,8 @@ def plot2D_hists(filelist, args):
     if args.plotEach == "CH":
         hNameList = args.channel
     elif args.plotEach == "DM":
-        hNameList = ["ee", "mumu", "had"]
-        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
+        hNameList = ["ee", "mumu", "AK8"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "AK8" : 0}
     else:
         hNameList = filelist.keys()
 
@@ -823,8 +823,8 @@ def plot2D_graph(filelist, args):
     if args.plotEach == "CH":
         gNameList = args.channels
     elif args.plotEach == "DM":
-        gNameList = ["ee", "mumu", "had"]
-        dmFromName = {"ee" : 1, "mumu" : 2, "had" : 0}
+        gNameList = ["ee", "mumu", "AK8"]
+        dmFromName = {"ee" : 1, "mumu" : 2, "AK8" : 0}
     else:
         gNameList = filelist.keys()
 
