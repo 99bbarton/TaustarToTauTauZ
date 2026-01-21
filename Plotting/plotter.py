@@ -13,7 +13,7 @@ from array import array
 sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
 from Cuts import getCuts
-from mcWeights import getWeight
+from mcWeights import getXSWeight
 from datasets import procToSubProc_run3_legacy, procToSubProc_run2, procToSubProc_run3, yearToEra
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
@@ -500,7 +500,9 @@ def plot1D(filelist, args):
                 if "taustar" in subProc:
                     subProc = subProc.split("_")[-1].upper()
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
-                weight = str(getWeight(subProc, year, xs=args.weights["XS"]))
+                weight = "1"
+                if args.weights["XS"]:
+                    weight = str(getXSWeight(subProc, year))
 
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
 
@@ -727,7 +729,10 @@ def plot2D_hists(filelist, args):
                 if "taustar" in subProc:
                     subProc = subProc.split("_")[-1].upper()
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
-                weight = str(getWeight(subProc, year, xs=args.weights["XS"]))
+                
+                weight = "1"
+                if args.weights["XS"]:
+                    weight = str(getXSWeight(subProc, year))
 
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 

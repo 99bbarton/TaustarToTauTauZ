@@ -45,7 +45,7 @@ from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, T
 sys.path.append("../Framework/")
 from datasets import procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
 from datasets import processes as allProcs
-from mcWeights import getWeight
+from mcWeights import getXSWeight, getSystStr
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -133,6 +133,8 @@ def parseArgs():
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
     argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
     argparser.add_argument("-l", "--log", action="store_true", help="Specify to set the y-axis of plots to log scale.")
+    #argparser.add_argument("-s", "--systs", action="store_true", help="If specified, will include systematic uncertainties")
+    argparser.add_argument("--tauES", choices=["DOWN", "NOM", "UP"], default="NOM", help="What value to use for the tau energy scale")
     argparser.add_argument("--CR", action="store_true", help="If specified, will perform estim for the same-sign tau control region instead of the signal region")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
@@ -160,7 +162,12 @@ def parseArgs():
     if "ALL" in args.channels:
         args.channels = ["ETau", "MuTau", "TauTau"]
 
-
+    if args.tauES == "DOWN":
+        args.tauES = "[0]"
+    elif args.tauES == "NOM":
+        args.tauES = "[1]"
+    else:
+        args.tauES = "[2]"
     
     return args
 
@@ -174,22 +181,26 @@ def makeEvtPredHists(args):
     sigCol = 603
     bkgdCol = 921
 
-    baseCuts = "(CHANNEL_isCand && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > 200 "
+    systDict = {"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"} #All nominal
+    #systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
+    #systDict = {"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"} #All UP
+
+    baseCuts = "(CHANNEL_isCand_TAUES_ && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR_TAUES_>1.5 && CHANNEL_visM_TAUES_ > 200  && CHANNEL_CHANNELDPhi_TAUES_<2.8"
     #Below version intended for per-signal-mass specific cuts
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.CR:
-        baseCuts += "&& CHANNEL_sign > 0"
+        baseCuts += "&& CHANNEL_sign_TAUES_ > 0"
     else:
-        baseCuts += "&& CHANNEL_sign < 0"
+        baseCuts += "&& CHANNEL_sign_TAUES_ < 0"
     baseCutStrs = []
-    baseCutStrs.append(baseCuts + " && CHANNEL_CHANNELDPhi<2.8 && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
+    baseCutStrs.append(baseCuts + " && ( (LOW_EDGE<=CHANNEL_minCollM_TAUES_ && CHANNEL_minCollM_TAUES_ <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM_TAUES_ && CHANNEL_maxCollM_TAUES_ <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     if args.nBins == 4:
-        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM < LOW_EDGE) )") #Bin 1
-        baseCutStrs.append(baseCuts + " && (CHANNEL_minCollM > HIGH_EDGE) )") #Bin 2
-        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE) )") #Bin 3
+        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM_TAUES_ < LOW_EDGE) )") #Bin 1
+        baseCutStrs.append(baseCuts + " && (CHANNEL_minCollM_TAUES_ > HIGH_EDGE) )") #Bin 2
+        baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE) )") #Bin 3
     else:
-        baseCutStrs.append(baseCuts + " && ( (CHANNEL_maxCollM < LOW_EDGE) || (CHANNEL_minCollM > HIGH_EDGE) || ((CHANNEL_maxCollM > HIGH_EDGE) && (CHANNEL_minCollM < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
+        baseCutStrs.append(baseCuts + " && ( (CHANNEL_maxCollM_TAUES_ < LOW_EDGE) || (CHANNEL_minCollM_TAUES_ > HIGH_EDGE) || ((CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
         
     # prepare histograms for each mass
     massBins = array("f", [float(m) for m in args.masses])
@@ -228,14 +239,16 @@ def makeEvtPredHists(args):
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                     if ch == "ETau":
-                        cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                     elif ch == "MuTau":
-                        cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                     else:
-                        cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
+
+                    cutStr = cutStr.replace("_TAUES_", args.tauES)
 
                     #Replace per-mass specific thresholds
                     #cutStr = cutStr.replace("REMETPT", str(massToThreshs[mass][3]))
@@ -261,16 +274,27 @@ def makeEvtPredHists(args):
                     #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) && Tau_pt[MuTau_tauIdx] > 100 )"
                     #    else:
                     #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
-                    weight = getWeight("M" + mass, year, xs=True)
-                    nEvts = sigTree.GetEntries(cutStr)
+                    
+                    weight_xs, unc_xs = getXSWeight("M" + mass, year)
+                    weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
 
-                    sigHists[mass].Fill(sigHists[mass].GetBinCenter(bin + 1), nEvts * weight)
+                    hTemp = TH1F("myHist", "", 3, -1, 2)
+                    hTemp.Sumw2()
+                    sigTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
+                    nEvts = hTemp.Integral()
+                    del hTemp
+                    #nEvts = sigTree.GetEntries(cutStr)
+
+                    #sigHists[mass].Fill(sigHists[mass].GetBinCenter(bin + 1), nEvts * weight_xs)
+                    sigHists[mass].Fill(sigHists[mass].GetBinCenter(bin + 1), nEvts)
                     if bin == 0:
-                        sigEvtPerMass[mass] += nEvts * weight
-                        eventsPerProc[mass]["SIG"] += nEvts * weight
+                        sigEvtPerMass[mass] += nEvts# * weight_xs
+                        eventsPerProc[mass]["SIG"] += nEvts# * weight_xs
             sigFile.Close()
-            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass])
-            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"])
+            #sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass])
+            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + (unc_xs*unc_xs))
+            #eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"]) 
+            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"] + (unc_xs*unc_xs)) 
 
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in args.processes:
@@ -307,14 +331,16 @@ def makeEvtPredHists(args):
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
                             if ch == "ETau":
-                                cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                             elif ch == "MuTau":
-                                cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                             else:
-                                cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > 200 && Tau_pt[TauTau_tau2Idx] > 200)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
+
+                            cutStr = cutStr.replace("_TAUES_", args.tauES)
 
                             #Replace per-mass specific thresholds
                             #cutStr = cutStr.replace("REMETPT", str(massToThreshs[mass][3]))
@@ -339,14 +365,24 @@ def makeEvtPredHists(args):
                             #    else:
                             #       cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) )"
 
-                            weight = getWeight(subProc, year, xs=True)
-                            nEvts = bkgdTree.GetEntries(cutStr)
+                            weight_xs, unc_xs = getXSWeight("M" + mass, year)
+                            weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
 
-                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(bin + 1), nEvts * weight)
+                            hTemp = TH1F("myHist", "", 3, -1, 2)
+                            hTemp.Sumw2()
+                            bkgdTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
+                            nEvts = hTemp.Integral()
+                            del hTemp
+
+                            #weight = getXSWeight(subProc, year)
+                            #nEvts = bkgdTree.GetEntries(cutStr)
+
+                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(bin + 1), nEvts)# * weight)
                             if bin == 0:
-                                bkgdEvtPerMass[mass] += nEvts * weight
-                                eventsPerProc[mass][proc] += nEvts * weight
-
+                                bkgdEvtPerMass[mass] += nEvts #* weight
+                                bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + unc_xs**2) #Keep track of xs+lumi errors as we go
+                                eventsPerProc[mass][proc] += nEvts# * weight
+                                eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + unc_xs**2)
                 bkgdFile.Close()
                 #End MASS
             #eventsErrPerProc[mass][proc] = sqrt( eventsPerProc[mass][proc])
@@ -356,9 +392,9 @@ def makeEvtPredHists(args):
         
 
     for i, mass in enumerate(args.masses):
-        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtPerMass[mass])
-        for p in args.processes:
-            eventsErrPerProc[mass][proc] = sqrt(eventsPerProc[mass][proc])
+        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + bkgdEvtPerMass[mass]) #Add sqrt(N) stat error to xs/lumi errors which were stored as processed
+        for p in args.processes: #Bkgd processes only
+            eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + eventsPerProc[mass][proc])
         
         sigHist = sigHists[mass]
         #sigHist.Sumw2()
@@ -383,12 +419,6 @@ def makeEvtPredHists(args):
 
         canv.cd()
         canv.Clear()
-        #if sigHist.GetMaximum() > bkgdHist.GetMaximum():
-        #    sigHist.Draw("HIST E1")
-        #    bkgdHist.Draw("HIST E1 SAME")
-        #else:
-        #    bkgdHist.Draw("HIST E1")
-        #    sigHist.Draw("HIST E1 SAME")
 
         stack.Draw("NOSTACK HIST E1")
         if args.log:
