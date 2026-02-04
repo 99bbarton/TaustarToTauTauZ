@@ -40,7 +40,7 @@ def getXSWeight(process, year):
     realLumi = lumis[year][0]
     realLumiUnc = lumis[year][1]
     weight = (realLumi / effLumi)
-    uncert = sqrt(xsUnc**2 + realLumiUnc**2)
+    uncert = weight * sqrt((xsUnc/xs)**2 + (realLumiUnc/realLumi)**2)
         
     #print(process, weight)
     return weight, uncert
@@ -57,7 +57,7 @@ def getSystStr(year, channel, systDict):
     
     tagToIdxStr = {"DOWN" : "[0]", "NOM" : "[1]", "UP" : "[2]", "DOWN2" : "[3]", "NOM2" : "[4]", "UP2" : "[5]"}
 
-    systStr = "*(1.0"
+    systStr = "(1.0"
     
     for key in systDict:
         key = key.upper()

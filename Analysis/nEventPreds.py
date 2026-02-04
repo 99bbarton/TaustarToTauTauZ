@@ -181,8 +181,8 @@ def makeEvtPredHists(args):
     sigCol = 603
     bkgdCol = 921
 
-    systDict = {"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"} #All nominal
-    #systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
+    #systDict = {"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"} #All nominal
+    systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
     #systDict = {"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"} #All UP
 
     baseCuts = "(CHANNEL_isCand_TAUES_ && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR_TAUES_>1.5 && CHANNEL_visM_TAUES_ > 200  && CHANNEL_CHANNELDPhi_TAUES_<2.8"
@@ -234,8 +234,8 @@ def makeEvtPredHists(args):
                 lBinEdges = massToLEdges[mass]
 
             for ch in args.channels:
-                for bin in range(args.nBins):
-                    cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
+                for b in range(args.nBins):
+                    cutStr = baseCutStrs[b].replace("CHANNEL", ch)
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                     if ch == "ETau":
@@ -257,45 +257,27 @@ def makeEvtPredHists(args):
                     #cutStr = cutStr.replace("RETAUPT", str(massToThreshs[mass][1]))
                     #cutStr = cutStr.replace("REEPT", str(massToThreshs[mass][4]))
                     #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
-                        
-                    
-                    ## The below block was necessary before CHANNEL_sign branches were added (i.e. prior to V2 processing)    
-                    #if args.CR:
-                    #    if ch == "ETau":
-                    #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) && Tau_pt[ETau_tauIdx] > 100 )"
-                    #    elif ch == "MuTau":
-                    #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) && Tau_pt[MuTau_tauIdx] > 100 )"
-                    #    else:
-                    #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
-                    #else:
-                    #    if ch == "ETau":
-                    #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) && Tau_pt[ETau_tauIdx] > 100 )"
-                    #    elif ch == "MuTau":
-                    #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) && Tau_pt[MuTau_tauIdx] > 100 )"
-                    #    else:
-                    #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) && Tau_pt[TauTau_tau1Idx] > 100 && Tau_pt[TauTau_tau2Idx] > 100 )"
-                    
+                                            
                     weight_xs, unc_xs = getXSWeight("M" + mass, year)
                     weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
-
+                    
                     hTemp = TH1F("myHist", "", 3, -1, 2)
                     hTemp.Sumw2()
-                    sigTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
+                    sigTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff")
                     nEvts = hTemp.Integral()
                     del hTemp
-                    #nEvts = sigTree.GetEntries(cutStr)
 
-                    #sigHists[mass].Fill(sigHists[mass].GetBinCenter(bin + 1), nEvts * weight_xs)
-                    sigHists[mass].Fill(sigHists[mass].GetBinCenter(bin + 1), nEvts)
-                    if bin == 0:
+                    sigHists[mass].Fill(sigHists[mass].GetBinCenter(b + 1), nEvts)
+                    if b == 0:
                         sigEvtPerMass[mass] += nEvts# * weight_xs
                         eventsPerProc[mass]["SIG"] += nEvts# * weight_xs
             sigFile.Close()
             #sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass])
-            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + (unc_xs*unc_xs))
-            #eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"]) 
-            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"] + (unc_xs*unc_xs)) 
-
+            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtPerMass[mass]*(unc_xs/weight_xs))
+            #eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"])
+            print("sigEvtErrPerMass["+mass+"] = sqrt("+ str(sigEvtPerMass[mass]) + " + " + str((sigEvtPerMass[mass]*unc_xs/weight_xs)) + " = " + str(sigEvtErrPerMass[mass]))
+            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"] + eventsPerProc[mass]["SIG"]*(unc_xs/weight_xs))
+            
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in args.processes:
             print(f"\tProcessing proc = {proc}")
@@ -305,6 +287,7 @@ def makeEvtPredHists(args):
                 subProcs = procToSubProc_run2[proc]
 
             for subProc in subProcs:
+                
                 filePath = dirPath + subProc + "_" + year + ".root"
                 bkgdFile = TFile.Open(filePath, "r")
                 try:
@@ -325,8 +308,8 @@ def makeEvtPredHists(args):
                         lBinEdges = massToLEdges[mass]
 
                     for ch in args.channels:
-                        for bin in range(args.nBins):
-                            cutStr = baseCutStrs[bin].replace("CHANNEL", ch)
+                        for b in range(args.nBins):
+                            cutStr = baseCutStrs[b].replace("CHANNEL", ch)
                             cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
@@ -349,53 +332,49 @@ def makeEvtPredHists(args):
                             #cutStr = cutStr.replace("RETAUPT", str(massToThreshs[mass][1]))
                             #cutStr = cutStr.replace("REEPT", str(massToThreshs[mass][4]))
                             #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
-
-                            #if args.CR:
-                            #    if ch == "ETau":
-                            #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) > 0) )"
-                            #    elif ch == "MuTau":
-                            #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) > 0) )"
-                            #    else:
-                            #        cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) > 0) )"
-                            #else:
-                            #    if ch == "ETau":
-                            #        cutStr = "("+cutStr+ "&& ( (Electron_charge[ETau_eIdx]*Tau_charge[ETau_tauIdx]) < 0) )"
-                            #    elif ch == "MuTau":
-                            #        cutStr = "("+cutStr+ "&& ( (Muon_charge[MuTau_muIdx]*Tau_charge[MuTau_tauIdx]) < 0) )"
-                            #    else:
-                            #       cutStr = "("+cutStr+ "&& ( (Tau_charge[TauTau_tau1Idx]*Tau_charge[TauTau_tau2Idx]) < 0) )"
-
-                            weight_xs, unc_xs = getXSWeight("M" + mass, year)
+                            
+                            weight_xs, unc_xs = getXSWeight(subProc, year)
+                            #print("subProc", subProc, "weight_xs", weight_xs, "unc_xs", unc_xs)
                             weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
-
+                            
                             hTemp = TH1F("myHist", "", 3, -1, 2)
                             hTemp.Sumw2()
                             bkgdTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
                             nEvts = hTemp.Integral()
                             del hTemp
 
-                            #weight = getXSWeight(subProc, year)
-                            #nEvts = bkgdTree.GetEntries(cutStr)
 
-                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(bin + 1), nEvts)# * weight)
-                            if bin == 0:
-                                bkgdEvtPerMass[mass] += nEvts #* weight
-                                bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + unc_xs**2) #Keep track of xs+lumi errors as we go
-                                eventsPerProc[mass][proc] += nEvts# * weight
-                                eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + unc_xs**2)
+                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(b + 1), nEvts)# * weight_xs)
+                            
+                            if b == 0:
+                                bkgdEvtPerMass[mass] += nEvts# * weight_xs
+                                eventsPerProc[mass][proc] += nEvts# * weight_xs
+                                #print("For proc:", proc, "subproc:", subProc, "mass:", mass, "nEvts:", nEvts, "nEvts*unc_xs/weight_xs=", nEvts*unc_xs/weight_xs)
+                                #print("\tbkgdEvtErrPerMass[mass] was", bkgdEvtErrPerMass[mass], "and is now", str(sqrt(bkgdEvtErrPerMass[mass]**2 + nEvts*unc_xs/weight_xs)))
+                                bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + (nEvts*unc_xs/weight_xs)**2) #Keep track of xs+lumi errors as we go
+                                #print("\teventsErrPerProc[mass][proc] was", eventsErrPerProc[mass][proc], "and is now", str(sqrt(eventsErrPerProc[mass][proc]**2 + nEvts*unc_xs/weight_xs)))
+                                eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + (nEvts*unc_xs/weight_xs)**2)
+                        #END BIN
+                    #END CH
+                    #print("For proc:", proc, "subproc:", subProc, "mass:", mass)
+                    #print("\tbkgdEvtErrPerMass[mass] was", bkgdEvtErrPerMass[mass], "and is now", str(sqrt(bkgdEvtErrPerMass[mass]**2 + nEvts*unc_xs/weight_xs)))
+                    #bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + nEvts*unc_xs/weight_xs) #Keep track of xs+lumi errors as we go
+                    #print("\teventsErrPerProc[mass][proc] was", eventsErrPerProc[mass][proc], "and is now", str(sqrt(eventsErrPerProc[mass][proc]**2 + nEvts*unc_xs/weight_xs)))
+                    #eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + nEvts*unc_xs/weight_xs)
+                #END MASS
                 bkgdFile.Close()
-                #End MASS
-            #eventsErrPerProc[mass][proc] = sqrt( eventsPerProc[mass][proc])
-            #print(f"Error for mass={mass}, proc={proc} = {eventsErrPerProc[mass][proc]}")
-            
-        #bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtPerMass[mass])
-        
+                                 
+
+            #END SUBPROC
+        #END PROC
+    #END YEAR
 
     for i, mass in enumerate(args.masses):
         bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + bkgdEvtPerMass[mass]) #Add sqrt(N) stat error to xs/lumi errors which were stored as processed
+        #bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtPerMass[mass])
         for p in args.processes: #Bkgd processes only
             eventsErrPerProc[mass][proc] = sqrt(eventsErrPerProc[mass][proc]**2 + eventsPerProc[mass][proc])
-        
+            #eventsErrPerProc[mass][proc] = sqrt(eventsPerProc[mass][proc])
         sigHist = sigHists[mass]
         #sigHist.Sumw2()
         bkgdHist = bkgdHists[mass]
@@ -405,6 +384,8 @@ def makeEvtPredHists(args):
         bkgdHist.SetLineColor(bkgdCol)
         bkgdHist.SetLineWidth(3)
         #bkgdHist.SetFillColor(bkgdCol)
+
+        #For 
 
         if i == 0:
             leg.AddEntry(sigHist, "Signal", "L")
@@ -479,13 +460,14 @@ def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
     processes = list(event_dicts[0].keys())
     
     total_bkgs = [sum(v for k, v in events.items() if k != "SIG") for events in event_dicts]
-    total_bkgs_errs = [sqrt(totBkgd) for totBkgd in total_bkgs]
+    #total_bkgs_errs = [sqrt(totBkgd) for totBkgd in total_bkgs]
+    total_bkgs_errs = [sqrt(sum(v**2 for k, v in events.items() if k != "SIG")) for events in event_err_dicts]
     
     # Sort background processes by yield at the first mass point (largest first)
     backgrounds = [p for p in processes if p != "SIG"]
-    backgrounds.sort(key=lambda p: event_dicts[3][p], reverse=True)
+    backgrounds.sort(key=lambda p: event_dicts[0][p], reverse=True)
     
-    rows = [["Signal"] + [f"{events['SIG']:.3f}+/-{sqrt(events['SIG']):.3f}" for events in event_dicts]]
+    rows = [["Signal"] + [f"{events['SIG']:.3f}+/-{errors['SIG']:.3f}" for events, errors in zip(event_dicts, event_err_dicts)]]
     
     if not latex:
         rows.append(["-" * 10] + ["-" * 10 for _ in masses])  

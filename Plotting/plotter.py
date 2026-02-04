@@ -502,7 +502,8 @@ def plot1D(filelist, args):
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
                 weight = "1"
                 if args.weights["XS"]:
-                    weight = str(getXSWeight(subProc, year))
+                    weight, xsUnc = getXSWeight(subProc, year)
+                    weight = str(weight)
 
                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
 
@@ -732,7 +733,8 @@ def plot2D_hists(filelist, args):
                 
                 weight = "1"
                 if args.weights["XS"]:
-                    weight = str(getXSWeight(subProc, year))
+                    weight, unc = getXSWeight(subProc, year)
+                    weight = str(weight)
 
                 hTemp = TH2F("h_temp_2d", ";"+plotParamsD1[1]+";"+plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
 
