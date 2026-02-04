@@ -26,7 +26,7 @@ def haddFiles():
         doBkgd = True
         doSig = False
     elif "SIG" in args.processes:
-        args.processes = ["M250","M500","M750","M1000","M1500","M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
+        args.processes = ["M250","M500","M750","M1000","M1250", "M1500", "M1750", "M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
         doSig = True
         doBkgd = False
     else:

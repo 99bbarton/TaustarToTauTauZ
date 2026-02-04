@@ -4,6 +4,9 @@
 *.pyc
 *.png
 *.log
+*.so
+*.d
+*.pcm
 
 MCGeneration/CondorScripts/
 MCGeneration/BTVNanoScripts/Condor/Jobs/
