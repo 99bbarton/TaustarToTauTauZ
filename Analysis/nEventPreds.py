@@ -182,8 +182,8 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     #systDict = {"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"} #All nominal
-    systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
-    #systDict = {"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"} #All UP
+    #systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
+    systDict = {"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"} #All UP
 
     baseCuts = "(CHANNEL_isCand_TAUES_ && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR_TAUES_>1.5 && CHANNEL_visM_TAUES_ > 200  && CHANNEL_CHANNELDPhi_TAUES_<2.8"
     #Below version intended for per-signal-mass specific cuts
@@ -275,7 +275,7 @@ def makeEvtPredHists(args):
             #sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass])
             sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtPerMass[mass]*(unc_xs/weight_xs))
             #eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"])
-            print("sigEvtErrPerMass["+mass+"] = sqrt("+ str(sigEvtPerMass[mass]) + " + " + str((sigEvtPerMass[mass]*unc_xs/weight_xs)) + " = " + str(sigEvtErrPerMass[mass]))
+            #print("sigEvtErrPerMass["+mass+"] = sqrt("+ str(sigEvtPerMass[mass]) + " + " + str((sigEvtPerMass[mass]*unc_xs/weight_xs)) + " = " + str(sigEvtErrPerMass[mass]))
             eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"] + eventsPerProc[mass]["SIG"]*(unc_xs/weight_xs))
             
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
