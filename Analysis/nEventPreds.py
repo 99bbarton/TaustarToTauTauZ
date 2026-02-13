@@ -281,7 +281,8 @@ def makeEvtPredHists(args):
                     eventsPerProc[mass]["SIG"][b] += nEvts# * weight_xs
             sigFile.Close()
             sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtPerMass[mass]*(unc_xs/weight_xs))
-            eventsErrPerProc[mass]["SIG"] = sqrt(eventsPerProc[mass]["SIG"][b] + eventsPerProc[mass]["SIG"][b]*(unc_xs/weight_xs))
+            for b in range(args.nBins):
+                eventsErrPerProc[mass]["SIG"][b] = sqrt(eventsPerProc[mass]["SIG"][b] + eventsPerProc[mass]["SIG"][b]*(unc_xs/weight_xs))
             
         # ------------------------ Backgrounds -----------------------------------------#
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
@@ -445,11 +446,12 @@ def makeEvtPredHists(args):
 #Makes a event yields per process and signal mass table
 #courtesy of ChatGPT
 def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
+    
     processes = list(event_dicts[0].keys())
     
     total_bkgs = [sum(v[0] for k, v in events.items() if k != "SIG") for events in event_dicts]
     #total_bkgs_errs = [sqrt(totBkgd) for totBkgd in total_bkgs]
-    total_bkgs_errs = [sqrt(sum(v[0]**2 for k, v in events.items() if k != "SIG")) for events in event_err_dicts]
+    total_bkgs_errs = [sqrt(sum(v[0]**2 for k, v in errs.items() if k != "SIG")) for errs in event_err_dicts]
     
     # Sort background processes by yield at the first mass point (largest first)
     backgrounds = [p for p in processes if p != "SIG"]
