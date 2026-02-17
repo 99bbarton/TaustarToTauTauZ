@@ -11,3 +11,4 @@
 MCGeneration/CondorScripts/
 MCGeneration/BTVNanoScripts/Condor/Jobs/
 Plotting/Plots/*
+Combine/Datacards/*

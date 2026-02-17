@@ -118,11 +118,16 @@ def getCombXSPercUnc(years, proc):
         else:
             crossections = crossections_run3
             subProcDict = procToSubProc_run3
-        
-        for subProc in subProcDict[proc]:
+
+        if proc.startswith("M"):
             xs = crossections[proc][0]
             xsErr = crossections[proc][1]
             totUnc += (xsErr/xs)**2
+        else:
+            for subProc in subProcDict[proc]:
+                xs = crossections[subProc][0]
+                xsErr = crossections[subProc][1]
+                totUnc += (xsErr/xs)**2
     totUnc = sqrt(totUnc)
 
     return totUnc

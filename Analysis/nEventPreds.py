@@ -496,51 +496,64 @@ def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
 #TODO calculate effect of shape uncertainties
 def makeDatacards(evPerMass, shapeVarPerMass, args):
     #First prepare univeral lines
-    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {4 + len(args.processes)}\n----------\n"
+    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {2 + len(args.processes) + 1}\n----------\n"
     if args.nBins == 2:
-        bin_block = "bin\tbin0\tbin1\nobservation\t0\t0\n----------\n"
+        bin_block = "bin        \tbin0\tbin1\nobservation\t0\t0\n----------\n"
         binStrs = ["bin0", "bin1"]
     else:
-        bin_block = "bin\tbin0\tbin1\tbin2\tbin3\nobservation\t0\t0\t0\t0\n----------\n"
+        bin_block = "bin        \tbin0\tbin1\tbin2\tbin3\nobservation\t0\t0\t0\t0\n----------\n"
         binStrs = ["bin0", "bin1", "bin2", "bin3"]
 
-    lumiUnc = f"{1+getCombLumiPercUnc(args.years):.3f}"
-    lumiLine = "lumi\tlnN"
-    extSyst = "1.100" #10% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise 
-    extLine = "extSyst\tlnN"
-    for bN in range(len(args.nBins)):
-        lumiLine += "\t"+ lumiUnc
-        extLine += "\t" + extSyst
 
+    
     #XS uncertainties are pre-calculable (except signal which we'll do in the masses loop)
     xsUncs = {}
     xsLines = {}
     for proc in args.processes:
-        xsLines[proc] = f"xs_{proc}\t"
+        xsLines[proc] = f"xs_{proc}\tlnN"
         xsUncs[proc] = f"{1+getCombXSPercUnc(args.years, proc):.3f}"
-    
-    cardProcs = ["SIG"].extend(args.processes)
+        
+    cardProcs = ["SIG"]
+    cardProcs.extend(args.processes)
 
-    for mass in args.masses:
-        with open(f"../Combine/Datacards/datacard_{mass}_{args.yearTag}.txt", "w+") as datacard:
-            datacard.write(f"2-bin scheme datacard for taustar hypothesis mass {mass} GeV\n----------\n")
+    lumiUnc = f"{1+getCombLumiPercUnc(args.years):.3f}"
+    lumiLine = "lumi\tlnN"
+    extSyst = "1.100" #10% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
+    
+    extLine = "extSyst\tlnN"
+    for bN in range(args.nBins*len(cardProcs)):
+        lumiLine += "\t"+ lumiUnc
+        extLine += "\t" + extSyst
+
+    print(extLine)
+    for mN, mass in enumerate(args.masses):
+        sigXSUnc = f"{1+getCombXSPercUnc(args.years, 'M'+mass):.3f}"
+        sigXSLine = "xs_SIG\tlnN"
+        
+        with open(f"../Combine/Datacards/datacard_{mass}.txt", "w+") as datacard:
+            datacard.write(f"{args.nBins}-bin scheme datacard for taustar hypothesis mass {mass} GeV\n----------\n")
             datacard.write(nMax_block)
             datacard.write(bin_block)
 
-            binLabelLine = "bin    "
-            procNameLine = "process"
-            procNumLine =  "process"
-            rateLine =     "rate   "
+            binLabelLine = "bin    \t"
+            procNameLine = "process\t"
+            procNumLine =  "process\t"
+            rateLine =     "rate   \t"
             for binN, binStr in enumerate(binStrs): 
                 for procN, proc in enumerate(cardProcs):
                     binLabelLine += "\t" + binStr.ljust(5)
                     procNameLine += "\t" + proc.ljust(5)
                     procNumLine += "\t" + str(procN).ljust(5)
-                    rateLine += f"\t{evPerMass[mass][proc][binN]:.3f}"
+                    rateLine += f"\t{evPerMass[mN][proc][binN]:.3f}"
 
+                    if proc == "SIG":
+                        sigXSLine += "\t" + sigXSUnc
+                    else:
+                        sigXSLine += "\t-     "
                     for k in xsLines.keys():
                         if k == proc:
                             xsLines[k] += "\t" + xsUncs[proc]
+                            
                         else:
                             xsLines[k] += "\t-     "
 
@@ -552,7 +565,10 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             datacard.write(lumiLine + "\n")
             datacard.write(extLine + "\n")
             for proc in cardProcs:
-                datacard.write(xsLines[proc] + "\n")
+                if proc == "SIG":
+                    datacard.write(sigXSLine + "\n")
+                else:
+                    datacard.write(xsLines[proc] + "\n")
 
             #TODO write shape uncertainties line once decided how to calc/pass from nEventPreds
 
@@ -575,7 +591,8 @@ if __name__ == "__main__":
 
     evtsPerProc, evtsErrPerProc = makeEvtPredHists(args)
     if args.makeDC:
-        pass
+        #print(evtsPerProc)
+        #evtsPerProc = [{'SIG': [0.25480947201140225, 0.3281724037369713, 0.41909110615961254, 0.0, 0.0, 0.0, 0.00046740032848902047, 0.0006276420899666846, 0.0008330298878718168, 0.0007760756416246295, 0.0009472713863942772, 0.0011435768392402679], 'ZZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WW': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WJets': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'DY': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'TT': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'ST': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'QCD': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {'SIG': [0.1892193216481246, 0.24542375258170068, 0.3156501242192462, 0.004591759410686791, 0.005963219329714775, 0.007677017478272319, 0.0, 0.0, 0.0, 0.004201513038424309, 0.0053616585792042315, 0.00678437294845935], 'ZZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WW': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WJets': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'DY': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'TT': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'ST': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'QCD': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {'SIG': [0.08386288280598819, 0.1091097691678442, 0.1407550445292145, 0.000859175794175826, 0.001091270736651495, 0.001374228682834655, 0.0, 0.0, 0.0, 0.00013323361781658605, 0.0001757670470396988, 0.0002298938052263111], 'ZZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WZ': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WW': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'WJets': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'DY': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'TT': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'ST': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'QCD': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]
         makeDatacards(evtsPerProc, [], args) #TODO
     else:
         printExpEvtsTable(args.masses, evtsPerProc, evtsErrPerProc, args.latex)
