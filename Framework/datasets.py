@@ -971,7 +971,7 @@ crossections_run3 = {
         "TTto2L2Nu" : [762.1, 0.1345],
         "TTto4Q" : [762.1, 0.1345],
         "TTtoLNu2Q" : [762.1, 0.1345],
-        "TBbarQ_t-channel_4FS" : [123.8, 123.8],
+        "TBbarQ_t-channel_4FS" : [123.8, 0.3709],
         "TWminusto4Q": [35.99, 0.01292],
         "TWminusto2L2Nu" : [35.99, 0.01292],
         "TWminustoLNu2Q" : [35.99, 0.01292],

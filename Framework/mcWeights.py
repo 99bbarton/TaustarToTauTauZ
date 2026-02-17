@@ -1,6 +1,6 @@
 #Tool to provide the event weight for MC samples
 
-from datasets import nEvents, crossections_2016, crossections_2017, crossections_2018, crossections_run3, yrTonEventsIdx, years_run3
+from datasets import nEvents, crossections_2016, crossections_2017, crossections_2018, crossections_run3, yrTonEventsIdx, years_run3, procToSubProc_run2, procToSubProc_run3
 from math import sqrt
 
 #year : [lumi, err] in fb^-1 
@@ -11,15 +11,15 @@ from math import sqrt
 
 
 lumis = {
-    "2016" : [19.5, 0.234],
+    "2016" :     [19.5, 0.234],
     "2016post" : [16.8, 0.202],
-    "2017" : [41.5, 0.955],
-    "2018" : [59.8, 0.150],
-    "2022" : [7.98, 0.112],
+    "2017" :     [41.5, 0.955],
+    "2018" :     [59.8, 0.150],
+    "2022" :     [7.98, 0.112],
     "2022post" : [26.67, 0.373],
-    "2023" : [17.79, 0.231],
+    "2023" :     [17.79, 0.231],
     "2023post" : [9.45, 0.123],
-    "2024" : [109, 2.18]   #NB: LUMI POG does not provide a lumi uncertainty for 2024. Using 2% here as a conservative (bigger than all other years) value
+    "2024" :     [109, 2.18]   #NB: LUMI POG does not provide a lumi uncertainty for 2024. Using 2% here as a conservative (bigger than all other years) value
 }
 
 def getXSWeight(process, year):
@@ -91,13 +91,38 @@ def getSystStr(year, channel, systDict):
     return systStr
 
 
+#Returns the comined lumi % uncertainty for the provided combination of years
+def getCombLumiPercUnc(years):
+    totUnc = 0
+    for year in years:
+        lumi, lumiUnc = lumis[year]
+        totUnc += (lumiUnc / lumi)**2
+    totUnc = sqrt(totUnc)
 
+    return totUnc
 
-#Systematics (applicability domain):
-#Lumi 
-#Tau Energy scale
-#Tau ID
-#E ID (ETau, Z_ee)
-#Mu ID (MuTau, Z_mumu)
-#Trigger SF (run3)
-#PDF reweighting (signal)
+#Returns the combined xs % uncertainty for the provided years and process (not subproc)
+def getCombXSPercUnc(years, proc):
+    totUnc = 0
+    for year in years:
+        crossections = {}
+        if year == "2016" or year == "2016post":
+            crossections = crossections_2016
+            subProcDict = procToSubProc_run2
+        elif year == "2017":
+            crossections = crossections_2017
+            subProcDict = procToSubProc_run2
+        elif year == "2018":
+            crossections = crossections_2018
+            subProcDict = procToSubProc_run2
+        else:
+            crossections = crossections_run3
+            subProcDict = procToSubProc_run3
+        
+        for subProc in subProcDict[proc]:
+            xs = crossections[proc][0]
+            xsErr = crossections[proc][1]
+            totUnc += (xsErr/xs)**2
+    totUnc = sqrt(totUnc)
+
+    return totUnc

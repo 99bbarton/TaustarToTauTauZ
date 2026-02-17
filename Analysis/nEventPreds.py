@@ -45,7 +45,7 @@ from ROOT import TFile, TCanvas, TTree, TChain, TH1F, TGraph, TLegend, gStyle, T
 sys.path.append("../Framework/")
 from datasets import procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
 from datasets import processes as allProcs
-from mcWeights import getXSWeight, getSystStr
+from mcWeights import getXSWeight, getSystStr, getCombLumiPercUnc, getCombXSPercUnc
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -183,13 +183,20 @@ def makeEvtPredHists(args):
     sigCol = 603
     bkgdCol = 921
 
-    systDict = {}   
-    if args.systs == "NOM":
-        systDict = {"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"} #All nominal
-    elif args.systs == "DOWN":
-        systDict = {"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"} #All DOWN
+    systDicts = []
+    if args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
+        systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"})
     else:
-        systDict = {"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"} #All UP
+        if args.systs == "NOM":
+            systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"}) #All nominal
+        elif args.systs == "DOWN":
+            systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"}) #All DOWN
+        elif sys.systs == "UP":
+            systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"}) #All UP
+
+    nSystDicts = len(systDicts)
 
 
     baseCuts = "(CHANNEL_isCand_TAUES_ && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR_TAUES_>1.5 && CHANNEL_visM_TAUES_ > 200  && CHANNEL_CHANNELDPhi_TAUES_<2.8"
@@ -208,7 +215,8 @@ def makeEvtPredHists(args):
         baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE) )") #Bin 3
     else:
         baseCutStrs.append(baseCuts + " && ( (CHANNEL_maxCollM_TAUES_ < LOW_EDGE) || (CHANNEL_minCollM_TAUES_ > HIGH_EDGE) || ((CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
-        
+    
+    nBinSyst = args.nBins * nSystDicts
     # prepare histograms for each mass
     massBins = array("f", [float(m) for m in args.masses])
     sigHists = {}
@@ -217,8 +225,8 @@ def makeEvtPredHists(args):
     sigEvtErrPerMass = {m: 0 for m in args.masses}
     bkgdEvtPerMass = {m: 0 for m in args.masses}
     bkgdEvtErrPerMass = {m: 0 for m in args.masses}
-    eventsPerProc = {m: {"SIG": [0]*args.nBins, "ZZ": [0]*args.nBins, "WZ": [0]*args.nBins, "WW": [0]*args.nBins, "WJets": [0]*args.nBins, "DY": [0]*args.nBins, "TT": [0]*args.nBins, "ST": [0]*args.nBins, "QCD": [0]*args.nBins} for m in args.masses}
-    eventsErrPerProc = {m: {"SIG": [0]*args.nBins, "ZZ": [0]*args.nBins, "WZ": [0]*args.nBins, "WW": [0]*args.nBins, "WJets": [0]*args.nBins, "DY": [0]*args.nBins, "TT": [0]*args.nBins, "ST": [0]*args.nBins, "QCD": [0]*args.nBins} for m in args.masses}
+    eventsPerProc = {m: {"SIG": [0]*nBinSyst, "ZZ": [0]*nBinSyst, "WZ": [0]*nBinSyst, "WW": [0]*nBinSyst, "WJets": [0]*nBinSyst, "DY": [0]*nBinSyst, "TT": [0]*nBinSyst, "ST": [0]*nBinSyst, "QCD": [0]*nBinSyst} for m in args.masses}
+    eventsErrPerProc = {m: {"SIG": [0]*nBinSyst, "ZZ": [0]*nBinSyst, "WZ": [0]*nBinSyst, "WW": [0]*nBinSyst, "WJets": [0]*nBinSyst, "DY": [0]*nBinSyst, "TT": [0]*nBinSyst, "ST": [0]*nBinSyst, "QCD": [0]*nBinSyst} for m in args.masses}
 
     for mass in args.masses:
         sigHists[mass] = TH1F(f"sig_m{mass}", f"Signal m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
@@ -266,22 +274,25 @@ def makeEvtPredHists(args):
                     #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
                     
                     weight_xs, unc_xs = getXSWeight("M" + mass, year)
-                    weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
-                    
-                    hTemp = TH1F("myHist", "", 3, -1, 2)
-                    hTemp.Sumw2()
-                    sigTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff")
-                    nEvts = hTemp.Integral()
-                    del hTemp
 
-                    sigHists[mass].Fill(sigHists[mass].GetBinCenter(b + 1), nEvts)
-                    if b == 0:
-                        sigEvtPerMass[mass] += nEvts# * weight_xs
-                    
-                    eventsPerProc[mass]["SIG"][b] += nEvts# * weight_xs
+                    for systI in range(nSystDicts):
+                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI])
+                        
+                        hTemp = TH1F("myHist", "", 3, -1, 2)
+                        hTemp.Sumw2()
+                        sigTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff")
+                        nEvts = hTemp.Integral()
+                        del hTemp
+
+                        if (len(systDicts) == 1 or systI == 1): # Assuming [DOWN, NOM, UP] order for syst variations
+                            sigHists[mass].Fill(sigHists[mass].GetBinCenter(b + 1), nEvts)
+                            if b == 0:
+                                sigEvtPerMass[mass] += nEvts# * weight_xs
+
+                        eventsPerProc[mass]["SIG"][(b*nSystDicts) + systI] += nEvts# * weight_xs 
             sigFile.Close()
             sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtPerMass[mass]*(unc_xs/weight_xs))
-            for b in range(args.nBins):
+            for b in range(args.nBins*nSystDicts):
                 eventsErrPerProc[mass]["SIG"][b] = sqrt(eventsPerProc[mass]["SIG"][b] + eventsPerProc[mass]["SIG"][b]*(unc_xs/weight_xs))
             
         # ------------------------ Backgrounds -----------------------------------------#
@@ -341,21 +352,24 @@ def makeEvtPredHists(args):
                             #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
                             
                             weight_xs, unc_xs = getXSWeight(subProc, year)
-                            weight_systStr = getSystStr(year=year, channel=ch, systDict=systDict)
-                            
-                            hTemp = TH1F("myHist", "", 3, -1, 2)
-                            hTemp.Sumw2()
-                            bkgdTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
-                            nEvts = hTemp.Integral()
-                            del hTemp
 
-                            bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(b + 1), nEvts)# * weight_xs)
-                            
-                            if b == 0:
-                                bkgdEvtPerMass[mass] += nEvts# * weight_xs
-                                bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + (nEvts*unc_xs/weight_xs)**2) #Keep track of xs+lumi errors as we go
-                            eventsPerProc[mass][proc][b] += nEvts# * weight_xs
-                            eventsErrPerProc[mass][proc][b] = sqrt(eventsErrPerProc[mass][proc][b]**2 + (nEvts*unc_xs/weight_xs)**2)
+                            for systI in range(nSystDicts):
+                                adjIdx = (b*nSystDicts) + systI
+                                weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI])
+                                
+                                hTemp = TH1F("myHist", "", 3, -1, 2)
+                                hTemp.Sumw2()
+                                bkgdTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
+                                nEvts = hTemp.Integral()
+                                del hTemp
+
+                                if (len(systDicts) == 1 or systI == 1): # Assuming [DOWN, NOM, UP] order for syst variations
+                                    bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(b + 1), nEvts)# * weight_xs)
+                                    if b == 0:
+                                        bkgdEvtPerMass[mass] += nEvts# * weight_xs
+                                        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + (nEvts*unc_xs/weight_xs)**2) #Keep track of xs+lumi errors as we go
+                                eventsPerProc[mass][proc][adjIdx] += nEvts# * weight_xs
+                                eventsErrPerProc[mass][proc][adjIdx] = sqrt(eventsErrPerProc[mass][proc][adjIdx]**2 + (nEvts*unc_xs/weight_xs)**2)
                         #END BIN
                     #END CH
                 #END MASS
@@ -367,7 +381,7 @@ def makeEvtPredHists(args):
     for i, mass in enumerate(args.masses):
         bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + bkgdEvtPerMass[mass]) #Add sqrt(N) stat error to xs/lumi errors which were stored as processed
         for p in args.processes: #Bkgd processes only
-            for b in range(args.nBins):
+            for b in range(args.nBins * nSystDicts):
                 eventsErrPerProc[mass][proc][b] = sqrt(eventsErrPerProc[mass][proc][b]**2 + eventsPerProc[mass][proc][b])
         sigHist = sigHists[mass]
         bkgdHist = bkgdHists[mass]
@@ -477,9 +491,72 @@ def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
         print(tabulate(rows, headers=headers, tablefmt="grid"))
 
 
-
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
+#TODO calculate effect of shape uncertainties
+def makeDatacards(evPerMass, shapeVarPerMass, args):
+    #First prepare univeral lines
+    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {4 + len(args.processes)}\n----------\n"
+    if args.nBins == 2:
+        bin_block = "bin\tbin0\tbin1\nobservation\t0\t0\n----------\n"
+        binStrs = ["bin0", "bin1"]
+    else:
+        bin_block = "bin\tbin0\tbin1\tbin2\tbin3\nobservation\t0\t0\t0\t0\n----------\n"
+        binStrs = ["bin0", "bin1", "bin2", "bin3"]
+
+    lumiUnc = f"{1+getCombLumiPercUnc(args.years):.3f}"
+    lumiLine = "lumi\tlnN"
+    extSyst = "1.100" #10% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise 
+    extLine = "extSyst\tlnN"
+    for bN in range(len(args.nBins)):
+        lumiLine += "\t"+ lumiUnc
+        extLine += "\t" + extSyst
+
+    #XS uncertainties are pre-calculable (except signal which we'll do in the masses loop)
+    xsUncs = {}
+    xsLines = {}
+    for proc in args.processes:
+        xsLines[proc] = f"xs_{proc}\t"
+        xsUncs[proc] = f"{1+getCombXSPercUnc(args.years, proc):.3f}"
+    
+    cardProcs = ["SIG"].extend(args.processes)
+
+    for mass in args.masses:
+        with open(f"../Combine/Datacards/datacard_{mass}_{args.yearTag}.txt", "w+") as datacard:
+            datacard.write(f"2-bin scheme datacard for taustar hypothesis mass {mass} GeV\n----------\n")
+            datacard.write(nMax_block)
+            datacard.write(bin_block)
+
+            binLabelLine = "bin    "
+            procNameLine = "process"
+            procNumLine =  "process"
+            rateLine =     "rate   "
+            for binN, binStr in enumerate(binStrs): 
+                for procN, proc in enumerate(cardProcs):
+                    binLabelLine += "\t" + binStr.ljust(5)
+                    procNameLine += "\t" + proc.ljust(5)
+                    procNumLine += "\t" + str(procN).ljust(5)
+                    rateLine += f"\t{evPerMass[mass][proc][binN]:.3f}"
+
+                    for k in xsLines.keys():
+                        if k == proc:
+                            xsLines[k] += "\t" + xsUncs[proc]
+                        else:
+                            xsLines[k] += "\t-     "
+
+            datacard.write(binLabelLine + "\n")
+            datacard.write(procNameLine + "\n")
+            datacard.write(procNumLine + "\n")
+            datacard.write(rateLine + "\n----------\n")
+            
+            datacard.write(lumiLine + "\n")
+            datacard.write(extLine + "\n")
+            for proc in cardProcs:
+                datacard.write(xsLines[proc] + "\n")
+
+            #TODO write shape uncertainties line once decided how to calc/pass from nEventPreds
+
+#----------------------------------------------------------------------------------------------------------------------------------------------#
 
 #Utility function to aid updating massToLEdges dict from massToLHalfWidths
 def printLEdges():
@@ -494,7 +571,11 @@ def printLEdges():
 if __name__ == "__main__":
     args = parseArgs()
     if args.printLEdges:
-        printLEdges
+        printLEdges()
+
+    evtsPerProc, evtsErrPerProc = makeEvtPredHists(args)
+    if args.makeDC:
+        pass
+        makeDatacards(evtsPerProc, [], args) #TODO
     else:
-        evtsPerProc, evtsErrPerProc = makeEvtPredHists(args)
         printExpEvtsTable(args.masses, evtsPerProc, evtsErrPerProc, args.latex)
