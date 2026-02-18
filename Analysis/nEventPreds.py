@@ -378,6 +378,8 @@ def makeEvtPredHists(args):
         #END PROC
     #END YEAR
 
+    gStyle.SetPaintTextFormat("2.2f")
+    
     for i, mass in enumerate(args.masses):
         bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + bkgdEvtPerMass[mass]) #Add sqrt(N) stat error to xs/lumi errors which were stored as processed
         for p in args.processes: #Bkgd processes only
@@ -404,7 +406,7 @@ def makeEvtPredHists(args):
         canv.cd()
         canv.Clear()
 
-        stack.Draw("NOSTACK HIST E1")
+        stack.Draw("NOSTACK HIST E1 TEXT0")
         if args.log:
             canv.SetLogy(True)
         leg.Draw()
@@ -459,13 +461,13 @@ def makeEvtPredHists(args):
 
 #Makes a event yields per process and signal mass table
 #courtesy of ChatGPT
-def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
+def printExpEvtsTable(event_dicts, event_err_dicts, args):
     
     processes = list(event_dicts[0].keys())
     
-    total_bkgs = [sum(v[0] for k, v in events.items() if k != "SIG") for events in event_dicts]
+    total_bkgs = [sum(v[0] for k, v in events.items() if k in args.processes) for events in event_dicts]
     #total_bkgs_errs = [sqrt(totBkgd) for totBkgd in total_bkgs]
-    total_bkgs_errs = [sqrt(sum(v[0]**2 for k, v in errs.items() if k != "SIG")) for errs in event_err_dicts]
+    total_bkgs_errs = [sqrt(sum(v[0]**2 for k, v in errs.items() if k in args.processes)) for errs in event_err_dicts]
     
     # Sort background processes by yield at the first mass point (largest first)
     backgrounds = [p for p in processes if p != "SIG"]
@@ -473,17 +475,18 @@ def printExpEvtsTable(masses, event_dicts, event_err_dicts, latex=False):
     
     rows = [["Signal"] + [f"{events['SIG'][0]:.3f}+/-{errors['SIG'][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)]]
     
-    if not latex:
-        rows.append(["-" * 10] + ["-" * 10 for _ in masses])  
+    if not args.latex:
+        rows.append(["-" * 10 for _ in args.masses])  
 
     for proc in backgrounds:
-        rows.append([proc] + [f"{events[proc][0]:.3f}+/-{errors[proc][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)])
+        if proc in args.processes:
+            rows.append([proc] + [f"{events[proc][0]:.3f}+/-{errors[proc][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)])
     
     rows.append(["Total Background"] + [f"{tb:.3f}+/-{tbErr:.3f}" for tb, tbErr in zip(total_bkgs, total_bkgs_errs)])
     
-    headers = ["Process"] + masses
+    headers = ["Process"] + args.masses
     
-    if latex:
+    if args.latex:
         latex_table = tabulate(rows, headers=headers, tablefmt="latex_booktabs")
         latex_table = latex_table.replace("---------- & ---------- & ---------- & ---------- & ---------- \\\\", "\\midrule")
         print(latex_table)
@@ -589,6 +592,6 @@ if __name__ == "__main__":
         printLEdges()
 
     evtsPerProc, evtsErrPerProc = makeEvtPredHists(args)
-    printExpEvtsTable(args.masses, evtsPerProc, evtsErrPerProc, args.latex)
+    printExpEvtsTable(evtsPerProc, evtsErrPerProc, args)
     if args.makeDC:
         makeDatacards(evtsPerProc, [], args) #TODO add shape envelope
