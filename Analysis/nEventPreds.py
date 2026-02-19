@@ -128,9 +128,10 @@ def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "SIG_MID", "250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
+    argparser.add_argument("-k", "--skims", action="store_true", help = "If specified, uses skimmed files for run3")
     argparser.add_argument("-p", "--processes", type=str, nargs="+", choices=allProcs.append("ALL"), default=["ALL"], help="Which bkgd processes to include.")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
-    argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=4, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
+    argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=2, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
     argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
     argparser.add_argument("-l", "--log", action="store_true", help="Specify to set the y-axis of plots to log scale.")
     #argparser.add_argument("-s", "--systs", action="store_true", help="If specified, will include systematic uncertainties")
@@ -140,6 +141,7 @@ def parseArgs():
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
+    argparser.add_argument("--nS", action="store_true", help="If specified, will not save plots")
     argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy Run3 process-to-subprocess translation (for V0 processing)")
     args = argparser.parse_args()  
     
@@ -236,7 +238,8 @@ def makeEvtPredHists(args):
 
     for year in args.years:
         print(f"Processing year = {year}")
-
+        isRun3 = year in ["2022", "2022post", "2023", "2023post"]
+        
         for mass in args.masses:
             print(f"\tProcessing mass = {mass}")
             filePath = os.environ["ROOTURL"] + os.environ["SIG_" + year] + f"taustarToTauZ_m{mass}_{year}.root"
@@ -288,13 +291,11 @@ def makeEvtPredHists(args):
                             sigHists[mass].Fill(sigHists[mass].GetBinCenter(b + 1), nEvts)
                             if b == 0:
                                 sigEvtPerMass[mass] += nEvts# * weight_xs
-
-                        eventsPerProc[mass]["SIG"][(b*nSystDicts) + systI] += nEvts# * weight_xs 
+                                sigEvtErrPerMass[mass] += (nEvts*(unc_xs/weight_xs))**2
+                        eventsPerProc[mass]["SIG"][(b*nSystDicts) + systI] += nEvts# * weight_xs
+                        eventsErrPerProc[mass]["SIG"][(b*nSystDicts) + systI] += (nEvts*(unc_xs/weight_xs))**2
             sigFile.Close()
-            sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtPerMass[mass]*(unc_xs/weight_xs))
-            for b in range(args.nBins*nSystDicts):
-                eventsErrPerProc[mass]["SIG"][b] = sqrt(eventsPerProc[mass]["SIG"][b] + eventsPerProc[mass]["SIG"][b]*(unc_xs/weight_xs))
-            
+
         # ------------------------ Backgrounds -----------------------------------------#
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in args.processes:
@@ -305,8 +306,10 @@ def makeEvtPredHists(args):
                 subProcs = procToSubProc_run2[proc]
 
             for subProc in subProcs:
-                
-                filePath = dirPath + subProc + "_" + year + ".root"
+                if args.skims and isRun3:
+                    filePath = dirPath + "Skims/" + subProc + "_" + year + "_skim.root"
+                else:
+                    filePath = dirPath + subProc + "_" + year + ".root"
                 bkgdFile = TFile.Open(filePath, "r")
                 try:
                     bkgdTree = bkgdFile.Get("Events")
@@ -367,9 +370,9 @@ def makeEvtPredHists(args):
                                     bkgdHists[mass].Fill(bkgdHists[mass].GetBinCenter(b + 1), nEvts)# * weight_xs)
                                     if b == 0:
                                         bkgdEvtPerMass[mass] += nEvts# * weight_xs
-                                        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + (nEvts*unc_xs/weight_xs)**2) #Keep track of xs+lumi errors as we go
+                                        bkgdEvtErrPerMass[mass] += (nEvts*unc_xs/weight_xs)**2
                                 eventsPerProc[mass][proc][adjIdx] += nEvts# * weight_xs
-                                eventsErrPerProc[mass][proc][adjIdx] = sqrt(eventsErrPerProc[mass][proc][adjIdx]**2 + (nEvts*unc_xs/weight_xs)**2)
+                                eventsErrPerProc[mass][proc][adjIdx] += (nEvts*unc_xs/weight_xs)**2
                         #END BIN
                     #END CH
                 #END MASS
@@ -379,12 +382,18 @@ def makeEvtPredHists(args):
     #END YEAR
 
     gStyle.SetPaintTextFormat("2.2f")
-    
+
     for i, mass in enumerate(args.masses):
-        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtErrPerMass[mass]**2 + bkgdEvtPerMass[mass]) #Add sqrt(N) stat error to xs/lumi errors which were stored as processed
-        for p in args.processes: #Bkgd processes only
-            for b in range(args.nBins * nSystDicts):
-                eventsErrPerProc[mass][proc][b] = sqrt(eventsErrPerProc[mass][proc][b]**2 + eventsPerProc[mass][proc][b])
+
+        sigEvtErrPerMass[mass] = sqrt(sigEvtPerMass[mass] + sigEvtErrPerMass[mass])
+        bkgdEvtErrPerMass[mass] = sqrt(bkgdEvtPerMass[mass] + bkgdEvtErrPerMass[mass])
+        
+        for b in range(args.nBins*nSystDicts):
+            eventsErrPerProc[mass]["SIG"][b] = sqrt(eventsPerProc[mass]["SIG"][b] + eventsErrPerProc[mass]["SIG"][b])
+            for p in args.processes:
+                eventsErrPerProc[mass][p][b] = sqrt(eventsPerProc[mass][p][b]+eventsErrPerProc[mass][p][b])
+
+                
         sigHist = sigHists[mass]
         bkgdHist = bkgdHists[mass]
         sigHist.SetLineWidth(3)
@@ -411,11 +420,12 @@ def makeEvtPredHists(args):
             canv.SetLogy(True)
         leg.Draw()
         canv.Update()
-        if args.CR:
+        if args.CR and not args.nS:
             canv.SaveAs(f"../Plotting/Plots/EventPreds/nEventPred_m{mass}_CR.png")
-        else:
+        elif not args.nS:
             canv.SaveAs(f"../Plotting/Plots/EventPreds/nEventPred_m{mass}.png")
-
+    #END MASS
+            
     canv.cd()
     canv.Clear()
     sigEvtArr = array("f", [sigEvtPerMass[m] for m in args.masses])
@@ -449,9 +459,9 @@ def makeEvtPredHists(args):
     leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
     canv.Update()
-    if args.CR:
+    if args.CR and not args.nS:
         canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses_CR.png")
-    else:
+    elif not args.nS:
         canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
 
     return [eventsPerProc[m] for m in args.masses], [eventsErrPerProc[m] for m in args.masses]
@@ -475,9 +485,6 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
     
     rows = [["Signal"] + [f"{events['SIG'][0]:.3f}+/-{errors['SIG'][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)]]
     
-    if not args.latex:
-        rows.append(["-" * 10 for _ in args.masses])  
-
     for proc in backgrounds:
         if proc in args.processes:
             rows.append([proc] + [f"{events[proc][0]:.3f}+/-{errors[proc][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)])
