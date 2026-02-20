@@ -13,7 +13,7 @@ import argparse
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Extracts values from Combine AsymptoticLimits Output files and makes a 'Brazil Plot' from them")
-    argparser.add_argument("-i", "--inDir", "The directory containing the output .root files")
+    argparser.add_argument("-i", "--inDir", help="The directory containing the output .root files")
     argparser.add_argument("-o", "--observed", action="store_true", help="If specified, plots the observed limits as well as expected")
     argparser.add_argument("-t", "--theory", nargs="+", choices=["MTS", "M10"], default=["MTS", "M10"], help="Which theory curves to plot.")
     argparser.add_argument("-n", "--name", help="A tag to label output plots with. Filenames will be limits_<name>.png/pdf")
@@ -94,7 +94,10 @@ def find_intersections(x1, y1, x2, y2):
 
 def plotLimit(args):
 
-    files = sorted(glob.glob(file_pattern = args.inDir + "/higgsCombineTest.AsymptoticLimits.mH*.*.root"), key=extract_mass)
+    files = sorted(glob.glob(args.inDir + "/higgsCombine*.AsymptoticLimits.mH*.*.root"), key=extract_mass)
+    if len(files) == 0:
+        print("ERROR: No files found")
+        exit(1)
 
     masses = []
     exp0 = []
@@ -111,6 +114,7 @@ def plotLimit(args):
 
         limits = read_limits(f)
 
+        
         exp0.append(limits["exp0"])
         exp_p1.append(limits["exp+1"])
         exp_m1.append(limits["exp-1"])
@@ -127,18 +131,19 @@ def plotLimit(args):
     exp_m2 = np.array(exp_m2)
     obs = np.array(obs)
 
+    
     plt.style.use(hep.style.CMS)
     fig, ax = plt.subplots()
 
     # Expected median
     ax.plot(masses, exp0, linestyle="--",color="black", label="Expected")
 
-    # 1 sigma band (green)
-    ax.fill_between(masses, exp_m1, exp_p1, color='#228b22', label="Expected \u00B11\u03C3")
-
     # 2sigma band (yellow)
     ax.fill_between(masses, exp_m2, exp_p2, color='#ffcc00', label="Expected ±2σ")
 
+    # 1 sigma band (green) - NB: must plot after yellow so it shows up
+    ax.fill_between(masses, exp_m1, exp_p1, color='#228b22', label="Expected \u00B11\u03C3")
+    
     # Observed
     if args.observed:
         ax.plot(masses, obs, linestyle="-", color="black", label="Observed")
@@ -162,8 +167,12 @@ def plotLimit(args):
     ax.legend(loc="upper right", frameon=False)
     plt.tight_layout()
 
-    plt.savefig("limits.png")
-    plt.savefig("limits.pdf")
+    if args.name:
+        plt.savefig(f"limits_{args.name}.png")
+        plt.savefig(f"limits_{args.name}.pdf")
+    else:
+        plt.savefig("limits.png")
+        plt.savefig("limits.pdf")
     plt.show()
 
 
