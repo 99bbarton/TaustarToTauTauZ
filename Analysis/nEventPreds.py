@@ -139,6 +139,7 @@ def parseArgs():
     argparser.add_argument("-s", "--systs", choices=["DOWN", "NOM", "UP"], default="NOM", help="What value to use for ALL shape systematics except tauES")
     argparser.add_argument("--CR", action="store_true", help="If specified, will perform estim for the same-sign tau control region instead of the signal region")
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
+    argparser.add_argument("--systStudy", action="store_true", help="If specified, will make a table")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
     argparser.add_argument("--nS", action="store_true", help="If specified, will not save plots")
@@ -186,7 +187,24 @@ def makeEvtPredHists(args):
     bkgdCol = 921
 
     systDicts = []
-    if args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
+    if args.systStudy:
+        systDicts.append({"TAUID": "DOWN", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+
+        systDicts.append({"TAUID": "NOM", "EID": "DOWM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM"})
+
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "DOWN", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "UP", "TRIG":"NOM"})
+
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"DOWN"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP"})
+
+    elif args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
         systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
         systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
         systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"})
@@ -583,6 +601,61 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
+def systStudiesTable(evtsPerProc, args):
+    """
+    Summarize relative effect of each systematic variation
+    for every mass, bin, and process.
+    """
+
+    # Systematic ordering must match makeEvtPredHists()
+    systNames = ["TAUID", "EID", "MUID", "TRIG"]
+    nSyst = len(systNames)
+    nVarPerSyst = 3  # DOWN, NOM, UP
+    nSystDicts = nSyst * nVarPerSyst
+
+    for mIdx, mass in enumerate(args.masses):
+        print("\n" + "="*80)
+        print(f"Systematic study for mass {mass}")
+        print("="*80)
+
+        events = evtsPerProc[mIdx]
+        processes = list(events.keys())
+
+        for b in range(args.nBins):
+            print(f"\n--- Bin {b} ---\n")
+
+            rows = []
+            headers = ["Process", "Systematic", "DOWN % Change", "UP % Change"]
+
+            for proc in processes:
+                for sIdx, syst in enumerate(systNames):
+
+                    baseIdx = b * nSystDicts + sIdx * nVarPerSyst
+
+                    down = events[proc][baseIdx + 0]
+                    nom  = events[proc][baseIdx + 1]
+                    up   = events[proc][baseIdx + 2]
+
+                    if nom != 0:
+                        relDown = (down - nom) / nom
+                        relUp   = (up   - nom) / nom
+                    else:
+                        relDown = 0.0
+                        relUp   = 0.0
+
+                    rows.append([
+                        proc,
+                        syst,
+                        f"{100*relDown:+.4f}",
+                        f"{100*relUp:+.4f}"
+                    ])
+
+            print(tabulate(rows, headers=headers, tablefmt="grid"))
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------#
+
+
 #Utility function to aid updating massToLEdges dict from massToLHalfWidths
 def printLEdges():
     global massToLHalfWidths
@@ -599,6 +672,9 @@ if __name__ == "__main__":
         printLEdges()
 
     evtsPerProc, evtsErrPerProc = makeEvtPredHists(args)
-    printExpEvtsTable(evtsPerProc, evtsErrPerProc, args)
-    if args.makeDC:
-        makeDatacards(evtsPerProc, [], args) #TODO add shape envelope
+    if args.systStudy:
+        systStudiesTable(evtsPerProc, args)
+    else:
+        printExpEvtsTable(evtsPerProc, evtsErrPerProc, args)
+        if args.makeDC:
+            makeDatacards(evtsPerProc, [], args) #TODO add shape envelope
