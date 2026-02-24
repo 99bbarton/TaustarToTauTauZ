@@ -195,7 +195,7 @@ def makeEvtPredHists(args):
             systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"}) #All nominal
         elif args.systs == "DOWN":
             systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"}) #All DOWN
-        elif sys.systs == "UP":
+        elif args.systs == "UP":
             systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"}) #All UP
 
     nSystDicts = len(systDicts)
