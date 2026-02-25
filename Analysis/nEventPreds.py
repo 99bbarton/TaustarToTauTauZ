@@ -192,7 +192,7 @@ def makeEvtPredHists(args):
         systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
         systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
 
-        systDicts.append({"TAUID": "NOM", "EID": "DOWM", "MUID": "NOM", "TRIG":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "DOWN", "MUID": "NOM", "TRIG":"NOM"})
         systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
         systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM"})
 
@@ -600,58 +600,121 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             #TODO write shape uncertainties line once decided how to calc/pass from nEventPreds
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
-
 def systStudiesTable(evtsPerProc, args):
     """
-    Summarize relative effect of each systematic variation
-    for every mass, bin, and process.
+    Summarize relative percent effect of each systematic variation
+    for every mass and process.
+
+    - SIG shown first
+    - Total Background included
+    - All bins in a single table
+    - Supports LaTeX output
     """
 
-    # Systematic ordering must match makeEvtPredHists()
+    from tabulate import tabulate
+
+    # Must match ordering in makeEvtPredHists()
     systNames = ["TAUID", "EID", "MUID", "TRIG"]
     nSyst = len(systNames)
     nVarPerSyst = 3  # DOWN, NOM, UP
     nSystDicts = nSyst * nVarPerSyst
 
     for mIdx, mass in enumerate(args.masses):
-        print("\n" + "="*80)
+
+        print("\n" + "="*120)
         print(f"Systematic study for mass {mass}")
-        print("="*80)
+        print("="*120)
 
         events = evtsPerProc[mIdx]
-        processes = list(events.keys())
 
+        # Build headers dynamically
+        headers = ["Process", "Systematic"]
         for b in range(args.nBins):
-            print(f"\n--- Bin {b} ---\n")
+            headers.append(f"DOWN % BIN {b}")
+            headers.append(f"UP % BIN {b}")
 
-            rows = []
-            headers = ["Process", "Systematic", "DOWN % Change", "UP % Change"]
+        rows = []
 
-            for proc in processes:
-                for sIdx, syst in enumerate(systNames):
+        # -------------------------------------------------------
+        # Helper to compute total background yields per variation
+        # -------------------------------------------------------
+        def total_bkg_variation(bin_idx, syst_offset):
+            total = 0.0
+            for proc in args.processes:
+                total += events[proc][bin_idx + syst_offset]
+            return total
+
+        # -------------------------------------------------------
+        # Order: SIG first, then backgrounds, then total bkg
+        # -------------------------------------------------------
+        process_list = ["SIG"] + args.processes
+
+        for proc in process_list:
+
+            for sIdx, syst in enumerate(systNames):
+
+                row = [proc, syst]
+
+                for b in range(args.nBins):
 
                     baseIdx = b * nSystDicts + sIdx * nVarPerSyst
 
-                    down = events[proc][baseIdx + 0]
-                    nom  = events[proc][baseIdx + 1]
-                    up   = events[proc][baseIdx + 2]
+                    if proc == "SIG":
+                        down = events["SIG"][baseIdx + 0]
+                        nom  = events["SIG"][baseIdx + 1]
+                        up   = events["SIG"][baseIdx + 2]
+                    else:
+                        down = events[proc][baseIdx + 0]
+                        nom  = events[proc][baseIdx + 1]
+                        up   = events[proc][baseIdx + 2]
 
                     if nom != 0:
-                        relDown = (down - nom) / nom
-                        relUp   = (up   - nom) / nom
+                        relDown = 100.0 * (down - nom) / nom
+                        relUp   = 100.0 * (up   - nom) / nom
                     else:
                         relDown = 0.0
                         relUp   = 0.0
 
-                    rows.append([
-                        proc,
-                        syst,
-                        f"{100*relDown:+.4f}",
-                        f"{100*relUp:+.4f}"
-                    ])
+                    row.append(f"{relDown:+.2f}")
+                    row.append(f"{relUp:+.2f}")
 
+                rows.append(row)
+
+        # -------------------------------------------------------
+        # Total Background block
+        # -------------------------------------------------------
+        for sIdx, syst in enumerate(systNames):
+
+            row = ["Total Bkg", syst]
+
+            for b in range(args.nBins):
+
+                baseIdx = b * nSystDicts + sIdx * nVarPerSyst
+
+                down = sum(events[p][baseIdx + 0] for p in args.processes)
+                nom  = sum(events[p][baseIdx + 1] for p in args.processes)
+                up   = sum(events[p][baseIdx + 2] for p in args.processes)
+
+                if nom != 0:
+                    relDown = 100.0 * (down - nom) / nom
+                    relUp   = 100.0 * (up   - nom) / nom
+                else:
+                    relDown = 0.0
+                    relUp   = 0.0
+
+                row.append(f"{relDown:+.2f}")
+                row.append(f"{relUp:+.2f}")
+
+            rows.append(row)
+
+        # -------------------------------------------------------
+        # Print table
+        # -------------------------------------------------------
+        if args.latex:
+            latex_table = tabulate(rows, headers=headers, tablefmt="latex_booktabs")
+            print(latex_table)
+        else:
             print(tabulate(rows, headers=headers, tablefmt="grid"))
-
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
