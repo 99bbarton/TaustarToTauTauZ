@@ -204,10 +204,10 @@ def makeEvtPredHists(args):
         systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
         systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP"})
 
-    elif args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
-        systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"})
+    #elif args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
+        #systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
+    #    systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
+        #systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"})
     else:
         if args.systs == "NOM":
             systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"}) #All nominal
@@ -521,7 +521,6 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
-#TODO calculate effect of shape uncertainties
 def makeDatacards(evPerMass, shapeVarPerMass, args):
     #First prepare univeral lines
     nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {2 + len(args.processes) + 1}\n----------\n"
@@ -546,7 +545,7 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
 
     lumiUnc = f"{1+getCombLumiPercUnc(args.years):.3f}"
     lumiLine = "lumi\tlnN"
-    extSyst = "1.100" #10% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
+    extSyst = "1.300" #30% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
     
     extLine = "extSyst\tlnN"
     for bN in range(args.nBins*len(cardProcs)):
@@ -556,6 +555,8 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     for mN, mass in enumerate(args.masses):
         sigXSUnc = f"{1+getCombXSPercUnc(args.years, 'M'+mass):.3f}"
         sigXSLine = "xs_SIG\tlnN"
+
+        
         
         with open(f"../Combine/Datacards/datacard_{mass}.txt", "w+") as datacard:
             datacard.write(f"{args.nBins}-bin scheme datacard for taustar hypothesis mass {mass} GeV\n----------\n")
@@ -571,18 +572,21 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
                     binLabelLine += "\t" + binStr.ljust(5)
                     procNameLine += "\t" + proc.ljust(5)
                     procNumLine += "\t" + str(procN).ljust(5)
-                    rateLine += f"\t{evPerMass[mN][proc][binN]:.3f}"
+                    rate = evPerMass[mN][proc][binN]
+                    if rate < 0.001:
+                        rate == 0.001 #Combine can't handle zero expected events
+                    rateLine += f"\t{rate:.3f}"
 
                     if proc == "SIG":
                         sigXSLine += "\t" + sigXSUnc
                     else:
                         sigXSLine += "\t-     "
-                    for k in xsLines.keys():
-                        if k == proc:
-                            xsLines[k] += "\t" + xsUncs[proc]
-                            
-                        else:
-                            xsLines[k] += "\t-     "
+                    if mN == 0:
+                        for k in xsLines.keys():
+                            if k == proc:
+                                xsLines[k] += "\t" + xsUncs[proc]
+                            else:
+                                xsLines[k] += "\t-     "
 
             datacard.write(binLabelLine + "\n")
             datacard.write(procNameLine + "\n")
@@ -596,8 +600,6 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
                     datacard.write(sigXSLine + "\n")
                 else:
                     datacard.write(xsLines[proc] + "\n")
-
-            #TODO write shape uncertainties line once decided how to calc/pass from nEventPreds
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 def systStudiesTable(evtsPerProc, args):
