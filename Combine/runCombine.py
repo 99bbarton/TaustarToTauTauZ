@@ -101,10 +101,10 @@ def impacts(args):
         mass = dc.split("_")[-1][:-4]
         print("\n\n =================================== Making Impact Plots for M" + mass + "  ===================================== \n\n")
         os.system(f"text2workspace.py {args.inDir}/{dc} -m {mass}")
-        os.system(f"combineTool.py -M Impacts -d {dc[:-4]}.root -m {mass} --robustFit 1 --doInitialFit")
-        os.system(f"combineTool.py -M Impacts -d {dc[:-4]}.root -m {mass} --robustFit 1 --doFits")
-        os.system(f"combineTool.py -M Impacts -d {dc[:-4]}.root -m {mass} -o impacts.json")
-        os.system(f"plotImpacts.py -i impacts.json -o impacts_{mass} --label-size 0.06 --left-margin 0.2")
+        os.system(f"combineTool.py -M Impacts -d {args.inDir}{dc[:-4]}.root -m {mass} --robustFit 1 --doInitialFit")
+        os.system(f"combineTool.py -M Impacts -d {args.inDir}{dc[:-4]}.root -m {mass} --robustFit 1 --doFits")
+        os.system(f"combineTool.py -M Impacts -d {args.inDir}{dc[:-4]}.root -m {mass} -o impacts.json")
+        os.system(f"python3 scripts/plotImpacts.py -i impacts.json -o impacts_{mass} --label-size 0.06 --left-margin 0.2")
 
         if args.outDir != "./":
             os.system(f"mv impacts_{mass}.* {args.outDir}/")

@@ -137,8 +137,9 @@ def parseArgs():
     #argparser.add_argument("-s", "--systs", action="store_true", help="If specified, will include systematic uncertainties")
     argparser.add_argument("-t", "--tauES", choices=["DOWN", "NOM", "UP"], default="NOM", help="What value to use for the tau energy scale")
     argparser.add_argument("-s", "--systs", choices=["DOWN", "NOM", "UP"], default="NOM", help="What value to use for ALL shape systematics except tauES")
-    argparser.add_argument("--CR", action="store_true", help="If specified, will perform estim for the same-sign tau control region instead of the signal region")
+    argparser.add_argument("--VR", action="store_true", help="If specified, will perform estim for the validation region instead of the signal region")
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
+    argparser.add_argument("--setObs", type=float, default=1.0, help="When making datacards, what signal strength 'r' to use for Observed entries. if <0, will use real obs, otherwise bkgd+(r*sig)")
     argparser.add_argument("--systStudy", action="store_true", help="If specified, will make a table")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
@@ -173,7 +174,13 @@ def parseArgs():
         args.tauES = "[1]"
     else:
         args.tauES = "[2]"
-    
+
+
+    if args.setObs < 0:
+        print("ERROR: --setObs<0 not supported until data is used")
+        exit(1)
+        
+        
     return args
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
@@ -219,13 +226,13 @@ def makeEvtPredHists(args):
     nSystDicts = len(systDicts)
 
 
-    baseCuts = "(CHANNEL_isCand_TAUES_ && MET_pt > 175 && Z_dauDR<0.5 && Z_pt>400 && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR_TAUES_>1.5 && CHANNEL_visM_TAUES_ > 200  && CHANNEL_CHANNELDPhi_TAUES_<2.8"
+    baseCuts = "(CHANNEL_isCand_TAUES_ && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5"
     #Below version intended for per-signal-mass specific cuts
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
-    if args.CR:
-        baseCuts += "&& CHANNEL_sign_TAUES_ > 0"
+    if args.VR:
+        baseCuts += "&& MET_pt > 70 && MET_pt < 170"
     else:
-        baseCuts += "&& CHANNEL_sign_TAUES_ < 0"
+        baseCuts += "&& MET_pt > 175" 
     baseCutStrs = []
     baseCutStrs.append(baseCuts + " && ( (LOW_EDGE<=CHANNEL_minCollM_TAUES_ && CHANNEL_minCollM_TAUES_ <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM_TAUES_ && CHANNEL_maxCollM_TAUES_ <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
@@ -423,8 +430,8 @@ def makeEvtPredHists(args):
             leg.AddEntry(sigHist, "Signal", "L")
             leg.AddEntry(bkgdHist, "Background", "L")
 
-        if args.CR:
-            stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass} in CR;Bin;Events")
+        if args.VR:
+            stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass} in VR;Bin;Events")
         else:
             stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass};Bin;Events")
         stack.Add(bkgdHist)
@@ -438,8 +445,8 @@ def makeEvtPredHists(args):
             canv.SetLogy(True)
         leg.Draw()
         canv.Update()
-        if args.CR and not args.nS:
-            canv.SaveAs(f"../Plotting/Plots/EventPreds/nEventPred_m{mass}_CR.png")
+        if args.VR and not args.nS:
+            canv.SaveAs(f"../Plotting/Plots/EventPreds/nEventPred_m{mass}_VR.png")
         elif not args.nS:
             canv.SaveAs(f"../Plotting/Plots/EventPreds/nEventPred_m{mass}.png")
     #END MASS
@@ -465,8 +472,8 @@ def makeEvtPredHists(args):
     mg = TMultiGraph()
     mg.Add(sigGraph)
     mg.Add(bkgdGraph)
-    if args.CR:
-        mg.SetTitle("Events per Signal Mass in Control Region L-Band;Signal Mass [GeV];Events")
+    if args.VR:
+        mg.SetTitle("Events per Signal Mass in Validation Region L-Band;Signal Mass [GeV];Events")
     else:
         mg.SetTitle("Events per Signal Mass in L-Band;Signal Mass [GeV];Events")
     mg.Draw("AP")
@@ -477,8 +484,8 @@ def makeEvtPredHists(args):
     leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
     canv.Update()
-    if args.CR and not args.nS:
-        canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses_CR.png")
+    if args.VR and not args.nS:
+        canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses_VR.png")
     elif not args.nS:
         canv.SaveAs("../Plotting/Plots/EventPreds/nEventPred_allMasses.png")
 
@@ -522,16 +529,16 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 def makeDatacards(evPerMass, shapeVarPerMass, args):
+
+    nSystDicts = len(evPerMass[0]["SIG"]) // args.nBins
+    nomOffset = 1 if nSystDicts > 1 else 0
+
     #First prepare univeral lines
     nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {2 + len(args.processes) + 1}\n----------\n"
     if args.nBins == 2:
-        bin_block = "bin        \tbin0\tbin1\nobservation\t0\t0\n----------\n"
         binStrs = ["bin0", "bin1"]
     else:
-        bin_block = "bin        \tbin0\tbin1\tbin2\tbin3\nobservation\t0\t0\t0\t0\n----------\n"
         binStrs = ["bin0", "bin1", "bin2", "bin3"]
-
-
     
     #XS uncertainties are pre-calculable (except signal which we'll do in the masses loop)
     xsUncs = {}
@@ -547,7 +554,7 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     lumiLine = "lumi\tlnN"
     extSyst = "1.300" #30% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
     
-    extLine = "extSyst\tlnN"
+    extLine = "shpSystEnv\tlnN"
     for bN in range(args.nBins*len(cardProcs)):
         lumiLine += "\t"+ lumiUnc
         extLine += "\t" + extSyst
@@ -556,6 +563,23 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
         sigXSUnc = f"{1+getCombXSPercUnc(args.years, 'M'+mass):.3f}"
         sigXSLine = "xs_SIG\tlnN"
 
+        binLine = "bin        \t"
+        obsLine = "observation\t"
+
+        for binN, binStr in enumerate(binStrs):
+
+            idx = binN * nSystDicts + nomOffset
+            
+            binLine += f"{binStr}\t"
+
+            bkgSum = sum(evPerMass[mN][proc][idx] for proc in args.processes)
+            sig = evPerMass[mN]["SIG"][idx]
+
+            obs = bkgSum + (args.setObs * sig)
+
+            obsLine += f"{obs:.3f}\t"
+
+        bin_block = binLine.rstrip() + "\n" + obsLine.rstrip() + "\n----------\n"
         
         
         with open(f"../Combine/Datacards/datacard_{mass}.txt", "w+") as datacard:
@@ -567,12 +591,14 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             procNameLine = "process\t"
             procNumLine =  "process\t"
             rateLine =     "rate   \t"
-            for binN, binStr in enumerate(binStrs): 
+            for binN, binStr in enumerate(binStrs):
+                idx = binN * nSystDicts + nomOffset
                 for procN, proc in enumerate(cardProcs):
                     binLabelLine += "\t" + binStr.ljust(5)
                     procNameLine += "\t" + proc.ljust(5)
                     procNumLine += "\t" + str(procN).ljust(5)
-                    rate = evPerMass[mN][proc][binN]
+                    
+                    rate = evPerMass[mN][proc][idx]
                     if rate < 0.001:
                         rate == 0.001 #Combine can't handle zero expected events
                     rateLine += f"\t{rate:.3f}"
