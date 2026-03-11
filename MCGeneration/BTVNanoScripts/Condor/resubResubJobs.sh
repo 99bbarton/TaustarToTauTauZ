@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Usage: ./resubmit_failed_jobs.sh <DATE> <YEAR_TAG>
-# Example: ./resubmit_failed_jobs.sh 10-30 2022post
+# Example: ./resubmit_failed_jobs.sh 20Feb2026 2022post
 #
 # <YEAR_TAG> corresponds to the string in your jobConfig files,
 # e.g., "2022post" in jobConfig_<PROCESS>_<YEAR_TAG>.jdl
@@ -49,21 +49,29 @@ for FILE in $FAILED_FILES; do
     BASENAME=$(basename "$CMD" .sh)
     # Split into parts
     #PROCESS=$(echo "$BASENAME" | sed -E 's/^run_([^_]+)_.*/\1/')
-    #NUM=$(echo "$BASENAME" | sed -E 's/^run_[^_]+_([0-9]+)_re[0-9]+$/\1/')
-    #SUBNUM=$(echo "$BASENAME" | sed -E 's/^run_[^_]+_[0-9]+_re([0-9]+)$/\1/')
+    #NUM=$(echo "$BASENAME" | sed -E 's/^run_[^_]+_([0-9]+)_([0-9]+)_[0-9]+(re[0-9]+)$/\1/')
+    #SUBNUM=$(echo "$BASENAME" | sed -E 's/^run_[^_]+_([0-9]+)_([0-9]+)_([0-9]+)re[0-9]+$/\1/')
 
-    PROCESS=$(echo "$BASENAME" | sed -E 's/^run_([^_]+)_.*/\1/')
-    NUM="${BASENAME##*_}"
-    echo "CMD = $CMD"
-    echo "Basename = $BASENAME"
-    echo "process = $PROCESS"
-    echo "NUM = $NUM"
+    #PROCESS=$(echo "$BASENAME" | sed -E 's/^run_([^_]+)_.*/\1/')
+    #NUM="${BASENAME##*_}"
+    #echo "CMD = $CMD"
+    #echo "Basename = $BASENAME"
+    #echo "process = $PROCESS"
+    #echo "NUM = $NUM"
     #echo "SUBNUM = $SUBNUM"
     
     # Build expected config filename:
     # jobConfig_<PROCESS>_<YEAR_TAG>_<NUM>re<SUBNUM>.jdl
-    #CONFIG_FILE="jobConfig_${PROCESS}_${YEAR_TAG}_${NUM}re${SUBNUM}.jdl"
-    CONFIG_FILE="jobConfig_${PROCESS}_${NUM}.jdl"
+    #CONFIG_FILE="jobConfig_${PROCESS}_${YEAR_TAG}_${YEAR_TAG}_${NUM}.jdl"
+    #CONFIG_FILE="jobConfig_${PROCESS}_${NUM}.jdl"
+    #CONFIG_FILE=$(echo "$BASENAME" | sed -E 's/run_(.*)_(.*)_(.*)_(re.*)\.sh/jobConfig_\1_\2_\2_\3\4.jdl/')
+
+    base=${BASENAME#run_}
+    base=${base%.sh}
+    IFS='_' read -r proc year num subnum <<< "$base"
+    CONFIG_FILE="jobConfig_${proc}_${year}_${year}_${num}${subnum}.jdl"
+
+    
     CONFIG_PATH="${JOB_DIR}/${CONFIG_FILE}"
     
     if [ -f "$CONFIG_PATH" ]; then

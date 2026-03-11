@@ -575,7 +575,7 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             bkgSum = sum(evPerMass[mN][proc][idx] for proc in args.processes)
             sig = evPerMass[mN]["SIG"][idx]
 
-            obs = bkgSum + (args.setObs * sig)
+            obs = round(bkgSum + (args.setObs * sig))
 
             obsLine += f"{obs:.3f}\t"
 
