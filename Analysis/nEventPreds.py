@@ -127,7 +127,7 @@ massToThreshs = {
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
     argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
-    argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF", "SIG_MID", "250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
+    argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF","SIG_MID","SIG_SENS","250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-k", "--skims", action="store_true", help = "If specified, uses skimmed files for run3")
     argparser.add_argument("-p", "--processes", type=str, nargs="+", choices=allProcs.append("ALL"), default=["ALL"], help="Which bkgd processes to include.")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
@@ -160,6 +160,8 @@ def parseArgs():
         args.masses = ["250", "1000", "3000", "5000"]
     elif "SIG_MID" in args.masses:
         args.masses = ["1000", "1250", "1500", "1750", "2000"]
+    elif "SIG_SENS" in args.masses:
+        args.masses = ["500","750","1000","1250","1500","1750","2000","2500","3000"]
 
     if "ALL" in args.processes:
         allProcs.remove("ALL")
@@ -226,13 +228,14 @@ def makeEvtPredHists(args):
     nSystDicts = len(systDicts)
 
 
-    baseCuts = "(CHANNEL_isCand_TAUES_ && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5"
+    #baseCuts = "(CHANNEL_isCand_TAUES_ && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5"
+    baseCuts = "(CHANNEL_isCand_TAUES_  && ObjCnt_nBTags < 2 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5" 
     #Below version intended for per-signal-mass specific cuts
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.VR:
-        baseCuts += "&& MET_pt > 70 && MET_pt < 170"
+        baseCuts += "&& ((MET_pt > 70 && MET_pt < 170) || Z_pt < 400 || Z_dauDR > 0.5 || CHANNEL_visM_TAUES_ < 200)"
     else:
-        baseCuts += "&& MET_pt > 175" 
+        baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200" 
     baseCutStrs = []
     baseCutStrs.append(baseCuts + " && ( (LOW_EDGE<=CHANNEL_minCollM_TAUES_ && CHANNEL_minCollM_TAUES_ <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM_TAUES_ && CHANNEL_maxCollM_TAUES_ <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
@@ -335,8 +338,9 @@ def makeEvtPredHists(args):
                     filePath = dirPath + "Skims/" + subProc + "_" + year + "_skim.root"
                 else:
                     filePath = dirPath + subProc + "_" + year + ".root"
-                bkgdFile = TFile.Open(filePath, "r")
+                
                 try:
+                    bkgdFile = TFile.Open(filePath, "r")
                     bkgdTree = bkgdFile.Get("Events")
                     if not bkgdTree or bkgdTree.GetEntries() == 0:
                         print("Warning: empty or missing Events tree:", filePath)
@@ -389,6 +393,7 @@ def makeEvtPredHists(args):
                                 hTemp.Sumw2()
                                 bkgdTree.Draw("Z_isCand>>myHist", cutStr+"*"+weight_systStr+"*"+str(weight_xs), "goff") 
                                 nEvts = hTemp.Integral()
+                                #print(f"proc {proc}, subProc {subProc}, nEvts {nEvts}, xsWeight {weight_xs}")
                                 del hTemp
 
                                 if (len(systDicts) == 1 or systI == 1): # Assuming [DOWN, NOM, UP] order for syst variations
