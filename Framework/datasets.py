@@ -34,7 +34,7 @@ procToSubProc_run3 = {
  1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
  }
 
-#TODO change this to "legacy" once V2 processing occurs
+
 procToSubProc_run3_legacy = {
     "ZZ" : ["ZZto2L2Nu", "ZZto2L2Q", "ZZto2Nu2Q", "ZZto4L", "ZZto4Q-1Jets"],
     "WZ" : ["WZto2L2Q", "WZto3LNu", "WZtoLNu2Q", "WZto4Q-1Jets-4FS"],
@@ -774,6 +774,47 @@ sigDatasets_mini = {
                 "M4500" : "/TaustarToTauZ_m4500_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixMiniAODv4-130X_mcRun3_2023_realistic_postBPix_v6-v2/MINIAODSIM",
                 "M5000" : "/TaustarToTauZ_m5000_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixMiniAODv4-130X_mcRun3_2023_realistic_postBPix_v6-v2/MINIAODSIM"
         }
+}
+
+
+dataDatasets_mini = {
+    "2016" : ["/Tau/Run2016B-ver1_HIPM_UL2016_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2016B-ver2_HIPM_UL2016_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2016C-HIPM_UL2016_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2016D-HIPM_UL2016_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2016E-HIPM_UL2016_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2016F-HIPM_UL2016_MiniAODv2-v1/MINIAOD"],
+    "2016post" : ["/Tau/Run2016F-UL2016_MiniAODv2-v1/MINIAOD",
+                  "/Tau/Run2016G-UL2016_MiniAODv2-v1/MINIAOD",
+                  "/Tau/Run2016H-UL2016_MiniAODv2-v1/MINIAOD"],
+    "2017" : ["/Tau/Run2017B-UL2017_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2017C-UL2017_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2017D-UL2017_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2017E-UL2017_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2017F-UL2017_MiniAODv2-v1/MINIAOD"],
+    "2018" : ["/Tau/Run2018A-UL2018_MiniAODv2-v1/MINIAOD",
+              "/Tau/Run2018B-UL2018_MiniAODv2-v2/MINIAOD",
+              "/Tau/Run2018C-UL2018_MiniAODv2-v2/MINIAOD",
+              "/Tau/Run2018D-UL2018_MiniAODv2-v2/MINIAOD"],
+    "2022" : ["/Tau/Run2022C-22Sep2023-v1/MINIAOD",
+              "/Tau/Run2022D-22Sep2023-v1/MINIAOD"],
+    "2022post" : ["/Tau/Run2022E-22Sep2023-v1/MINIAOD",
+                  "/Tau/Run2022F-22Sep2023-v1/MINIAOD",
+                  "/Tau/Run2022G-22Sep2023-v1/MINIAOD"],
+    "2023" : ["/Tau/Run2023C-22Sep2023_v1-v2/MINIAOD",
+              "/Tau/Run2023C-22Sep2023_v2-v1/MINIAOD",
+              "/Tau/Run2023C-22Sep2023_v3-v1/MINIAOD",
+              "/Tau/Run2023C-22Sep2023_v4-v1/MINIAOD"],
+    "2023post" : ["/Tau/Run2023D-22Sep2023_v1-v1/MINIAOD",
+                  "/Tau/Run2023D-22Sep2023_v2-v1/MINIAOD"],
+    "2024" : ["/Tau/Run2024C-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024D-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024E-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024F-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024G-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024H-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024I-MINIv6NANOv15-v1/MINIAOD",
+              "/Tau/Run2024I-MINIv6NANOv15_v2-v1/MINIAOD"]
 }
 
 #subprocess : [xs, xsErr] in pb
