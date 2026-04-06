@@ -140,6 +140,7 @@ def parseArgs():
     argparser.add_argument("--VR", action="store_true", help="If specified, will perform estim for the validation region instead of the signal region")
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
     argparser.add_argument("--setObs", type=float, default=1.0, help="When making datacards, what signal strength 'r' to use for Observed entries. if <0, will use real obs, otherwise bkgd+(r*sig)")
+    argparser.add_argument("--extrap", type=float, default=1.0, help="A factor to multiply the measured yields. For use in extrapolating to to yields e.g. when 2024 is added")
     argparser.add_argument("--systStudy", action="store_true", help="If specified, will make a table")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
     argparser.add_argument("--latex", action="store_true", help="If specified, will print a the predicted events table in LaTeX format")
@@ -306,6 +307,9 @@ def makeEvtPredHists(args):
                     
                     weight_xs, unc_xs = getXSWeight("M" + mass, year)
 
+                    if args.extrap:
+                        weight_xs = weight_xs * args.extrap
+
                     for systI in range(nSystDicts):
                         weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI])
                         
@@ -384,6 +388,9 @@ def makeEvtPredHists(args):
                             #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
                             
                             weight_xs, unc_xs = getXSWeight(subProc, year)
+
+                            if args.extrap:
+                                weight_xs = weight_xs * args.extrap
 
                             for systI in range(nSystDicts):
                                 adjIdx = (b*nSystDicts) + systI

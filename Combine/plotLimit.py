@@ -17,6 +17,7 @@ def parseArgs():
     argparser.add_argument("-o", "--observed", action="store_true", help="If specified, plots the observed limits as well as expected")
     argparser.add_argument("-t", "--theory", nargs="+", choices=["MTS", "M10"], default=["MTS", "M10"], help="Which theory curves to plot.")
     argparser.add_argument("-n", "--name", help="A tag to label output plots with. Filenames will be limits_<name>.png/pdf")
+    argparser.add_argument("-l", "--intLumi", default="308", help="Specify the integrated lumi (effective) used for the limits")
     args = argparser.parse_args()
 
     return args
@@ -161,7 +162,7 @@ def plotLimit(args):
 
     ax.set_xlabel(r"$m_{\tau^*}$ GeV")
     ax.set_ylabel(r"$\sigma B(\tau^* \rightarrow \tau Z)   [fb]$")
-    hep.cms.label(ax=ax, lumi="158", com="13 and 13.6")
+    hep.cms.label(ax=ax, lumi=args.intLumi, com="13 and 13.6")
 
     ax.set_yscale("log")
     ax.legend(loc="upper right", frameon=False)
