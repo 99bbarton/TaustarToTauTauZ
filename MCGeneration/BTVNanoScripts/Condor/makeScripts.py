@@ -6,16 +6,16 @@ import subprocess
 import copy
 
 sys.path.append("../../../Framework/")
-from datasets import bkgdDatasets_mini, sigDatasets_mini
+from datasets import bkgdDatasets_mini, sigDatasets_mini, dataDatasets_mini
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Tool to make the .sh and .jdl scripts necessary to add PF info to background MC samples and then process them with nanoAOD-tools")
-    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"], help="Which samples to process")
-    argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "RUN2", "RUN3", "2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"], help="Which years to process")
+    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["ALL", "SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "DATA"], help="Which samples to process")
+    argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "RUN2", "RUN3", "2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"], help="Which years to process")
     argparser.add_argument("-f", "--filesPerJob", required=False, type=int, default=10, help="The number of miniAOD dataset files to process per Condor job")
-    argparser.add_argument("--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
+    argparser.add_argument("-j", "--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
     args = argparser.parse_args()
 
     hasSB = [False, False]
@@ -39,9 +39,9 @@ def parseArgs():
                 hasSB[1] = True
     
 
-    if "ALL" in args.years:
+    if "ALL" in args.years:  #TODO Add 2024 when OK
         args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
-    elif "RUN3" in args.years:
+    elif "RUN3" in args.years: #TODO Add 2024 when OK
         args.years = ["2022", "2022post", "2023", "2023post"]
     elif "RUN2" in args.years:
         args.years = ["2016", "2016post", "2017", "2018"]
@@ -107,8 +107,11 @@ def makeScripts(args, dateStr, hasSB):
         for proc in args.processes:
             if proc.startswith("M"):
                 outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/JobOutputs/" + dateStr + "/" + year + "/"
+            elif proc == "DATA":
+                outDir = "/store/user/bbarton/TaustarToTauTauZ/Data/JobOutputs/" + dateStr + "/" + year + "/"
             else:
                 outDir = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + dateStr + "/" + year + "/" + proc + "/"
+            
             
             if not args.justCount and not proc.startswith("M"):
                 print("Making directory: " + outDir)
@@ -117,6 +120,8 @@ def makeScripts(args, dateStr, hasSB):
 
             if proc.startswith("M"):
                 dataSets = [sigDatasets_mini[year][proc]]
+            elif proc == "DATA":
+                dataSets = dataDatasets_mini[year]
             else:
                 dataSets = bkgdDatasets_mini[year][proc]
             for dataset in dataSets:
@@ -131,11 +136,13 @@ def makeScripts(args, dateStr, hasSB):
                         subDataset = dataset[1:dataset.find("TuneCP5")]
                     else:
                         subDataset = dataset[1:dataset.find("_")+1]
-                else:
+                elif proc != "DATA":
                     if dataset.find("TuneCP5") > 0:
                         subDataset = dataset[:dataset.find("TuneCP5")]
                     else:
                         subDataset = dataset[:dataset.find("_")+1]
+                else:
+                    subDataset = "Data_"
 
                 nJobs = len(inpDsFiles) // args.filesPerJob
 
@@ -191,12 +198,18 @@ def makeScripts(args, dateStr, hasSB):
                         if era == 2: 
                             executable.write("mv $HOME/" + cmssw_pfNano + "/src/PhysicsTools/PFNano/" + subDataset +"*.root .\n")
                             executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
-                            executable.write("python condorScript.py " + year + "\n")
+                            if proc == "DATA":
+                                executable.write("python condorScript.py " + year + " TRUE\n")
+                            else:
+                                executable.write("python condorScript.py " + year + " FALSE\n")
                         else:
                             executable.write("mv $HOME/" + cmssw_pfNano + "/src/btvnano-prod/" + subDataset +"*.root .\n")
                             executable.write("rm -r $HOME/" + cmssw_pfNano + "\n")
                             #Perform the NanoAOD-tools processing of the new custom nano+PF files
-                            executable.write("python3 condorScript.py " + year + "\n")
+                            if proc == "DATA":
+                                executable.write("python3 condorScript.py " + year + " TRUE\n")
+                            else:
+                                executable.write("python3 condorScript.py " + year + " FALSE\n")
                         executable.write("ls $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
                         #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
