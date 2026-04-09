@@ -131,19 +131,19 @@ def makeScripts(args, dateStr, hasSB):
                 inpDsFiles = stdout.split("\n")
                 #print(inpDsFiles)
 
-                if dataset.startswith("/"):
+                if proc == "DATA":
+                    subDataset = "Data_"
+                elif dataset.startswith("/"):
                     if dataset.find("TuneCP5") > 0:
                         subDataset = dataset[1:dataset.find("TuneCP5")]
                     else:
                         subDataset = dataset[1:dataset.find("_")+1]
-                elif proc != "DATA":
+                else:
                     if dataset.find("TuneCP5") > 0:
                         subDataset = dataset[:dataset.find("TuneCP5")]
                     else:
                         subDataset = dataset[:dataset.find("_")+1]
-                else:
-                    subDataset = "Data_"
-
+                
                 nJobs = len(inpDsFiles) // args.filesPerJob
 
                 if len(inpDsFiles) % args.filesPerJob > 0:
