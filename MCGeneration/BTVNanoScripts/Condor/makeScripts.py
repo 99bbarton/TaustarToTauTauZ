@@ -181,7 +181,10 @@ def makeScripts(args, dateStr, hasSB):
                             executable.write("export INP_FILE=" + inpFilePath + "\n")
                             executable.write("export OUT_FILE=" + subDataset + year + "_" + str(jobN) + "_" + str(fileN) + ".root\n")
                             #confFileName = makeConfigFile(subDataset, year, jobN, fileN, inpFilePath)
-                            executable.write("cmsRun baseConf_" + year + ".py\n") #Perform custom nanoAOD production
+                            if proc == "DATA":
+                                executable.write("cmsRun baseConf_data_" + year + ".py\n") #Perform custom nanoAOD production
+                            else:
+                                executable.write("cmsRun baseConf_" + year + ".py\n") #Perform custom nanoAOD production
                             #executable.write("rm " + inpFile + "\n") #Remove miniAOD file
 
                         #Now setup nanoAOD-tools CMSSW area
@@ -210,7 +213,7 @@ def makeScripts(args, dateStr, hasSB):
                                 executable.write("python3 condorScript.py " + year + " TRUE\n")
                             else:
                                 executable.write("python3 condorScript.py " + year + " FALSE\n")
-                        executable.write("ls $PWD/outputs/\n")
+                        executable.write("ls -ltrh $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
                         #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
                         executable.write("xrdcp tree.root root://cmseos.fnal.gov/" + outDir + subDataset + year + "_" + str(jobN) + ".root\n")
