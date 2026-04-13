@@ -16,6 +16,7 @@ def parseArgs():
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "RUN2", "RUN3", "2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"], help="Which years to process")
     argparser.add_argument("-f", "--filesPerJob", required=False, type=int, default=10, help="The number of miniAOD dataset files to process per Condor job")
     argparser.add_argument("-j", "--justCount", action="store_true", help="If specified, will just print the number of jobs for each dataset and won't actually make configs")
+    argparser.add_argument("-N", "--maxJobs", type=int, default=-1, help="A maximum number of jobs per process to make")
     args = argparser.parse_args()
 
     hasSB = [False, False]
@@ -153,6 +154,8 @@ def makeScripts(args, dateStr, hasSB):
                     continue
                 
                 for jobN in range(nJobs):
+                    if args.maxJobs > 0 and jobN >= args.maxJobs:
+                        continue
                     start = jobN*args.filesPerJob
                     jobFiles = inpDsFiles[start: start + args.filesPerJob]
 
