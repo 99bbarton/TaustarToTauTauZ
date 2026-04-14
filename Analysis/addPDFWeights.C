@@ -70,7 +70,7 @@ void pdfWeightAdder(TString year)
     for (int fN = 0; fN < 14; fN++)
     {
         //TString filename = "root://cmsxrootd.fnal.gov//store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/"+year+"/V2/taustarToTauZ_"+masses[fN]+"_"+year+".root";
-        TString filename = "../Data/SignalMC/WithPDFWeights/"+year+"/taustarToTauZ_"+masses[fN]+"_"+year+".root";
+        TString filename = "../Data/SignalMC/WithPDFWeights/"+year+"/V2p1/taustarToTauZ_"+masses[fN]+"_"+year+".root";
         cout << "\tAdding weights to file:  " << filename << endl;
         addPDFWeights(filename, 0, nomPDF, varPDFs);
     }
@@ -94,15 +94,17 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
     //Set up storage of new weights
     double alphas;
     double renormWeights[2]; //Up, down
-    double factorizWeights[200];
+    //double factorizWeights[200];
+    double factWeightUp, factWeightDown;
     double weightsForVar[100]; 
     double factWeightsRMSs[2]; // Up, down
     double varWeightsRMS;
     double varWeightsErr;
+    int nVars = 100;
     TBranch *b_alphas = tree->Branch("PDFWeights_alphas", &alphas, "PDFWeights_alphas/D");
     TBranch *b_renormWeights = tree->Branch("PDFWeights_renormWeights", renormWeights, "PDFWeights_renormWeights[2]/D");
     //TBranch *b_nVarsUD = tree->Branch("PDFWeights_nVarsUD", &nVarsUD, "PDFWeights_nVarsUD/i");
-    TBranch *b_nVars = tree->Branch("PDFWeights_nVars", 100, "PDFWeights_nVars/i");
+    TBranch *b_nVars = tree->Branch("PDFWeights_nVars", &nVars, "PDFWeights_nVars/i");
     //TBranch *b_factorizeWeights = tree->Branch("PDFWeights_factorizeWeights", factorizWeights, "PDFWeights_factorizeWeights[200]/D");
     //TBranch *b_weightsForVar = tree->Branch("PDFWeights_weightsForVar", weightsForVar, "PDFWeights_weightsForVar[100]/D");
     TBranch *b_factWeightsRMSs = tree->Branch("PDFWeights_factWeightsRMSs", factWeightsRMSs, "PDFWeights_factWeightsRMSs[2]/D");
@@ -121,11 +123,14 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
     tree->SetBranchAddress("Generator_x2", &x2);
     int nEntries = tree->GetEntries();
 
+    
     for (int entryN = 0; entryN < nEntries; entryN++)
     {
         //Get the existing values from the tree
         tree->GetEntry(entryN);
-      
+
+
+	
         //Calc the new weights
         alphas = calcAlphas(scalePDF);
         renormWeights[0] = calcRenormWeight(scalePDF, VAR_UP, nQCD); 
@@ -133,12 +138,16 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
 	
        
 	for (int varN = 0; varN < 100; varN++) 
-        {
-            factorizWeights[varN] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_UP); 
-            factorizWeights[varN+1] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_DOWN); 
-
-            factWeightsRMSs[0] += (factorizWeights[varN] * factorizWeights[varN]);
-            factWeightsRMSs[1] += (factorizWeights[varN+1] * factorizWeights[varN+1]);
+	{
+	  //factorizWeights[varN] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_UP); 
+	  //factorizWeights[varN+1] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_DOWN); 
+	    factWeightUp = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_UP);
+	    factWeightDown = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_DOWN);
+	  
+            //factWeightsRMSs[0] += (factorizWeights[varN] * factorizWeights[varN]);
+            //factWeightsRMSs[1] += (factorizWeights[varN+1] * factorizWeights[varN+1]);
+	    factWeightsRMSs[0] += (factWeightUp * factWeightUp);
+	    factWeightsRMSs[1] += (factWeightDown * factWeightDown);
 
             // weight using https://lhapdf.hepforge.org/group__reweight__double.html, one per replica.
             weightsForVar[varN] = LHAPDF::weightxxQ(id1, id2, x1, x2, scalePDF, nomPDF, varPDFs[varN]); 
@@ -163,7 +172,6 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
         varWeightsErr = (weight84 - weight16) / 2.0;
         if (varWeightsErr < 0)
             varWeightsErr = 0;
-
 
         //Fill the tree
         b_alphas->Fill();
