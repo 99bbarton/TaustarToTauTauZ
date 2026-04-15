@@ -135,17 +135,16 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
         alphas = calcAlphas(scalePDF);
         renormWeights[0] = calcRenormWeight(scalePDF, VAR_UP, nQCD); 
         renormWeights[1] = calcRenormWeight(scalePDF, VAR_DOWN, nQCD); 
-	
+
+	factWeightsRMSs[0] = 0;
+	factWeightsRMSs[1] = 0;
+	varWeightsRMS = 0;
        
 	for (int varN = 0; varN < 100; varN++) 
 	{
-	  //factorizWeights[varN] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_UP); 
-	  //factorizWeights[varN+1] = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_DOWN); 
 	    factWeightUp = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_UP);
 	    factWeightDown = calcFactorizWeight(varPDFs[varN], id1, id2, x1, x2, scalePDF, VAR_DOWN);
-	  
-            //factWeightsRMSs[0] += (factorizWeights[varN] * factorizWeights[varN]);
-            //factWeightsRMSs[1] += (factorizWeights[varN+1] * factorizWeights[varN+1]);
+	    
 	    factWeightsRMSs[0] += (factWeightUp * factWeightUp);
 	    factWeightsRMSs[1] += (factWeightDown * factWeightDown);
 
@@ -153,7 +152,7 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
             weightsForVar[varN] = LHAPDF::weightxxQ(id1, id2, x1, x2, scalePDF, nomPDF, varPDFs[varN]); 
             varWeightsRMS += (weightsForVar[varN] * weightsForVar[varN]);
         }
-
+	
         //Calculate the RMS's
         factWeightsRMSs[0] /= 100;
         factWeightsRMSs[1] /= 100; 

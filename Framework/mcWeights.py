@@ -48,8 +48,8 @@ def getXSWeight(process, year):
 # Given a year, channel and dictionary containing any or all of the following systematics,
 # return the variable string used to extract corresponding weights from the Events tree
 # Each syst can have the value "DOWN", "NOM", or "UP"
-#systDict = {"TAUID": "", "EID": "", "MUID": "", "TRIG":""}
-def getSystStr(year, channel, systDict):
+#systDict = {"TAUID": "", "EID": "", "MUID": "", "TRIG":"", "VARW":"", "FACTW":""}
+def getSystStr(year, channel, systDict, isSig=False):
     
     if channel not in ["ETau", "MuTau", "TauTau"]:
         print("ERROR: Unrecognized channel :", channel, "in getSystStr()")
@@ -61,8 +61,11 @@ def getSystStr(year, channel, systDict):
     
     for key in systDict:
         key = key.upper()
-        idxStr = tagToIdxStr[systDict[key].upper()]
-        secIdxStr = tagToIdxStr[systDict[key].upper() + "2"]
+        val = systDict[key].upper()
+        if val == "": #e.g. for VARW for non-signal
+            continue
+        idxStr = tagToIdxStr[val]
+        secIdxStr = tagToIdxStr[val + "2"]
         if key == "TAUID":
             if channel == "TauTau":
                 systStr += "*" + channel + "_tauVsESF"+ idxStr + "*" + channel + "_tauVsMuSF"+ idxStr + "*" + channel + "_tauVsJetSF"+ idxStr
@@ -79,13 +82,27 @@ def getSystStr(year, channel, systDict):
                 systStr += "*MuTau_muIDSF" + idxStr + "*Z_muIDSFs"+idxStr + "*Z_muIDSFs" + secIdxStr
             else:
                 systStr += "*Z_muIDSFs"+idxStr + "*Z_muIDSFs" + secIdxStr
-        if key == "TRIG" and year in years_run3:
-            if key == "DOWN":
+        elif key == "TRIG" and year in years_run3:
+            if idxStr == "[0]":
                 systStr += "*0.94"
-            elif key == "NOM":
+            elif idxStr == "[1]":
                 systStr += "*1.0"
-            elif key == "UP":
+            elif idxStr == "[2]":
                 systStr += "*1.04"
+        elif key == "VARW" and isSig: #PDF weights only added to signal
+            if val == "DOWN":
+                systStr += "*(PDFWeights_varWeightsRMS - PDFWeights_varWeightsErr)"
+            elif val == "NOM":
+                systStr += "*PDFWeights_varWeightsRMS"
+            elif val == "UP":
+                systStr += "*(PDFWeights_varWeightsRMS + PDFWeights_varWeightsErr)"
+        elif key == "FACTW" and isSig: #NOM weight is just 1.0, only for signal
+            if val == "DOWN":
+                systStr += "*PDFWeights_factWeightsRMSs[1]"
+            elif val == "UP":
+                systStr += "*PDFWeights_factWeightsRMSs[0]"
+        else:
+            print("WARNING: KEY" + key + " is not recognized in getSystStr()!")
     
     systStr += ")"
     return systStr

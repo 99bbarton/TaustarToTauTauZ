@@ -198,21 +198,30 @@ def makeEvtPredHists(args):
 
     systDicts = []
     if args.systStudy:
-        systDicts.append({"TAUID": "DOWN", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-
-        systDicts.append({"TAUID": "NOM", "EID": "DOWN", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM"})
-
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "DOWN", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "UP", "TRIG":"NOM"})
-
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"DOWN"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP"})
+        #TAU ID
+        systDicts.append({"TAUID": "DOWN", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        #E ID
+        systDicts.append({"TAUID": "NOM", "EID": "DOWN", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        #MU ID
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "DOWN", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "UP", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        #TRIG
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"DOWN", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP", "VARW":"NOM", "FACTW":"NOM"})
+        #PDF reweight
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"DOWN", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"UP", "FACTW":"NOM"})
+        #PDF Factorization
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"DOWN"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"UP"})
 
     #elif args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
         #systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
@@ -220,11 +229,11 @@ def makeEvtPredHists(args):
         #systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"})
     else:
         if args.systs == "NOM":
-            systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"}) #All nominal
+            systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"}) #All nominal
         elif args.systs == "DOWN":
-            systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"}) #All DOWN
+            systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN", "VARW":"DOWN", "FACTW":"DOWN"}) #All DOWN
         elif args.systs == "UP":
-            systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP"}) #All UP
+            systDicts.append({"TAUID": "UP", "EID": "UP", "MUID": "UP", "TRIG":"UP", "VARW":"UP", "FACTW":"UP"}) #All UP
 
     nSystDicts = len(systDicts)
 
@@ -311,7 +320,7 @@ def makeEvtPredHists(args):
                         weight_xs = weight_xs * args.extrap
 
                     for systI in range(nSystDicts):
-                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI])
+                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=True)
                         
                         hTemp = TH1F("myHist", "", 3, -1, 2)
                         hTemp.Sumw2()
@@ -394,7 +403,7 @@ def makeEvtPredHists(args):
 
                             for systI in range(nSystDicts):
                                 adjIdx = (b*nSystDicts) + systI
-                                weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI])
+                                weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=False)
                                 
                                 hTemp = TH1F("myHist", "", 3, -1, 2)
                                 hTemp.Sumw2()
