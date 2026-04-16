@@ -143,7 +143,8 @@ def split_job_script(job_script_path, year):
         os.chmod(new_script_path, 0o755)
         print(f"Created split script: {new_script_path}")
 
-        jdl_name = f"jobConfig_{proc_name}_{year}_{jobnum}re{idx}.jdl"
+        #jdl_name = f"jobConfig_{proc_name}_{year}_{jobnum}re{idx}.jdl"
+        jdl_name = f"jobConfig_{proc_name}_{jobnum}re{idx}.jdl"
         jdl_path = resub_dir / jdl_name
         make_jdl_file(jdl_path, new_script_name, year)
 
@@ -175,7 +176,7 @@ def main():
     parser.add_argument(
         "-p", "--processes",
         required=True, nargs="+",
-        choices=["ALL", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"],
+        choices=["ALL", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "DATA"],
         help="Which samples to process"
     )
     parser.add_argument("-s", "--split", action="store_true", help="Split unfinished job scripts into halves")
@@ -197,10 +198,13 @@ def main():
 
 
             for proc in args.processes:
-                if proc not in mapping:
+                if proc not in mapping and proc != "DATA":
                     print(f"Category '{proc}' not found in mapping for {year}.")
                     continue
-                subprocs = mapping[proc]
+                if proc == "DATA":
+                    subprocs = ["Data"]
+                else:
+                    subprocs = mapping[proc]
 
                 for subproc in subprocs:
                     print(f"\nChecking {date} / {year} / {proc}/{subproc} ...")
