@@ -131,6 +131,7 @@ def parseArgs():
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF","SIG_MID","SIG_SENS","250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-k", "--skims", action="store_true", help = "If specified, uses skimmed files for run3")
     argparser.add_argument("-p", "--processes", type=str, nargs="+", choices=allProcs.append("ALL"), default=["ALL"], help="Which bkgd processes to include.")
+    argparser.add_argument("-d", "--data", action="store_true", help="If specified, will inlclude data samples")
     argparser.add_argument("-c", "--channels", action="append", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use. Default ALL " )
     argparser.add_argument("-b", "--nBins", type=int, choices=[2, 4], default=2, help="Specify 2 to use binning scheme of signal L-band + all rest of plane. 4 to use L-band + 3 bkgd regions" )
     argparser.add_argument("-a", "--asymm", action="store_true", help="If specified, will use assymetric L-bands. Otherwise, symmetric band edges are used.")
@@ -262,11 +263,13 @@ def makeEvtPredHists(args):
     massBins = array("f", [float(m) for m in args.masses])
     sigHists = {}
     bkgdHists = {}
+    dataHists = {}
     sigEvtPerMass = {m: 0 for m in args.masses}
     sigEvtErrPerMass = {m: 0 for m in args.masses}
     bkgdEvtPerMass = {m: 0 for m in args.masses}
     bkgdEvtErrPerMass = {m: 0 for m in args.masses}
-    eventsPerProc = {m: {"SIG": [0]*nBinSyst, "ZZ": [0]*nBinSyst, "WZ": [0]*nBinSyst, "WW": [0]*nBinSyst, "WJets": [0]*nBinSyst, "DY": [0]*nBinSyst, "TT": [0]*nBinSyst, "ST": [0]*nBinSyst, "QCD": [0]*nBinSyst} for m in args.masses}
+    dataEvtPerMass = {m: 0 for m in args.masses}
+    eventsPerProc = {m: {"SIG": [0]*nBinSyst, "ZZ": [0]*nBinSyst, "WZ": [0]*nBinSyst, "WW": [0]*nBinSyst, "WJets": [0]*nBinSyst, "DY": [0]*nBinSyst, "TT": [0]*nBinSyst, "ST": [0]*nBinSyst, "QCD": [0]*nBinSyst, "DATA": [0]*nBinSyst} for m in args.masses}
     eventsErrPerProc = {m: {"SIG": [0]*nBinSyst, "ZZ": [0]*nBinSyst, "WZ": [0]*nBinSyst, "WW": [0]*nBinSyst, "WJets": [0]*nBinSyst, "DY": [0]*nBinSyst, "TT": [0]*nBinSyst, "ST": [0]*nBinSyst, "QCD": [0]*nBinSyst} for m in args.masses}
 
     for mass in args.masses:
@@ -274,7 +277,11 @@ def makeEvtPredHists(args):
         sigHists[mass].Sumw2()
         bkgdHists[mass] = TH1F(f"bkgd_m{mass}", f"Background m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
         bkgdHists[mass].Sumw2()
+        if args.data:
+            dataHists[mass] = TH1F(f"data_m{mass}", f"Data m{mass};Bin;Events", args.nBins, -0.5, -0.5 + args.nBins)
 
+
+    # --------------------------------------- Signal ------------------------------------------------ #
     for year in args.years:
         print(f"Processing year = {year}")
         isRun3 = year in ["2022", "2022post", "2023", "2023post"]
@@ -388,14 +395,6 @@ def makeEvtPredHists(args):
                                 #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
 
                             cutStr = cutStr.replace("_TAUES_", args.tauES)
-
-                            #Replace per-mass specific thresholds
-                            #cutStr = cutStr.replace("REMETPT", str(massToThreshs[mass][3]))
-                            #cutStr = cutStr.replace("REZPT", str(massToThreshs[mass][0]))
-                            #cutStr = cutStr.replace("REVISM", str(massToThreshs[mass][2]))
-                            #cutStr = cutStr.replace("RETAUPT", str(massToThreshs[mass][1]))
-                            #cutStr = cutStr.replace("REEPT", str(massToThreshs[mass][4]))
-                            #cutStr = cutStr.replace("REMUPT", str(massToThreshs[mass][5]))
                             
                             weight_xs, unc_xs = getXSWeight(subProc, year)
 
@@ -429,6 +428,40 @@ def makeEvtPredHists(args):
                 bkgdFile.Close()
             #END SUBPROC
         #END PROC
+
+        # ----------------------------------   Data   --------------------------- #
+        if args.data and args.VR: # To avoid unblinding signal region 
+            for mass in args.masses:
+                
+                filePath = os.environ["ROOTURL"] + os.environ["TSSTTZDATA"] + f"data_{year}.root"
+                dataFile = TFile.Open(filePath, "r")
+                dataTree = dataFile.Get("Events")
+
+                if args.asymm:
+                    lBinEdges = massToLEdges_asymm[mass]
+                else:
+                    lBinEdges = massToLEdges[mass]
+
+                for ch in args.channels:
+                    for b in range(args.nBins):
+                        cutStr = baseCutStrs[b].replace("CHANNEL", ch)
+                        cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
+                        cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
+                        if ch == "ETau":
+                            cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                        elif ch == "MuTau":
+                            cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                        else:
+                            cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
+
+                        cutStr = cutStr.replace("_TAUES_", args.tauES)
+                        nEvts = dataTree.GetEntries(cutStr)
+                        dataHists[mass].Fill(dataHists[mass].GetBinCenter(b+1), nEvts)
+                        dataEvtPerMass += nEvts
+                        for systI in range(nSystDicts):
+                            eventsPerProc[mass]["DATA"][(b*nSystDicts) + systI] += nEvts
+                            
+                dataFile.Close()
     #END YEAR
 
     gStyle.SetPaintTextFormat("2.2f")
@@ -450,13 +483,22 @@ def makeEvtPredHists(args):
         sigHist.SetLineColor(sigCol)
         bkgdHist.SetLineColor(bkgdCol)
         bkgdHist.SetLineWidth(3)
+        if args.data and args.VR:
+            dataHist = dataHists[mass]
+            dataHist.SetMarkerColor(1)
+            dataHist.SetMarkerStyle(8)
+            dataHist.SetMarkerSize(2)
 
         if i == 0:
             leg.AddEntry(sigHist, "Signal", "L")
             leg.AddEntry(bkgdHist, "Background", "L")
+            if args.data and args.VR:
+                leg.AddEntry(dataHist, "Data", "P")
 
         if args.VR:
             stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass} in VR;Bin;Events")
+            if args.data:
+                stack.Add(dataHist)
         else:
             stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass};Bin;Events")
         stack.Add(bkgdHist)
@@ -493,10 +535,20 @@ def makeEvtPredHists(args):
     bkgdGraph.SetMarkerStyle(8)
     bkgdGraph.SetMarkerSize(2)
     bkgdGraph.SetLineColor(bkgdCol)
+    if args.data and args.VR:
+        dataEvtArr = array("f", [dataEvtPerMass[m] for m in args.masses])
+        dataGraph = TGraph(len(dataEvtArr), massBins, dataEvtArr)
+        dataGraph.SetMarkerColor(bkgdCol)
+        dataGraph.SetMarkerStyle(8)
+        dataGraph.SetMarkerSize(2)
+        dataGraph.SetLineColor(1)
 
     mg = TMultiGraph()
+    if args.data and args.VR:
+        mg.Add(dataGraph)
     mg.Add(sigGraph)
     mg.Add(bkgdGraph)
+    
     if args.VR:
         mg.SetTitle("Events per Signal Mass in Validation Region L-Band;Signal Mass [GeV];Events")
     else:
@@ -505,6 +557,8 @@ def makeEvtPredHists(args):
     if args.log:
         canv.SetLogy(True)
     leg.Clear()
+    if args.data and args.VR:
+        leg.AddEntry(dataGraph, "Observed", "P")
     leg.AddEntry(sigGraph, "Expected Signal", "P")
     leg.AddEntry(bkgdGraph, "Expected Background", "P")
     leg.Draw()
@@ -520,7 +574,6 @@ def makeEvtPredHists(args):
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 #Makes a event yields per process and signal mass table
-#courtesy of ChatGPT
 def printExpEvtsTable(event_dicts, event_err_dicts, args):
     
     processes = list(event_dicts[0].keys())
@@ -533,13 +586,17 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
     backgrounds = [p for p in processes if p != "SIG"]
     backgrounds.sort(key=lambda p: event_dicts[0][p][0], reverse=True)
     
-    rows = [["Signal"] + [f"{events['SIG'][0]:.3f}+/-{errors['SIG'][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)]]
+    rows = []
+    if args.data:
+        rows.append(["Observed"] + [f"{events['DATA'][0]:.0f}" for events in event_dicts])
+
+    rows.append(["Signal"] + [f"{events['SIG'][0]:.3f}+/-{errors['SIG'][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)])
+
+    rows.append(["Total Background"] + [f"{tb:.3f}+/-{tbErr:.3f}" for tb, tbErr in zip(total_bkgs, total_bkgs_errs)])
     
     for proc in backgrounds:
         if proc in args.processes:
             rows.append([proc] + [f"{events[proc][0]:.3f}+/-{errors[proc][0]:.3f}" for events, errors in zip(event_dicts, event_err_dicts)])
-    
-    rows.append(["Total Background"] + [f"{tb:.3f}+/-{tbErr:.3f}" for tb, tbErr in zip(total_bkgs, total_bkgs_errs)])
     
     headers = ["Process"] + args.masses
     
