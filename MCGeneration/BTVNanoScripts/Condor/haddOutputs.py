@@ -66,7 +66,7 @@ def haddFiles():
             outDir = "/store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/" + args.year + "/" + args.version + "/"
         elif proc == "DATA":
             inDir = "/store/user/bbarton/TaustarToTauTauZ/Data/JobOutputs/"+ args.date + "/" + args.year + "/"
-            outDir = "/store/user/bbarton/TaustarToTauTauZ/Data/" + args.year + "/" + args.version + "/"
+            outDir = "/store/user/bbarton/TaustarToTauTauZ/Data/" + args.version + "/"
         else:
             inDir = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/" + args.date + "/" + args.year + "/" + proc + "/"
             outDir = "/store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/" + args.year + "/" + args.version + "/"

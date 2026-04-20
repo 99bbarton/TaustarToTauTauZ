@@ -82,13 +82,14 @@ def getSystStr(year, channel, systDict, isSig=False):
                 systStr += "*MuTau_muIDSF" + idxStr + "*Z_muIDSFs"+idxStr + "*Z_muIDSFs" + secIdxStr
             else:
                 systStr += "*Z_muIDSFs"+idxStr + "*Z_muIDSFs" + secIdxStr
-        elif key == "TRIG" and year in years_run3:
-            if idxStr == "[0]":
-                systStr += "*0.94"
-            elif idxStr == "[1]":
-                systStr += "*1.0"
-            elif idxStr == "[2]":
-                systStr += "*1.04"
+        elif key == "TRIG":
+            if year in years_run3:
+                if idxStr == "[0]":
+                    systStr += "*0.94"
+                elif idxStr == "[1]":
+                    systStr += "*1.0"
+                elif idxStr == "[2]":
+                    systStr += "*1.04"
         elif key == "VARW" and isSig: #PDF weights only added to signal
             if val == "DOWN":
                 systStr += "*(PDFWeights_varWeightsRMS - PDFWeights_varWeightsErr)"

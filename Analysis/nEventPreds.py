@@ -1,3 +1,4 @@
+
 #Make histograms of the number of signal and background in each bin (0=signal L-band)
 
   ###########################################################
@@ -403,7 +404,10 @@ def makeEvtPredHists(args):
 
                             for systI in range(nSystDicts):
                                 adjIdx = (b*nSystDicts) + systI
-                                weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=False)
+                                systDictCopy = systDicts[systI].copy() #PDF weights only available in signal so put in defaults so mcWeights gives correct strings
+                                systDictCopy["FACTW"] = ""
+                                systDictCopy["VARW"] = ""
+                                weight_systStr = getSystStr(year=year, channel=ch, systDict=systDictCopy, isSig=False)
                                 
                                 hTemp = TH1F("myHist", "", 3, -1, 2)
                                 hTemp.Sumw2()
