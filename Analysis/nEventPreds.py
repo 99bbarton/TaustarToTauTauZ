@@ -193,7 +193,7 @@ def parseArgs():
 #Reworked version of original function to change loop ordering for improved file I/O efficiency
 def makeEvtPredHists(args):
     canv = TCanvas("canv_binScheme", "N Events in 2D Collinear Mass Bins", 1200, 800)
-    leg = TLegend(0.7, 0.7, 0.9, 0.9)
+    leg = TLegend(0.75, 0.75, 0.95, 0.95)
     gStyle.SetOptStat(0)
     sigCol = 603
     bkgdCol = 921
@@ -328,7 +328,11 @@ def makeEvtPredHists(args):
                         weight_xs = weight_xs * args.extrap
 
                     for systI in range(nSystDicts):
-                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=True)
+                        systDictCopy = systDicts[systI].copy() #PDF weights only available in signal so put in defaults so mcWeights gives correct strings
+                        systDictCopy["FACTW"] = ""
+                        systDictCopy["VARW"] = ""
+                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDictCopy, isSig=True)
+                        #weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=True) #TODO FIX ME
                         
                         hTemp = TH1F("myHist", "", 3, -1, 2)
                         hTemp.Sumw2()
@@ -430,10 +434,11 @@ def makeEvtPredHists(args):
         #END PROC
 
         # ----------------------------------   Data   --------------------------- #
-        if args.data and args.VR: # To avoid unblinding signal region 
+        if args.data and args.VR: # To avoid unblinding signal region
+            print("Processing DATA")
             for mass in args.masses:
                 
-                filePath = os.environ["ROOTURL"] + os.environ["TSSTTZDATA"] + f"data_{year}.root"
+                filePath = os.environ["ROOTURL"] + os.environ["TSTTZDATA"] + f"data_{year}.root"
                 dataFile = TFile.Open(filePath, "r")
                 dataTree = dataFile.Get("Events")
 
@@ -457,7 +462,8 @@ def makeEvtPredHists(args):
                         cutStr = cutStr.replace("_TAUES_", args.tauES)
                         nEvts = dataTree.GetEntries(cutStr)
                         dataHists[mass].Fill(dataHists[mass].GetBinCenter(b+1), nEvts)
-                        dataEvtPerMass += nEvts
+                        if b == 0:
+                            dataEvtPerMass[mass] += nEvts
                         for systI in range(nSystDicts):
                             eventsPerProc[mass]["DATA"][(b*nSystDicts) + systI] += nEvts
                             
@@ -465,6 +471,7 @@ def makeEvtPredHists(args):
     #END YEAR
 
     gStyle.SetPaintTextFormat("2.2f")
+    gStyle.SetTitleX(0.4)
 
     for i, mass in enumerate(args.masses):
 
@@ -488,12 +495,15 @@ def makeEvtPredHists(args):
             dataHist.SetMarkerColor(1)
             dataHist.SetMarkerStyle(8)
             dataHist.SetMarkerSize(2)
+            dataHist.SetLineWidth(0)
+            dataHist.SetLineColor(0)
 
+            
         if i == 0:
-            leg.AddEntry(sigHist, "Signal", "L")
-            leg.AddEntry(bkgdHist, "Background", "L")
             if args.data and args.VR:
                 leg.AddEntry(dataHist, "Data", "P")
+            leg.AddEntry(sigHist, "Signal", "L")
+            leg.AddEntry(bkgdHist, "Background", "L")
 
         if args.VR:
             stack = THStack(f"stack_m{mass}", f"Events Passing Selection m{mass} in VR;Bin;Events")
@@ -538,7 +548,7 @@ def makeEvtPredHists(args):
     if args.data and args.VR:
         dataEvtArr = array("f", [dataEvtPerMass[m] for m in args.masses])
         dataGraph = TGraph(len(dataEvtArr), massBins, dataEvtArr)
-        dataGraph.SetMarkerColor(bkgdCol)
+        dataGraph.SetMarkerColor(1)
         dataGraph.SetMarkerStyle(8)
         dataGraph.SetMarkerSize(2)
         dataGraph.SetLineColor(1)
