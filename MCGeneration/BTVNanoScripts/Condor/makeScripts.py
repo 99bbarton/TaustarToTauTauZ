@@ -118,6 +118,8 @@ def makeScripts(args, dateStr, hasSB):
                 print("Making directory: " + outDir)
                 command = "eosmkdir " + outDir
                 stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+                if len(stderr) > 0:
+                    print("stderr when making eos output dirs:\n", stderr)
 
             if proc.startswith("M"):
                 dataSets = [sigDatasets_mini[year][proc]]
