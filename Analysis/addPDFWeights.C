@@ -155,10 +155,16 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
 	
         //Calculate the RMS's
         factWeightsRMSs[0] /= 100;
-        factWeightsRMSs[1] /= 100; 
+        factWeightsRMSs[1] /= 100;
+	if (factWeightsRMSs[0] < 0 || (factWeightsRMSs[0] != factWeightsRMSs[0]))
+	  factWeightsRMSs[0] = 1
+	if (factWeightsRMSs[1] < 0 || (factWeightsRMSs[1] != factWeightsRMSs[1]))
+          factWeightsRMSs[1] = 1
         factWeightsRMSs[0] = sqrt(factWeightsRMSs[0]);
         factWeightsRMSs[1] = sqrt(factWeightsRMSs[1]);
         varWeightsRMS /= 100;
+	if (varWeightsRMS < 0 || (varWeightsRMS != varWeightsRMS)) // Protect against very rare nan's
+	  varWeightsRMS = 1;
         varWeightsRMS = sqrt(varWeightsRMS);
 
 
@@ -169,7 +175,7 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
         double weight16 = weightsForVar[15];
         double weight84 = weightsForVar[83];
         varWeightsErr = (weight84 - weight16) / 2.0;
-        if (varWeightsErr < 0)
+        if (varWeightsErr < 0 || (varWeightsErr != varWeightsErr))
             varWeightsErr = 0;
 
         //Fill the tree

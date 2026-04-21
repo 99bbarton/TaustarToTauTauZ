@@ -123,6 +123,25 @@ massToThreshs = {
 }
 
 
+#mass : [varW, factW]
+pdfWeights = {
+    "250"  : [1.00, 1.00],
+    "500"  : [1.06, 1.15],
+    "750"  : [1.06, 1.20],
+    "1000" : [1.08, 1.39],
+    "1250" : [1.11, 1.77],
+    "1500" : [1.13, 1.41],
+    "1750" : [1.19, 2.24],
+    "2000" : [1.20, 4.46],
+    "2500" : [1.30, 2.47],
+    "3000" : [1.37, 14.27],
+    "3500" : [1.0, 1.0],
+    "4000" : [1.0, 1.0],
+    "4500" : [1.0, 1.0],
+    "5000" : [1.0, 1.0]
+}
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 def parseArgs():
@@ -328,11 +347,7 @@ def makeEvtPredHists(args):
                         weight_xs = weight_xs * args.extrap
 
                     for systI in range(nSystDicts):
-                        systDictCopy = systDicts[systI].copy() #PDF weights only available in signal so put in defaults so mcWeights gives correct strings
-                        systDictCopy["FACTW"] = ""
-                        systDictCopy["VARW"] = ""
-                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDictCopy, isSig=True)
-                        #weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=True) #TODO FIX ME
+                        weight_systStr = getSystStr(year=year, channel=ch, systDict=systDicts[systI], isSig=True) 
                         
                         hTemp = TH1F("myHist", "", 3, -1, 2)
                         hTemp.Sumw2()
@@ -626,7 +641,7 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     nomOffset = 1 if nSystDicts > 1 else 0
 
     #First prepare univeral lines
-    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {2 + len(args.processes) + 1}\n----------\n"
+    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {4 + len(args.processes) + 1}\n----------\n"
     if args.nBins == 2:
         binStrs = ["bin0", "bin1"]
     else:
@@ -654,6 +669,8 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     for mN, mass in enumerate(args.masses):
         sigXSUnc = f"{1+getCombXSPercUnc(args.years, 'M'+mass):.3f}"
         sigXSLine = "xs_SIG\tlnN"
+        varWLine = "varW\tlnN"
+        factWLine = "factW\tlnN"
 
         binLine = "bin        \t"
         obsLine = "observation\t"
@@ -697,8 +714,12 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
 
                     if proc == "SIG":
                         sigXSLine += "\t" + sigXSUnc
+                        varWLine +="\t" + str(pdfWeights[mass][0])
+                        factWLine +="\t" + str(pdfWeights[mass][1])
                     else:
                         sigXSLine += "\t-     "
+                        varWLine +="\t-     "
+                        factWLine +="\t-     "
                     if mN == 0:
                         for k in xsLines.keys():
                             if k == proc:
@@ -713,6 +734,8 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             
             datacard.write(lumiLine + "\n")
             datacard.write(extLine + "\n")
+            datacard.write(varWLine + "\n")
+            datacard.write(factWLine + "\n")
             for proc in cardProcs:
                 if proc == "SIG":
                     datacard.write(sigXSLine + "\n")
@@ -734,7 +757,7 @@ def systStudiesTable(evtsPerProc, args):
     from tabulate import tabulate
 
     # Must match ordering in makeEvtPredHists()
-    systNames = ["TAUID", "EID", "MUID", "TRIG"]
+    systNames = ["TAUID", "EID", "MUID", "TRIG", "VARW", "FACTW"]
     nSyst = len(systNames)
     nVarPerSyst = 3  # DOWN, NOM, UP
     nSystDicts = nSyst * nVarPerSyst
