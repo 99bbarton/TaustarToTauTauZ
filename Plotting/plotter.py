@@ -97,6 +97,7 @@ def parseArgs():
     argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
     argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "SIG_MID", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
+    argparser.add_argument("-k", "--skims", action="store_true", help="If specified, will use skims of run3 backgrounds")
     argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy i.e. V0 proc->subProc translation for run3")
     argparser.add_argument("-c", "--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
@@ -265,9 +266,12 @@ def getFileList(args):
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                            if era == "3" and args.skims:
+                                filename += "Skims/" +subProc + "_" + year + "_skim.root"
+                            else:
+                                filename += subProc + "_" + year + ".root"
                         else:
-                            filename = args.inDir
-                        filename += subProc + "_" + year + ".root"
+                            filename = args.inDir + subProc + "_" + year + ".root"
                         filelist["ALL"].append(filename)
                 
     elif args.plotEach == "YEAR":
@@ -292,10 +296,13 @@ def getFileList(args):
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                            if era == "3" and args.skims:
+                                filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                            else:
+                                filename += subProc + "_" + year + ".root"
                         else:
-                            filename = args.inDir
-                        filename += subProc + "_"
-                        filelist[year].append(filename + year + ".root")
+                            filename = args.inDir + subProc + "_" + year + ".root"
+                        filelist[year].append(filename)
                         
     elif args.plotEach == "PROC":
         if args.sumBkgd:
@@ -324,13 +331,17 @@ def getFileList(args):
                     for subProc in procToSubProc[proc]:
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                            if era == "3" and args.skims:
+                                filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                            else:
+                                filename += subProc + "_" + year + ".root"
                         else:
-                            filename = args.inDir
-                        filename += subProc + "_"
+                            filename = args.inDir + subProc + "_" + year + ".root"
+                        
                         if args.sumBkgd:
-                            filelist["Backgrounds"].append(filename + year + ".root")
+                            filelist["Backgrounds"].append(filename)
                         else:
-                            filelist[proc].append(filename + year + ".root")
+                            filelist[proc].append(filename)
 
             if len(filelist[proc]) == 0: #If we summedBkgd, per-process lists are left empty for non-signal processes
                 del filelist[proc]
@@ -386,9 +397,12 @@ def getFileList(args):
                         continue
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
+                        if era == "3" and args.skims:
+                            filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                        else:
+                            filename += subProc + "_" + year + ".root"
                     else:
-                        filename = args.inDir
-                    filename += subProc + "_" + year + ".root"
+                        filename = args.inDir + subProc + "_" + year + ".root"
                     filelist[subProc].append(filename)
 
     return filelist
@@ -495,11 +509,17 @@ def plot1D(filelist, args):
                 cutStr = cutStr.replace("CHANNEL", ch)
 
                 fileAlone = filename.split("/")[-1]
-                nameYearSepIdx = fileAlone.rfind("_")
+                skimIdx = fileAlone.find("_skim")
+                if skimIdx > 0:
+                    nameYearSepIdx = fileAlone.rfind("_", 0, skimIdx)
+                else:
+                    nameYearSepIdx = fileAlone.rfind("_")
                 subProc = fileAlone[:nameYearSepIdx]
                 if "taustar" in subProc:
                     subProc = subProc.split("_")[-1].upper()
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
+                if year.find("_skim"):
+                    year = year.split("_")[0]
                 weight = "1"
                 if args.weights["XS"]:
                     weight, xsUnc = getXSWeight(subProc, year)
