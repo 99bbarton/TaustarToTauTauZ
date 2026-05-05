@@ -225,7 +225,7 @@ def main(args):
 
     
     if len(args.vars) == 1:
-        plot1D(filelist, args)
+        plot1D(filelist, dataFileDict, args)
     elif args.drawStyle:
         if args.drawStyle == "SAME":
             print("SAME feature not yet implemented!") #TODO
@@ -415,21 +415,21 @@ def getFileList(args):
 
         if args.plotEach == "YEAR":
             for year in args.years:
-                dataFileDict["Data_"+year] = dataBaseDir + "Data_" + year + ".root"
+                dataFileDict["Data_"+year] = dataBaseDir + "data_" + year + ".root"
         elif args.plotEach == "CH":
             for ch in args.channels:
                 dataFileDict["Data_"+ch] = []
                 for year in args.years:
-                    dataFileDict["Data_"+ch].append(dataBaseDir + "Data_" + year + ".root")
+                    dataFileDict["Data_"+ch].append(dataBaseDir + "data_" + year + ".root")
         elif args.plotEach == "DM":
             for zDM in ["ee", "mumu", "AK8"]:
                 dataFileDict["Data_ZTo"+zDM] = []
                 for year in args.years:
-                    dataFileDict["Data_ZTo"+zDM].append(dataBaseDir + "Data_" + year + ".root")
+                    dataFileDict["Data_ZTo"+zDM].append(dataBaseDir + "data_" + year + ".root")
         else:
             dataFileDict["Data"] = []
             for year in args.years:
-                dataFileDict["Data"].append(dataBaseDir + "Data_" + year + ".root")
+                dataFileDict["Data"].append(dataBaseDir + "data_" + year + ".root")
 
     return filelist, dataFileDict
 
@@ -531,8 +531,6 @@ def plot1D(filelist, dataFileDict, args):
                     
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
-                if args.addCuts:
-                    cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
 
                 fileAlone = filename.split("/")[-1]
@@ -625,6 +623,7 @@ def plot1D(filelist, dataFileDict, args):
 
 
     if "DATA" in args.processes:
+        print("Plotting Data")
         dataHists = []
         dataNumHists = []
         for hName in dataFileDict.keys():
@@ -649,7 +648,7 @@ def plot1D(filelist, dataFileDict, args):
                     inFile.Close()
                     continue
                 
-                for ch in args.channels:
+                for ch in args.channel:
                     if args.plotEach == "CH" and not hName.endswith(ch):
                         continue
                     
@@ -660,8 +659,6 @@ def plot1D(filelist, dataFileDict, args):
 
                     if args.plotEach == "DM":
                         cutStr += " && Z_dm==" + str(dmFromName[hName.split("ZTo")[1]])
-                    if args.addCuts:
-                        cutStr += " && " + args.addCuts
                     cutStr = cutStr.replace("CHANNEL", ch)
 
                     hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
@@ -765,7 +762,7 @@ def plot1D(filelist, dataFileDict, args):
                 numHists[hN].Draw("HIST")
             else:
                 numHists[hN].Draw("HIST SAME")
-        if len(dataNumHists) > 0:
+        if "DATA" in args.processes:
             for hN, dHist in enumerate(dataNumHists):
                 if len(numHists) == 0 and hN == 0:
                     dataNumHists.Draw("HIST")
@@ -783,13 +780,13 @@ def plot1D(filelist, dataFileDict, args):
                 hist.Draw("HIST")
             else:
                 hist.Draw("HIST SAME")
-        if len(dataHists) > 0:
+        if "DATA" in args.processes:
             for hN, hist in enumerate(dataHists):
-                hist.SetMaximum(maxVal)'
+                hist.SetMaximum(maxVal)
                 if len(hists) == 0 and hN == 0:
-                    hist.Draw("HIST")
+                    hist.Draw("P")
                 else:
-                    hist.Draw("HIST SAME")
+                    hist.Draw("P SAME")
             
     if makeLegend:
         if len(hists) > 5 and not (args.nEvents or args.stack):
@@ -885,8 +882,6 @@ def plot2D_hists(filelist, dataFileDict, args):
                     cutStr = "(1>0)"
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
-                if args.addCuts:
-                    cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
 
 
@@ -1000,7 +995,7 @@ def plot2D_graph(filelist, args):
     graphs = TMultiGraph()
     gNameList = []
     if args.plotEach == "CH":
-        gNameList = args.channels
+        gNameList = args.channel
     elif args.plotEach == "DM":
         gNameList = ["ee", "mumu", "AK8"]
         dmFromName = {"ee" : 1, "mumu" : 2, "AK8" : 0}
@@ -1033,8 +1028,6 @@ def plot2D_graph(filelist, args):
                     cutStr = "(1>0)"
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
-                if args.addCuts:
-                    cutStr += " && " + args.addCuts
                 cutStr = cutStr.replace("CHANNEL", ch)
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
