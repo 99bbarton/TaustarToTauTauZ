@@ -12,7 +12,6 @@ from array import array
 
 sys.path.append("../Framework/")
 from Colors import getColor, getPalettes, getPalette
-from Cuts import getCuts
 from mcWeights import getXSWeight
 from datasets import procToSubProc_run3_legacy, procToSubProc_run2, procToSubProc_run3, yearToEra
 
@@ -96,10 +95,10 @@ def parseArgs():
     argparser.add_argument("vars", nargs='+', choices=varToPlotParams.keys(), help="What to plot. If one argument is provided, a 1D hist of that variable will be produced. If a second argument is also provided, the first arg will be plotted on the x-axis and the second, the y-axis.")
     argparser.add_argument("-i", "--inDir", default="DEF", help="A directory to find the input root files")
     argparser.add_argument("-y", "--years", required=True, nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to plot")
-    argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "SIG_MID", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD"], help = "Which signal masses to plot. SIG_DEF=[M250, M1000, M3000, M5000]")
+    argparser.add_argument("-p", "--processes", required=True, type=str, nargs="+", choices = ["ALL", "SIG_ALL", "SIG_DEF", "SIG_SENS", "SIG_MID", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "BKGD", "BKGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "DATA"], help = "Which processes to plot.")
     argparser.add_argument("-k", "--skims", action="store_true", help="If specified, will use skims of run3 backgrounds")
     argparser.add_argument("--legacy", action="store_true", help="If specified, will use legacy i.e. V0 proc->subProc translation for run3")
-    argparser.add_argument("-c", "--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
+    argparser.add_argument("--channel", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     argparser.add_argument("-e", "--plotEach", choices=plotEachToLeg.keys(), default="NA", help="If specified, will make a hist/graph per channel/proc/year rather than combining them into a single hist")
     #argparser.add_argument("-g", "--graph", action="store_true", help="Requries 2 vars. If specified, will make a graph of the passed vars rather than a 2D hist" )
     argparser.add_argument("-d", "--dataTier", choices=["Gen", "Rec","Gen_Rec"], default="Rec",help="What data tier to use. If len(vars)==2, GEN_RECO will user var1:GEN and var2:reco")
@@ -107,8 +106,7 @@ def parseArgs():
     argparser.add_argument("-l", "--logScale", nargs="+", choices=["X","Y","Z"], help="Axis to make log scale")
     argparser.add_argument("-n", "--normalize", action="store_true", help="If specified, will normalize distributions to unit area (1D hists only)")
     argparser.add_argument("-w", "--weights", choices=["ALL", "XS", "NONE"], default="NONE", help="Spefify which weights to apply to MC samples")
-    argparser.add_argument("--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
-    argparser.add_argument("-a", "--addCuts", type=str, help="A cut to add to those returned by Cuts::getCuts")
+    argparser.add_argument("-c", "--cuts", type=str, help="Cuts to apply. Overrides default cuts" )
     argparser.add_argument("--effCut", type=str, help="If provided, will make an effiency plot by requiring the specified additional cut for the numerator and the cuts from '--cuts' for both numerator and denominator" )
     argparser.add_argument("-s", "--stack", action="store_true", help="If specified, background samples will be stacked")
     argparser.add_argument("--sumBkgd", action="store_true", help="If specified, background samples will be combined into a single 'background' category.")
@@ -156,6 +154,8 @@ def parseArgs():
         processes.extend(["M250", "M1000", "M3000", "M5000"])
     elif "SIG_MID" in args.processes:
         processes.extend(["M1000", "M1250", "M1500", "M1750", "M2000"])
+    elif "SIG_SENS" in args.processes:
+        processes.extend(["M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000"])
     elif "SIG_ALL" in args.processes:
         processes.extend(["M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000"])
     if "BKGD" in args.processes:
@@ -163,7 +163,7 @@ def parseArgs():
     elif "BKGDnoQCD" in args.processes:
         processes.extend(["ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST"])
     for proc in args.processes:
-        if proc in ["SIG_DEF", "SIG_MID", "SIG_ALL", "BKGD", "BKGDnoQCD"]:
+        if proc in ["SIG_DEF", "SIG_MID", "SIG_ALL", "SIG_SENS", "BKGD", "BKGDnoQCD"]:
             continue
         processes.append(proc)
     args.processes = processes
@@ -221,7 +221,7 @@ def parseArgs():
 
 def main(args):
 
-    filelist = getFileList(args)
+    filelist, dataFileDict = getFileList(args)
 
     
     if len(args.vars) == 1:
@@ -231,12 +231,12 @@ def main(args):
             print("SAME feature not yet implemented!") #TODO
             return 1
         else:
-            plot2D_hists(filelist, args)
+            plot2D_hists(filelist, dataFileDict, args)
     else:
         #if args.graph:
         #    plot2D_graph(filelist, args)
         #else:
-        plot2D_hists(filelist, args)
+        plot2D_hists(filelist, dataFileDict, args)
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
@@ -405,21 +405,48 @@ def getFileList(args):
                         filename = args.inDir + subProc + "_" + year + ".root"
                     filelist[subProc].append(filename)
 
-    return filelist
+    #Make a separate list of data files since data must always be separated from MC, regardless of --plotEach specification
+    dataFileDict = {}
+    if "DATA" in args.processes:
+        if args.inDir == "DEF":
+            dataBaseDir = "root://cmsxrootd.fnal.gov/" + str(os.environ["TSTTZDATA"]) 
+        else:
+            dataBaseDir = args.inDir
+
+        if args.plotEach == "YEAR":
+            for year in args.years:
+                dataFileDict["Data_"+year] = dataBaseDir + "Data_" + year + ".root"
+        elif args.plotEach == "CH":
+            for ch in args.channels:
+                dataFileDict["Data_"+ch] = []
+                for year in args.years:
+                    dataFileDict["Data_"+ch].append(dataBaseDir + "Data_" + year + ".root")
+        elif args.plotEach == "DM":
+            for zDM in ["ee", "mumu", "AK8"]:
+                dataFileDict["Data_ZTo"+zDM] = []
+                for year in args.years:
+                    dataFileDict["Data_ZTo"+zDM].append(dataBaseDir + "Data_" + year + ".root")
+        else:
+            dataFileDict["Data"] = []
+            for year in args.years:
+                dataFileDict["Data"].append(dataBaseDir + "Data_" + year + ".root")
+
+    return filelist, dataFileDict
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-def plot1D(filelist, args):
+def plot1D(filelist, dataFileDict, args):
     global varToPlotParams, plotEachToLeg
 
     if args.nS:
         gStyle.SetOptStat(False)
     canv = TCanvas("canv", "1D Plotting", 1200, 1000)
     canv.SetLeftMargin(0.15)
-    makeLegend = args.plotEach != "NA"
+    makeLegend = args.plotEach != "NA" or "DATA" in args.processes
     if makeLegend:
         gStyle.SetOptStat(0)
         legTitle = plotEachToLeg[args.plotEach]
+        
         if args.nEvents:
             legTitle += ": nEvents"
         if args.plotEach == "PROC" and len(filelist.keys()) > 6:
@@ -500,7 +527,7 @@ def plot1D(filelist, args):
                 if args.cuts:
                     cutStr = args.cuts
                 else:
-                    cutStr = getCuts(args.vars[0], ch, args.dataTier)
+                    cutStr = "(1>0)"
                     
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
@@ -579,7 +606,7 @@ def plot1D(filelist, args):
                 numHists[hNum].SetLineWidth(3)
 
             if args.normalize:
-                hists[hNum].Scale(1.0 / hists[hNum].GetEntries())
+                hists[hNum].Scale(1.0 / hists[hNum].Integral())
 
             if makeLegend:
                 if hName[0]=="M" and hName != "MuTau":
@@ -595,6 +622,115 @@ def plot1D(filelist, args):
         if hists[hNum].GetMaximum() > maxVal:
             maxVal = hists[hNum].GetMaximum()
     #END HIST
+
+
+    if "DATA" in args.processes:
+        dataHists = []
+        dataNumHists = []
+        for hName in dataFileDict.keys():
+            dataHists.append(TH1F(hName, titleStr, plotParams[2], plotParams[3], plotParams[4]))
+            if args.effCut:
+                dataNumHists.append(TH1F(hName+"_num", titleStr, plotParams[2], plotParams[3], plotParams[4]))
+            
+            for filename in dataFileDict[hName]:
+                try:
+                    inFile = TFile.Open(filename, "r")
+                except:
+                    print("ERROR: Could not read file " + inFile)
+                    continue
+                try:
+                    tree = inFile.Get("Events")
+                    if tree.GetEntries() == 0:
+                        print("Warning: TTree was empty for file:", filename)
+                        inFile.Close()
+                        continue
+                except:
+                    print('Warning: No tree called "Events" in file:', filename)
+                    inFile.Close()
+                    continue
+                
+                for ch in args.channels:
+                    if args.plotEach == "CH" and not hName.endswith(ch):
+                        continue
+                    
+                    if args.cuts:
+                        cutStr = args.cuts
+                    else:
+                        cutStr = "(1>0)"
+
+                    if args.plotEach == "DM":
+                        cutStr += " && Z_dm==" + str(dmFromName[hName.split("ZTo")[1]])
+                    if args.addCuts:
+                        cutStr += " && " + args.addCuts
+                    cutStr = cutStr.replace("CHANNEL", ch)
+
+                    hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
+
+                    if type(plotParams[0]) is str:
+                        plotStr = plotParams[0].replace("CHANNEL", ch)  
+                        if args.plotEach == "SJ":
+                            print("ERROR: SJ plotting not supported in data")
+                            exit(1)
+
+                        tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
+
+                        dataHists[-1].Add(hTemp)
+                        del hTemp
+
+                        if args.effCut:
+                            hTemp_num = TH1F("h_"+hName+"_temp_num", titleStr, plotParams[2], plotParams[3], plotParams[4])
+                            cutStr += " && " + args.effCut
+                            tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
+                            dataNumHists[-1].Add(hTemp_num)
+                            del hTemp_num
+                    elif type(plotParams[0] is list):
+                        for i, varVer in enumerate(plotParams[0]):
+                            if i > 0:
+                                hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
+                                
+                            plotStr = varVer.replace("CHANNEL", ch)
+                            tree.Draw(plotStr + ">>+h_"+hName+"_temp", cutStr)
+
+                            dataHists[-1].Add(hTemp)
+                            del hTemp
+
+                            if args.effCut:
+                                hTemp_num = TH1F("h_"+hName+"_temp_num", titleStr, plotParams[2], plotParams[3], plotParams[4])
+                                cutStr += " && " + args.effCut
+                                tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
+                                dataNumHists[-1].Add(hTemp_num)
+                                del hTemp_num
+                #END CH
+                inFile.Close()
+            #END FILE
+
+            dataHists[-1].SetLineColor(0) 
+            dataHists[-1].SetLineWidth(0)
+            dataHists[-1].SetMarkerColor(1)
+            dataHists[-1].SetMarkerStyle(8)
+            dataHists[-1].SetMarkerSize(2)
+            if args.effCut:
+                dataNumHists[-1].SetLineColor(0) 
+                dataNumHists[-1].SetLineWidth(0)
+                dataNumHists[-1].SetMarkerColor(1)
+                dataNumHists[-1].SetMarkerStyle(8)
+                dataNumHists[-1].SetMarkerSize(2)
+                dataNumHists[-1].Sumw2()
+                dataNumHists[-1].SetMaximum(1.1)
+                dataNumHists[-1].Divide(dataHists[-1])
+
+            
+            if args.normalize:
+                dataHists[-1].Scale(1.0 / dataHists[-1].GetEntries())
+
+            name = hName
+            if args.nEvents:
+                name += f": {dataHists[-1].Integral():.2f}"
+            leg.AddEntry(dataHists[-1], name, "P")
+
+            if dataHists[-1].GetMaximum() > maxVal and not args.effCut:
+                maxVal = dataHists[-1].GetMaximum()
+
 
     canv.Clear()    
     
@@ -629,20 +765,32 @@ def plot1D(filelist, args):
                 numHists[hN].Draw("HIST")
             else:
                 numHists[hN].Draw("HIST SAME")
-
-        
+        if len(dataNumHists) > 0:
+            for hN, dHist in enumerate(dataNumHists):
+                if len(numHists) == 0 and hN == 0:
+                    dataNumHists.Draw("HIST")
+                else:
+                    dataNumHists.Draw("HIST SAME")
+                
     if not args.effCut:
         maxVal = max(maxVal, bkgdStack.GetMaximum()*1.2)
         for hN, hist in enumerate(hists):
             if hN in bHistNums:
                 continue
-            
+
             hist.SetMaximum(maxVal)
             if not args.stack and hN == 0:
                 hist.Draw("HIST")
             else:
                 hist.Draw("HIST SAME")
-                
+        if len(dataHists) > 0:
+            for hN, hist in enumerate(dataHists):
+                hist.SetMaximum(maxVal)'
+                if len(hists) == 0 and hN == 0:
+                    hist.Draw("HIST")
+                else:
+                    hist.Draw("HIST SAME")
+            
     if makeLegend:
         if len(hists) > 5 and not (args.nEvents or args.stack):
             leg.SetNColumns(2)
@@ -670,7 +818,7 @@ def plot1D(filelist, args):
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------- ##
 
-def plot2D_hists(filelist, args):
+def plot2D_hists(filelist, dataFileDict, args):
     global varToPlotParams, plotEachToLeg
 
     canv = TCanvas("canv", "2D Hists", 1200, 1000)
@@ -734,9 +882,7 @@ def plot2D_hists(filelist, args):
                 if args.cuts:
                     cutStr = args.cuts
                 else:
-                    cutStrD1 = getCuts(args.vars[0], ch, args.dataTier[0])
-                    cutStrD2 = getCuts(args.vars[1], ch, args.dataTier[1])
-                    cutStr = "(" + cutStrD1 + ") && (" + cutStrD2 + ")"
+                    cutStr = "(1>0)"
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
                 if args.addCuts:
@@ -745,11 +891,17 @@ def plot2D_hists(filelist, args):
 
 
                 fileAlone = filename.split("/")[-1]
-                nameYearSepIdx = fileAlone.rfind("_")
+                skimIdx = fileAlone.find("_skim")
+                if skimIdx > 0:
+                    nameYearSepIdx = fileAlone.rfind("_", 0, skimIdx)
+                else:
+                    nameYearSepIdx = fileAlone.rfind("_")
                 subProc = fileAlone[:nameYearSepIdx]
                 if "taustar" in subProc:
                     subProc = subProc.split("_")[-1].upper()
                 year = fileAlone[nameYearSepIdx + 1:].split(".")[0]
+                if year.find("_skim"):
+                    year = year.split("_")[0]
                 
                 weight = "1"
                 if args.weights["XS"]:
@@ -878,9 +1030,7 @@ def plot2D_graph(filelist, args):
                 if args.cuts:
                     cutStr = args.cuts
                 else:
-                    cutStrD1 = getCuts(args.vars[0], ch, dataTier1)
-                    cutStrD2 = getCuts(args.vars[1], ch, dataTier2)
-                    cutStr = "(" + cutStrD1 + ") && (" + cutStrD2 + ")"
+                    cutStr = "(1>0)"
                 if args.plotEach == "DM":
                     cutStr += " && Z_dm==" + str(dmFromName[hName])
                 if args.addCuts:
