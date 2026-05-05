@@ -417,7 +417,7 @@ def getFileList(args):
             for year in args.years:
                 dataFileDict["Data_"+year] = dataBaseDir + "data_" + year + ".root"
         elif args.plotEach == "CH":
-            for ch in args.channels:
+            for ch in args.channel:
                 dataFileDict["Data_"+ch] = []
                 for year in args.years:
                     dataFileDict["Data_"+ch].append(dataBaseDir + "data_" + year + ".root")
