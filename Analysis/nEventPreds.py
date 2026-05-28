@@ -214,7 +214,8 @@ def makeEvtPredHists(args):
     canv = TCanvas("canv_binScheme", "N Events in 2D Collinear Mass Bins", 1200, 800)
     leg = TLegend(0.75, 0.75, 0.95, 0.95)
     gStyle.SetOptStat(0)
-    sigCol = 603
+    #sigCol = 603
+    sigCol = 601
     bkgdCol = 921
 
     systDicts = []
@@ -260,13 +261,15 @@ def makeEvtPredHists(args):
 
 
     #baseCuts = "(CHANNEL_isCand_TAUES_ && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5"
-    baseCuts = "(CHANNEL_isCand_TAUES_  && ObjCnt_nBTags < 2 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5" 
+    #baseCuts = "(CHANNEL_isCand_TAUES_"
+    baseCuts = "(CHANNEL_isCand_TAUES_  && ObjCnt_nBTags < 2 && CHANNEL_sign_TAUES_ < 0 && CHANNEL_CHANNELDPhi_TAUES_<2.8 && CHANNEL_CHANNELDR_TAUES_>1.5"
     #Below version intended for per-signal-mass specific cuts
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.VR:
         baseCuts += "&& ((MET_pt > 70 && MET_pt < 170) || Z_pt < 400 || Z_dauDR > 0.5 || CHANNEL_visM_TAUES_ < 200)"
+        #pass
     else:
-        baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && ObjCnt_nBTags < 2 && CHANNEL_visM_TAUES_ > 200" 
+        baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && CHANNEL_visM_TAUES_ > 200" 
     baseCutStrs = []
     baseCutStrs.append(baseCuts + " && ( (LOW_EDGE<=CHANNEL_minCollM_TAUES_ && CHANNEL_minCollM_TAUES_ <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM_TAUES_ && CHANNEL_maxCollM_TAUES_ <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
@@ -322,12 +325,15 @@ def makeEvtPredHists(args):
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                     if ch == "ETau":
+                        #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 50)"
                         cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                     elif ch == "MuTau":
+                        #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 50)"
                         cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                     else:
+                        #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 100)"
                         cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
 
@@ -404,13 +410,16 @@ def makeEvtPredHists(args):
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
                             if ch == "ETau":
-                                cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
+                                #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                             elif ch == "MuTau":
-                                cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 100 && Muon_pt[MuTau_muIdx] > 50)"
+                                #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                             else:
-                                cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
+                                cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 100 && Tau_pt[TauTau_tau2Idx_TAUES_] > 100)"
+                                #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
 
                             cutStr = cutStr.replace("_TAUES_", args.tauES)
@@ -468,11 +477,14 @@ def makeEvtPredHists(args):
                         cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                         cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
                         if ch == "ETau":
-                            cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                            cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
+                            #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         elif ch == "MuTau":
-                            cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                            cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 100 && Muon_pt[MuTau_muIdx] > 50)"
+                            #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                         else:
-                            cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
+                            cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 100 && Tau_pt[TauTau_tau2Idx_TAUES_] > 100)"
+                            #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
 
                         cutStr = cutStr.replace("_TAUES_", args.tauES)
                         nEvts = dataTree.GetEntries(cutStr)

@@ -13,16 +13,16 @@ from datasets import procToSubProc_run2, procToSubProc_run3, years_run2
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cuts = {
-	"ETau": ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "ETau_havePair", "ETau_sign<0", "ETau_ETauDPhi<2.8","(TMath:Cos(ETau_ETauDPhi)*TMath:Cos(ETau_ETauDPhi))<0.99", "ETau_ETauDR>1.5", "ETau_haveTrip", "Trig_tau", "ETau_trigMatchTau", "ETau_minCollM >= ETau_visM", "ETau_isCand",  "ObjCnt_nBTags < 2", "Tau_pt[ETau_tauIdx] > 200", "Electron_pt[ETau_eIdx] > 100"],
-	"MuTau" : ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "MuTau_havePair", "MuTau_sign<0", "MuTau_MuTauDPhi<2.8","(TMath:Cos(MuTau_MuTauDPhi)*TMath:Cos(MuTau_MuTauDPhi))<0.99", "MuTau_MuTauDR>1.5", "MuTau_haveTrip", "Trig_tau", "MuTau_trigMatchTau", "MuTau_minCollM >= MuTau_visM", "MuTau_isCand", "Tau_pt[MuTau_tauIdx] > 200", "Muon_pt[MuTau_muIdx] > 100"],
-	"TauTau" : ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "TauTau_havePair", "TauTau_sign<0", "TauTau_TauTauDPhi<2.8","(TMath:Cos(TauTau_TauTauDPhi)*TMath:Cos(TauTau_TauTauDPhi))<0.99", "TauTau_TauTauDR>1.5", "TauTau_haveTrip", "Trig_tau", "TauTau_trigMatchTau", "TauTau_minCollM >= TauTau_visM", "TauTau_isCand", "Tau_pt[TauTau_tau1Idx_TAUES_] > 200", "Tau_pt[TauTau_tau2Idx_TAUES_] > 200"]
+	"ETau": ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "ETau_havePair", "ETau_sign<0", "ETau_ETauDPhi<2.8","(TMath::Cos(ETau_ETauDPhi)*TMath::Cos(ETau_ETauDPhi))<0.99", "ETau_ETauDR>1.5", "ETau_haveTrip", "Trig_tau", "ETau_trigMatchTau", "ETau_minCollM >= ETau_visM", "ETau_isCand",  "ObjCnt_nBTags < 2", "Tau_pt[ETau_tauIdx] > 200", "Electron_pt[ETau_eIdx] > 100"],
+	"MuTau" : ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "MuTau_havePair", "MuTau_sign<0", "MuTau_MuTauDPhi<2.8","(TMath::Cos(MuTau_MuTauDPhi)*TMath::Cos(MuTau_MuTauDPhi))<0.99", "MuTau_MuTauDR>1.5", "MuTau_haveTrip", "Trig_tau", "MuTau_trigMatchTau", "MuTau_minCollM >= MuTau_visM", "MuTau_isCand", "Tau_pt[MuTau_tauIdx] > 200", "Muon_pt[MuTau_muIdx] > 100"],
+	"TauTau" : ["Z_dm >=0 && Z_dm <=2", "Z_mass > 61 && Z_mass < 151", "Z_dauDR < 0.8", "TauTau_havePair", "TauTau_sign<0", "TauTau_TauTauDPhi<2.8","(TMath::Cos(TauTau_TauTauDPhi)*TMath::Cos(TauTau_TauTauDPhi))<0.99", "TauTau_TauTauDR>1.5", "TauTau_haveTrip", "Trig_tau", "TauTau_trigMatchTau", "TauTau_minCollM >= TauTau_visM", "TauTau_isCand", "Tau_pt[TauTau_tau1Idx] > 200", "Tau_pt[TauTau_tau2Idx] > 200"]
 }
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Make a N-1 cutflow table")
-    argparser.add_argument("-y", "--years", nargs="+", choices=["2022post", "2022", "2023post", "2023", "RUN3"], default=["RUN3"] help="Which year's data to use")
+    argparser.add_argument("-y", "--years", nargs="+", choices=["2022post", "2022", "2023post", "2023", "RUN3"], default=["RUN3"], help="Which year's data to use")
     argparser.add_argument("-p", "--processes", type=str, nargs="+", choices = ["TT", "ST", "DY", "ZZ", "WZ", "WW", "DATA"], default=["TT", "ST"], help="Which processes to use")
     argparser.add_argument("-c", "--channels", nargs="+", choices=["ALL", "ETau", "MuTau", "TauTau"], default=["ALL"], help="What tau decay channels to use" )
     args = argparser.parse_args()
@@ -43,6 +43,7 @@ def makeNm1Cutflow(args):
     results = {}
     
     for proc in args.processes:
+        print("Processing", proc)
 
         chain = TChain("Events")
         if proc == "DATA":
@@ -60,25 +61,42 @@ def makeNm1Cutflow(args):
                     chain.Add(basePath + subProc + "_" + year + ".root")
         
         totEvts = chain.GetEntries()
+        print("totEvts=", totEvts)
 
         for ch in args.channels:
+            print("\tprocessing", ch)
+
+            if ch not in results:
+                results[ch]={}
+            
+            
             allCutStr = "("
             for cut in cuts[ch]:
                 allCutStr += cut + "&&"
             allCutStr = allCutStr[:-2] + ")"
             nAllCuts = chain.GetEntries(allCutStr)
+            print("nAllCuts=", nAllCuts)
 
+            nPrev=0
+            cutStr = "1>0"
             for cut in cuts[ch]:
-                cutStr = allCutStr.replace(cut, "1>0")
-                nNotThisCut = chain.GetEntries(cutStr)
-                percRem = (nNotThisCut - nAllCuts) / totEvts * 100
+                #cutStr = allCutStr.replace(cut, "1>0")
+                #nNotThisCut = chain.GetEntries(cutStr)
+                #percRem = (nNotThisCut - nAllCuts) / totEvts * 100
+                cutStr += "&&" + cut
+                nNow = chain.GetEntries(cutStr)
+                nRemoved = nPrev - nNow
+                
+                if cut not in results[ch]:
+                    results[ch][cut] = {}
 
-
-            if cut not in results[ch]:
-                results[ch][cut] = {}
-
-            results[ch][cut][proc] = percRem
-
+                #results[ch][cut][proc] = percRem
+                results[ch][cut][proc] = nNow
+                #if nPrev == 0:
+                #    results[ch][cut][proc] = 0
+                #else:
+                #    results[ch][cut][proc] = nRemoved / nPrev * 100
+                #nPrev = nNow
 
     for ch in args.channels:
         print("\n")
@@ -95,8 +113,9 @@ def makeNm1Cutflow(args):
 
             for proc in args.processes:
                 val = results[ch][cut].get(proc, 0.0)
-                row.append(f"{val:.2f}%")
-
+                #row.append(f"{val:.2f}%")
+                row.append(f"{val}")
+                
             table.append(row)
 
         print(tabulate(table, headers=headers, tablefmt="grid"))
