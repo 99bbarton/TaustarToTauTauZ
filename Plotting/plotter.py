@@ -823,7 +823,7 @@ def plot2D_hists(filelist, dataFileDict, args):
     canv.SetRightMargin(0.15)
     gStyle.SetOptStat(0)
 
-    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM"
+    makeLegend = len(filelist.keys()) > 1 or args.plotEach == "CH" or args.plotEach == "DM" or "DATA" in args.processes
     if makeLegend:
         gStyle.SetOptStat(0)
         legTitle = plotEachToLeg[args.plotEach]
@@ -833,7 +833,7 @@ def plot2D_hists(filelist, dataFileDict, args):
 
     plotParamsD1 = varToPlotParams[args.vars[0]]
     plotParamsD2 = varToPlotParams[args.vars[1]]
-    
+
     plotParamsD1[0] = plotParamsD1[0].replace("_DATATIER_", args.dataTier[0])
     plotParamsD1[1] = plotParamsD1[1].replace("_DATATIER_", args.dataTier[0])
     plotParamsD2[0] = plotParamsD2[0].replace("_DATATIER_", args.dataTier[1])
@@ -940,14 +940,94 @@ def plot2D_hists(filelist, dataFileDict, args):
             else:
                 drawStyle = "COLZ"
     
+    #Plot data on the same canvas
+        dataHists = []
+
+    if "DATA" in args.processes:
+        print("Plotting Data")
+
+        for hName in dataFileDict.keys():
+
+            histToFill = "h_" + args.vars[0] + "_vs_" + args.vars[1] + "_" + hName
+            dataHists.append(TH2F(histToFill, ";" + plotParamsD1[1] + ";" + plotParamsD2[1], plotParamsD1[2], plotParamsD1[3], plotParamsD1[4], plotParamsD2[2], plotParamsD2[3], plotParamsD2[4]))
+
+            for filename in dataFileDict[hName]:
+                try:
+                    inFile = TFile.Open(filename, "r")
+                except:
+                    print("ERROR: Could not read file " + filename)
+                    continue
+
+                try:
+                    tree = inFile.Get("Events")
+                    if tree.GetEntries() == 0:
+                        print("Warning: TTree was empty for file:", filename)
+                        inFile.Close()
+                        continue
+                except:
+                    print('Warning: No tree called "Events" in file:', filename)
+                    inFile.Close()
+                    continue
+
+                for ch in args.channel:
+                    if args.plotEach == "CH" and not hName.endswith(ch):
+                        continue
+
+                    if args.cuts:
+                        cutStr = args.cuts
+                    else:
+                        cutStr = "(1>0)"
+
+                    if args.plotEach == "DM":
+                        cutStr += " && Z_dm==" + str(dmFromName[hName.split("ZTo")[1]])
+
+                    cutStr = cutStr.replace("CHANNEL", ch)
+
+                    hTemp = TH2F("h_temp_2d_data",";" + plotParamsD1[1] + ";" + plotParamsD2[1],plotParamsD1[2], plotParamsD1[3], plotParamsD1[4],plotParamsD2[2], plotParamsD2[3], plotParamsD2[4])
+
+                    plotStr = (plotParamsD2[0].replace("CHANNEL", ch) + ":" + plotParamsD1[0].replace("CHANNEL", ch))
+
+                    if plotStr.find("dPhi") > 0:
+                        plotStr = ch + "_" + ch[0].lower() + ch[1:] + "dPhi"
+
+                    tree.Draw(plotStr + ">>+h_temp_2d_data", cutStr)
+
+                    dataHists[-1].Add(hTemp)
+
+                    del hTemp
+
+                inFile.Close()
+
+            dataHists[-1].SetMarkerColor(1)
+            dataHists[-1].SetLineColor(1)
+
+            if makeLegend:
+                name = hName
+
+                if args.nEvents:
+                    name += f": {dataHists[-1].Integral():.2e}"
+
+                leg.AddEntry(dataHists[-1], name, "P")
+
+
+
     for hN, hist in enumerate(hists):
-        
         if hN == 0:
             hist.Draw(drawStyle)
         else:
             hist.Draw(drawStyle + " SAME")
     
-    if args.plotEach != "NA":
+    if "DATA" in args.processes:
+        dataDrawStyle = args.drawStyle if args.drawStyle else "SCAT"
+
+        for hN, hist in enumerate(dataHists):
+
+            if len(hists) == 0 and hN == 0:
+                hist.Draw(dataDrawStyle)
+            else:
+                hist.Draw(dataDrawStyle + " SAME")
+
+    if makeLegend:
         leg.Draw()
 
     if args.logScale:
