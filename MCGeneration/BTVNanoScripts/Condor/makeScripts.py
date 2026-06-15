@@ -115,6 +115,13 @@ def makeScripts(args, dateStr, hasSB):
             
             
             if not args.justCount and not proc.startswith("M"):
+                outDateDir = outDir.replace(year + "/", "")
+                print("Making directory: " + outDateDir)
+                command = "eosmkdir " + outDateDir
+                stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+                if len(stderr) > 0:
+                    print("stderr when making eos output dirs:\n", stderr)
+                
                 print("Making directory: " + outDir)
                 command = "eosmkdir " + outDir
                 stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
@@ -194,7 +201,7 @@ def makeScripts(args, dateStr, hasSB):
 
                         #Now setup nanoAOD-tools CMSSW area
                         executable.write('echo "ls of current directory gives:"\n')
-                        executable.write("ls $PWD\n")
+                        executable.write("ls -ltrh $PWD\n")
                         executable.write("cd\n")
                         executable.write("xrdcp root://cmseos.fnal.gov//store/user/bbarton/"+ cmssw_nano + ".tgz .\n")
                         executable.write("tar -xf " + cmssw_nano + ".tgz\n")
@@ -221,7 +228,7 @@ def makeScripts(args, dateStr, hasSB):
                         executable.write("ls -ltrh $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
                         #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
-                        executable.write("xrdcp tree.root root://cmseos.fnal.gov/" + outDir + subDataset + year + "_" + str(jobN) + ".root\n")
+                        executable.write("xrdcp -f tree.root root://cmseos.fnal.gov/" + outDir + subDataset + year + "_" + str(jobN) + ".root\n")
                         executable.write("XRDEXIT=$?\n")
                         executable.write("if [[ $XRDEXIT -ne 0 ]]; then\n")
                         executable.write('echo "exit code $XRDEXIT, failure in xrdcp"\n')
