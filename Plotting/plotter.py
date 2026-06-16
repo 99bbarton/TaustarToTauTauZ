@@ -569,7 +569,7 @@ def plot1D(filelist, dataFileDict, args):
                         tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", "(" + cutStr + ")*" + weight)
                         numHists[-1].Add(hTemp_num)
                         del hTemp_num
-                elif type(plotParams[0] is list):
+                elif type(plotParams[0]) is list:
                     for i, varVer in enumerate(plotParams[0]):
                         if i > 0:
                             hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
@@ -591,6 +591,7 @@ def plot1D(filelist, dataFileDict, args):
         #END FILE
         
         if (not hName.startswith("M")) and args.stack:
+            print("Adding", hName)
             bHistNums.append(hNum)
             bHistEntries.append(hists[hNum].Integral())
             bHistNames.append(hName)
@@ -681,7 +682,7 @@ def plot1D(filelist, dataFileDict, args):
                             tree.Draw(plotStr + ">>+h_"+hName+"_temp_num", cutStr)
                             dataNumHists[-1].Add(hTemp_num)
                             del hTemp_num
-                    elif type(plotParams[0] is list):
+                    elif type(plotParams[0]) is list:
                         for i, varVer in enumerate(plotParams[0]):
                             if i > 0:
                                 hTemp = TH1F("h_"+hName+"_temp", titleStr, plotParams[2], plotParams[3], plotParams[4])
@@ -738,13 +739,16 @@ def plot1D(filelist, dataFileDict, args):
         #Add hists to stack in order from least to greatest number of entries so the stack renders in log scales
         ordBkgdHNums = [i[0] for i in sorted(enumerate(bHistEntries), key=lambda x:x[1])]
         for num, idx in enumerate(ordBkgdHNums):
-            hists[idx].SetLineColor(stackPalette[num])
-            hists[idx].SetFillColor(stackPalette[num])
-            bkgdStack.Add(hists[bHistNums[idx]])
+            histIdx = bHistNums[idx]
+            hists[histIdx].SetLineColor(stackPalette[num])
+            hists[histIdx].SetFillColor(stackPalette[num])
+            bkgdStack.Add(hists[histIdx])
+
+            
             if args.nEvents:
-                leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx]+ f": {bHistEntries[idx]:.2f}", "F")
+                leg.AddEntry(hists[histIdx], bHistNames[idx]+ f": {bHistEntries[idx]:.2f}", "F")
             else:
-                leg.AddEntry(hists[bHistNums[idx]], bHistNames[idx], "F")
+                leg.AddEntry(hists[histIdx], bHistNames[idx], "F")
             
         maxVal = max(maxVal, bkgdStack.GetMaximum())
         maxVal = maxVal * 1.2
