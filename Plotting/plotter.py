@@ -114,6 +114,7 @@ def parseArgs():
     argparser.add_argument("--sPalette", choices=getPalettes(), default="sydney", help="If --stack, what palette to use for the background MC stack")
     argparser.add_argument("--drawStyle", help="A ROOT drawstyle to use for the plot.'SAME' + multiple vars will plot all the vars on the same 1D hist")
     argparser.add_argument("--nEvents", action="store_true", help="If specified, the number of events will be added to the legend entry for each hist")
+    argparser.add_argument("--mS", type=float, default=-1, help="For 2D scatter plots. If specified, will use a round marker (style 8) of specified size.")
     argparser.add_argument("--nS", action="store_true", help="If specified, will disabled the stat box on 1D hists")
     argparser.add_argument("--nP", action="store_true", help="If specified, will not prompt the user before saving and closing plots")
     argparser.add_argument("--save", action="append", choices = [".pdf", ".png", ".C", "ALL"], default=[], help="What file types to save plots as. Default not saved.")
@@ -922,6 +923,9 @@ def plot2D_hists(filelist, dataFileDict, args):
         if args.plotEach != "NA":
             hists[hNum].SetLineColor(getColor(args.palette, hNum))
             hists[hNum].SetMarkerColor(getColor(args.palette, hNum))
+            if args.mS > 0:
+                hists[hNum].SetMarkerStyle(8)
+                hists[hNum].SetMarkerSize(args.mS)
             
             if args.drawStyle:
                 drawStyle = args.drawStyle
@@ -932,7 +936,7 @@ def plot2D_hists(filelist, dataFileDict, args):
 
             name = hName
             if args.nEvents:
-                name += f": {hists[hNum].Integral():.2e}"
+                name += f": {hists[hNum].Integral():.1f}"
             leg.AddEntry(hists[hNum], name, "F")
         else:
             if args.drawStyle:
@@ -941,7 +945,7 @@ def plot2D_hists(filelist, dataFileDict, args):
                 drawStyle = "COLZ"
     
     #Plot data on the same canvas
-        dataHists = []
+    dataHists = []
 
     if "DATA" in args.processes:
         print("Plotting Data")
@@ -999,13 +1003,18 @@ def plot2D_hists(filelist, dataFileDict, args):
                 inFile.Close()
 
             dataHists[-1].SetMarkerColor(1)
+            dataHists[-1].SetMarkerStyle(8)
+            if args.mS > 0:
+                dataHists[-1].SetMarkerSize(args.mS)
+            else:
+                dataHists[-1].SetMarkerSize(1)
             dataHists[-1].SetLineColor(1)
 
             if makeLegend:
                 name = hName
 
                 if args.nEvents:
-                    name += f": {dataHists[-1].Integral():.2e}"
+                    name += f": {dataHists[-1].Integral():.0f}"
 
                 leg.AddEntry(dataHists[-1], name, "P")
 
