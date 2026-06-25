@@ -1307,10 +1307,11 @@ def printDatasetsLaTeX():
 
     for year, processes in bkgdDatasets_mini.items():
         print(f"%% === {year} datasets ===")
-        print("\\resizebox{\\textwidth}{!}{%")
+        #print("\\resizebox{\\textwidth}{!}{%")
         print("\\begin{table}[htbp]")
         print("  \\centering")
         print(f"  \\caption{{MC datasets for {year}}}")
+        print("\\resizebox{\\textwidth}{!}{%")
         print("  \\begin{tabular}{|l|l|}")
         print("    \\hline")
         print("    Process & Dataset \\\\")

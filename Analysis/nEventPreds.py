@@ -221,29 +221,29 @@ def makeEvtPredHists(args):
     systDicts = []
     if args.systStudy:
         #TAU ID
-        systDicts.append({"TAUID": "DOWN", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "DOWN", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "UP", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
         #E ID
-        systDicts.append({"TAUID": "NOM", "EID": "DOWN", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "DOWN", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "UP", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
         #MU ID
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "DOWN", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "UP", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "DOWN", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "UP", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
         #TRIG
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"DOWN", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP", "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"DOWN"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM"})#, "VARW":"NOM", "FACTW":"NOM"})
+        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"UP"})#, "VARW":"NOM", "FACTW":"NOM"})
         #PDF reweight
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"DOWN", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"UP", "FACTW":"NOM"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"DOWN", "FACTW":"NOM"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"UP", "FACTW":"NOM"})
         #PDF Factorization
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"DOWN"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
-        systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"UP"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"DOWN"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"NOM"})
+        #systDicts.append({"TAUID": "NOM", "EID": "NOM", "MUID": "NOM", "TRIG":"NOM", "VARW":"NOM", "FACTW":"UP"})
 
     #elif args.makeDC:# [DOWN, NOM, UP] order for syst variations is assumed below
         #systDicts.append({"TAUID": "DOWN", "EID": "DOWN", "MUID": "DOWN", "TRIG":"DOWN"})
@@ -324,6 +324,10 @@ def makeEvtPredHists(args):
                     cutStr = baseCutStrs[b].replace("CHANNEL", ch)
                     cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
+
+                    if not isRun3: #Apply MET trigger in Run2. Removed from isCand for data v2p2 processing
+                        cutStr = "(" + cutStr + " && Trig_MET)"
+                    
                     if ch == "ETau":
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 50)"
                         cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
@@ -409,6 +413,9 @@ def makeEvtPredHists(args):
                             cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
+                            if not isRun3:
+                                cutStr = "(" + cutStr + " && Trig_MET)"
+                            
                             if ch == "ETau":
                                 cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
@@ -476,6 +483,10 @@ def makeEvtPredHists(args):
                         cutStr = baseCutStrs[b].replace("CHANNEL", ch)
                         cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                         cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
+
+                        if not isRun3:
+                            cutStr = "(" + cutStr + " && Trig_MET)"
+                        
                         if ch == "ETau":
                             cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
                             #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
@@ -653,7 +664,9 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     nomOffset = 1 if nSystDicts > 1 else 0
 
     #First prepare univeral lines
-    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {4 + len(args.processes) + 1}\n----------\n"
+    #nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {4 + len(args.processes) + 1}\n----------\n" #This line if using PDF var and fact Weights
+    nMax_block = f"imax {args.nBins}\njmax {len(args.processes)}\nkmax {2 + len(args.processes) + 1}\n----------\n"
+    
     if args.nBins == 2:
         binStrs = ["bin0", "bin1"]
     else:
@@ -673,7 +686,7 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     lumiLine = "lumi\tlnN"
     extSyst = "1.300" #30% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
     
-    extLine = "shpSystEnv\tlnN"
+    extLine = "shpEnv\tlnN"
     for bN in range(args.nBins*len(cardProcs)):
         lumiLine += "\t"+ lumiUnc
         extLine += "\t" + extSyst
@@ -746,8 +759,8 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
             
             datacard.write(lumiLine + "\n")
             datacard.write(extLine + "\n")
-            datacard.write(varWLine + "\n")
-            datacard.write(factWLine + "\n")
+            #datacard.write(varWLine + "\n")
+            #datacard.write(factWLine + "\n")
             for proc in cardProcs:
                 if proc == "SIG":
                     datacard.write(sigXSLine + "\n")
@@ -769,7 +782,7 @@ def systStudiesTable(evtsPerProc, args):
     from tabulate import tabulate
 
     # Must match ordering in makeEvtPredHists()
-    systNames = ["TAUID", "EID", "MUID", "TRIG", "VARW", "FACTW"]
+    systNames = ["TAUID", "EID", "MUID", "TRIG"]#, "VARW", "FACTW"]
     nSyst = len(systNames)
     nVarPerSyst = 3  # DOWN, NOM, UP
     nSystDicts = nSyst * nVarPerSyst

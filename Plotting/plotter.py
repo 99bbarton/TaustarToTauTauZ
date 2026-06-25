@@ -775,7 +775,7 @@ def plot1D(filelist, dataFileDict, args):
                     dataNumHists.Draw("HIST SAME")
                 
     if not args.effCut:
-        maxVal = max(maxVal, bkgdStack.GetMaximum()*1.2)
+        maxVal = max(maxVal*1.1, bkgdStack.GetMaximum()*1.1)
         for hN, hist in enumerate(hists):
             if hN in bHistNums:
                 continue
