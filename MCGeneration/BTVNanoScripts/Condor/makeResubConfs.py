@@ -20,7 +20,7 @@ from collections import defaultdict
 
 # --- Import process mappings ---
 sys.path.append("../../../Framework")
-from datasets import procToSubProc_run2, procToSubProc_run3, years_run2, years_run3
+from datasets import procToSubProc_run2, procToSubProc_run3, years_run2, years_run3, dataDatasets_mini
 
 EOS_BASE_PATH = "$TSTTZ/BackgroundMC/PFNano/JobOutputs"
 
@@ -202,7 +202,11 @@ def main():
                     print(f"Category '{proc}' not found in mapping for {year}.")
                     continue
                 if proc == "DATA":
-                    subprocs = ["Data"]
+                    datasets = dataDatasets_mini[year]
+                    subprocs = []
+                    for dataset in datasets:
+                        subprocs.append(dataset.split("/")[2])
+                    
                 else:
                     subprocs = mapping[proc]
 

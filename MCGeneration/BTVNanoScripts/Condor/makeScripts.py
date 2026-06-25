@@ -140,9 +140,10 @@ def makeScripts(args, dateStr, hasSB):
                 stdout = stdout.strip()
                 inpDsFiles = stdout.split("\n")
                 #print(inpDsFiles)
-
+                
                 if proc == "DATA":
-                    subDataset = "Data_"
+                    subDataset = dataset.split("/")[-2] + "_"
+                    
                 elif dataset.startswith("/"):
                     if dataset.find("TuneCP5") > 0:
                         subDataset = dataset[1:dataset.find("TuneCP5")]
