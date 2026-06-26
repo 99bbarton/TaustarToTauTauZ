@@ -47,6 +47,7 @@ sys.path.append("../Framework/")
 from datasets import procToSubProc_run2, procToSubProc_run3, procToSubProc_run3_legacy
 from datasets import processes as allProcs
 from mcWeights import getXSWeight, getSystStr, getCombLumiPercUnc, getCombXSPercUnc
+from cuts import getMETFilters
 
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -307,7 +308,8 @@ def makeEvtPredHists(args):
     for year in args.years:
         print(f"Processing year = {year}")
         isRun3 = year in ["2022", "2022post", "2023", "2023post"]
-        
+        metFilters = getMETFilters(year)
+
         for mass in args.masses:
             print(f"\tProcessing mass = {mass}")
             filePath = os.environ["ROOTURL"] + os.environ["SIG_" + year] + f"taustarToTauZ_m{mass}_{year}.root"
@@ -326,7 +328,9 @@ def makeEvtPredHists(args):
                     cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
                     if not isRun3: #Apply MET trigger in Run2. Removed from isCand for data v2p2 processing
-                        cutStr = "(" + cutStr + " && Trig_MET)"
+                        cutStr += " && " + metFilters + " && Trig_MET"
+                    else: 
+                        cutStr += " && " + metFilters
                     
                     if ch == "ETau":
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 50)"
