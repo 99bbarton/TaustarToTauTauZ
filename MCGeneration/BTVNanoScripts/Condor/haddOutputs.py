@@ -11,7 +11,7 @@ from datasets import processes, procToSubProc_run2, procToSubProc_run3, procToSu
 def haddFiles():
     argparser = argparse.ArgumentParser(description="Tool to hadd the outputs of the Condor jobs together")
     argparser.add_argument("-d", "--date", required=True, type=str, help="The date in the form e.g. 1Apr2025 that the jobs were created on")
-    argparser.add_argument("-y", "--year", required=True, choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"], help="What year the jobs correspond to")
+    argparser.add_argument("-y", "--year", required=True, choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"], help="What year the jobs correspond to")
     argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "DATA"], help="Which samples to process")
     argparser.add_argument("-v", "--version", required=True, type=str, help="A unique string to denote the new file area on EOS.")
     argparser.add_argument("-l", "--legacy", required=False, action="store_true", help="If specified, uses old version of procToSubProc for Run3")
@@ -53,7 +53,7 @@ def haddFiles():
 
     if args.year in ["2016", "2016post", "2017", "2018"]:
         procToSubProc = procToSubProc_run2
-    elif args.year in ["2022", "2022post", "2023", "2023post"]:
+    elif args.year in ["2022", "2022post", "2023", "2023post", "2024"]:
         if args.legacy:
             procToSubProc = procToSubProc_run3_legacy
         else:
@@ -92,7 +92,7 @@ def haddFiles():
                 print("WARNING: No input files for " + proc)
                 continue
             print("\thadd'ing " + proc + " samples")
-            command = "hadd -f9 -j 4 root://cmseos.fnal.gov/" + outDir + "/data_" + args.year + ".root `xrdfsls -u " + inDir + " | grep Data_`"
+            command = "hadd -f9 -j 4 root://cmseos.fnal.gov/" + outDir + "/data_" + args.year + ".root `xrdfsls -u " + inDir + " | grep root`"
             stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             print(stdout)
             if len(stderr) > 0:

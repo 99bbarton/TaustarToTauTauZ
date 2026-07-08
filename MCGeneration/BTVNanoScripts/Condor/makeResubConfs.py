@@ -170,7 +170,7 @@ def main():
     parser.add_argument(
         "-y", "--years",
         required=True, nargs="+",
-        choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"],
+        choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"],
         help="Which years to process"
     )
     parser.add_argument(
