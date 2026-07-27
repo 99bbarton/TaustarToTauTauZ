@@ -267,8 +267,8 @@ def makeEvtPredHists(args):
     #Below version intended for per-signal-mass specific cuts
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.VR:
-        baseCuts += "&& ((MET_pt > 70 && MET_pt < 170) || Z_pt < 400 || Z_dauDR > 0.5 || CHANNEL_visM_TAUES_ < 200)"
-        #pass
+        #baseCuts += "&& ((MET_pt > 70 && MET_pt < 170) || Z_pt < 400 || Z_dauDR > 0.5 || CHANNEL_visM_TAUES_ < 200)"
+        baseCuts += "&& MET_pt < 175 && Z_pt < 400 && Z_dauDR > 0.5 && CHANNEL_visM_TAUES_ > 200"
     else:
         baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && CHANNEL_visM_TAUES_ > 200" 
     baseCutStrs = []

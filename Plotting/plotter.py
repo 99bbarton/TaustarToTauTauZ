@@ -464,7 +464,7 @@ def plot1D(filelist, dataFileDict, args):
     plotParams[1] = plotParams[1].replace("_DATATIER_", args.dataTier[0])
 
     titleStr = ";" + plotParams[1] + ";"
-    if args.normalize:
+    if args.normalize or args.effCut:
         titleStr += "Fraction of Events"
     else:
         titleStr += "Events"
@@ -715,9 +715,9 @@ def plot1D(filelist, dataFileDict, args):
                 dataNumHists[-1].SetMarkerStyle(8)
                 dataNumHists[-1].SetMarkerSize(2)
                 dataNumHists[-1].Sumw2()
-                dataNumHists[-1].SetMaximum(1.1)
                 dataNumHists[-1].Divide(dataHists[-1])
-
+                print(dataNumHists[-1].GetEntries())
+                print(dataNumHists[-1].GetMaximum())
             
             if args.normalize:
                 dataHists[-1].Scale(1.0 / dataHists[-1].GetEntries())
@@ -770,9 +770,9 @@ def plot1D(filelist, dataFileDict, args):
         if "DATA" in args.processes:
             for hN, dHist in enumerate(dataNumHists):
                 if len(numHists) == 0 and hN == 0:
-                    dataNumHists.Draw("HIST")
+                    dHist.Draw("P")
                 else:
-                    dataNumHists.Draw("HIST SAME")
+                    dHist.Draw("P SAME")
                 
     if not args.effCut:
         maxVal = max(maxVal*1.1, bkgdStack.GetMaximum()*1.1)
