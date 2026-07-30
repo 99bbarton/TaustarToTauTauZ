@@ -3,12 +3,15 @@
 
 */
 
-#include <TString>
-#include <TFile>
-#include <TTree>
-#include <TBranch>
-#include <TLorentzVector>
-#include <TMath>
+#include "TString.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TLorentzVector.h"
+#include "TMath.h"
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
+#include "TTreeReaderArray.h"
 
 #include <vector>
 #include <algorithm>
@@ -17,12 +20,12 @@
 #include <string>
 
 
-void procMultFiles(string dirpath, string filelist);
+int procMultFiles(string dirpath, string filelist);
 void addSDCollM(TString filename);
 void calcCollM(TLorentzVector& tau1, TLorentzVector& tau2, TLorentzVector& theZ, TLorentzVector& MET, float* minCM, float* maxCM);
 
 
-void procMultFiles(string dirpath, string filelist)
+int procMultFiles(string dirpath, string filelist)
 {
     if (dirpath.compare(0, 6, "/store") == 0)  
         dirpath = "root://cmsxrootd.fnal.gov/" + dirpath;
@@ -30,180 +33,160 @@ void procMultFiles(string dirpath, string filelist)
     std::ifstream file(filelist);
     if (!file.is_open()) {
         std::cerr << "ERROR: Could not open the filelist." << std::endl;
-        return 1;
+	return 1;
     }
 
     TString filename;
     std:string line;
-    while (std:getline(file, line))
+    while (std::getline(file, line))
     {
-        std::cout << "Processing file: " << line << std:endl;
+        std::cout << "Processing file: " << line << std::endl;
         filename = dirpath + "/" + line;
         addSDCollM(TString(filename));
     }
 
     file.close();
+    return 0;
 }
 
 void addSDCollM(TString filename)
 {
-    TFile* file = TFile::Open(filename, "UPDATE");
-    TTree* tree = (TTree*) file->Get("Events");
-    if (tree == NULL)
-        {
-            cout << "File " << filename << " could not be read or does not contain a readable tree" << endl;
-            exit(-1);
-        }
-
-    float minCollM_SD, maxCollM_SD;
-
-    TBranch* b_minCollM_SD = tree->Branch("SDCM_min", minCollM_SD, "SDCM_min/F");
-    TBranch* b_maxCollM_SD = tree->Branch("SDCM_max", maxCollM_SD, "SDCM_max/F");
-
-    bool eTauCand, muTauCand, tautauCand;
-    int zIdx, eIdx, muIdx, eTauIdx, muTauIdx, tau1Idx, tau2Idx; 
-    float Z_pt, Z_eta, Z_phi, Z_mass;
-    int Z_dm, Z_jetIdxAK8;
-    float MET_pt, MET_eta, MET_phi; 
-    vector<float> elPts, elEtas, elPhis;
-    vector<float> muPts, muEtas, muPhis;
-    vector<float> tauPts, tauEtas, tauPhis;
-    vector<float> sdMasses;
-
-    /*
-    tree->SetBranchStatus("*", false);
-    tree->SetBranchStatus("ETau_isCand", true);
-    tree->SetBranchStatus("ETau_eIdx", true);;
-    tree->SetBranchStatus("ETau_tauIdx", true);
-    tree->SetBranchStatus("MuTau_isCand", true);
-    tree->SetBranchStatus("MuTau_muIdx", true);
-    tree->SetBranchStatus("MuTau_tauIdx", true);
-    tree->SetBranchStatus("TauTau_isCand", true);
-    tree->SetBranchStatus("TauTau_tau1Idx", true);
-    tree->SetBranchStatus("TauTau_tau2Idx", true);
-    tree->SetBranchStatus("Z_pt", true);
-    tree->SetBranchStatus("Z_eta", true);
-    tree->SetBranchStatus("Z_phi", true);
-    tree->SetBranchStatus("Z_mass", true);
-    tree->SetBranchStatus("Z_dm", true);
-    tree->SetBranchStatus("MET_pt", true);
-    tree->SetBranchStatus("MET_eta", true);
-    tree->SetBranchStatus("MET_phi", true);
-    tree->SetBranchStatus("Electron_pt", true);
-    tree->SetBranchStatus("Electron_eta", true);
-    tree->SetBranchStatus("Electron_phi", true);
-    tree->SetBranchStatus("Muon_pt", true);
-    tree->SetBranchStatus("Muon_eta", true);
-    tree->SetBranchStatus("Muon_phi", true);
-    tree->SetBranchStatus("Tau_pt", true);
-    tree->SetBranchStatus("Tau_eta", true);
-    tree->SetBranchStatus("Tau_phi", true);
-    tree->SetBranchStatus("FatJet_msoftdrop", true);
-    */
-
-    tree->SetBranchAddress("ETau_isCand", &eTauCand);
-    tree->SetBranchAddress("ETau_eIdx", &eIdx);
-    tree->SetBranchAddress("ETau_tauIdx", &eTauIdx);
-    tree->SetBranchAddress("MuTau_isCand", &muTauCand);
-    tree->SetBranchAddress("MuTau_muIdx", &muIdx);
-    tree->SetBranchAddress("MuTau_tauIdx", &muTauIdx);
-    tree->SetBranchAddress("TauTau_isCand", &tauTauCand);
-    tree->SetBranchAddress("TauTau_tau1Idx", &tau1Idx);
-    tree->SetBranchAddress("TauTau_tau2Idx", &tau2Idx);
-    tree->SetBranchAddress("Z_pt", &Z_pt);
-    tree->SetBranchAddress("Z_eta", &Z_eta);
-    tree->SetBranchAddress("Z_phi", &Z_phi);
-    tree->SetBranchAddress("Z_mass", &Z_mass);
-    tree->SetBranchAddress("Z_dm", &Z_dm);
-    tree->SetBranchAddress("MET_pt", &MET_pt);
-    tree->SetBranchAddress("MET_eta", &MET_eta);
-    tree->SetBranchAddress("MET_phi", &MET_phi);
-    tree->SetBranchAddress("Electron_pt", &elPts);
-    tree->SetBranchAddress("Electron_eta", &elEtas);
-    tree->SetBranchAddress("Electron_phi", &elPhis);
-    tree->SetBranchAddress("Muon_pt", &muPts);
-    tree->SetBranchAddress("Muon_eta", &muEtas);
-    tree->SetBranchAddress("Muon_phi", &muPhis);
-    tree->SetBranchAddress("Tau_pt", &tauPts);
-    tree->SetBranchAddress("Tau_eta", &tauEtas);
-    tree->SetBranchAddress("Tau_phi", &tauPhis);
-    tree->SetBranchAddress("FatJet_msoftdrop", &sdMasses);
-
-    int nEntries = tree->GetEntries();
-    for (int entryN = 0; entryN < nEntries; entryN++)
-    {
-        tree->GetEntry(entryN);
-
-        TLorentzVector theZ;
-        if (Z_dm == 0)
-            theZ.SetPtEtaPhiM(Z_pt, Z_eta, Z_phi, sdMasses.at(Z_jetIdxAK8));
-        else
-            theZ.SetPtEtaPhiM(Z_pt, Z_eta, Z_phi, Z_mass);
-
-        TLorentzVector met;
-        met.SetPtEtaPhiM(MET_pt, MET_eta, MET_phi, 0);
-
-        if (eTauCand)
-        {
-            TLorentzVector theEl;
-            theEl.SetPtEtaPhiM(elPts.at(eIdx), elEtas.at(eIdx), elPhis.at(eIdx), 0.000511);
-
-            TLorentzVector theTau;
-            theTau.SetPtEtaPhiM(tauPts.at(eTauIdx), tauEtas.at(eTauIdx), tauPhis.at(eTauIdx), 1.777);
-
-            calcCollM(theTau, theEl, theZ, MET, &minCollM_SD, &maxCollM_SD);
-        }
-        else if (muTauCand)
-        {
-            TLorentzVector theMu;
-            theMu.SetPtEtaPhiM(muPts.at(muIdx), muEtas.at(muIdx), muPhis.at(muIdx), 0.1057);
-
-            TLorentzVector theTau;
-            theTau.SetPtEtaPhiM(tauPts.at(muTauIdx), tauEtas.at(muTauIdx), tauPhis.at(muTauIdx), 1.777);
-
-            calcCollM(theTau, theMu, theZ, MET, &minCollM_SD, &maxCollM_SD);
-        }
-        else if (tauTauCand)
-        {
-            TLorentzVector tau2;
-            tau2.SetPtEtaPhiM(tauPts.at(tau2Idx), tauEtas.at(tau2Idx), tauPhis.at(tau2Idx), 1.777);
-
-            TLorentzVector tau1;
-            tau1.SetPtEtaPhiM(tauPts.at(tau1Idx), tauEtas.at(tau1Idx), tauPhis.at(tau1Idx), 1.777);
-
-            calcCollM(tau1, tau2, theZ, MET, &minCollM_SD, &maxCollM_SD);
-        } 
-        else
-            continue;
+    TFile *file = TFile::Open(filename, "UPDATE");
+    if (!file || file->IsZombie()) {
+        std::cout << "Couldn't open " << filename << std::endl;
+        return;
     }
 
-    //TODO fill and write branches and close file
-    b_minCollM_SD->Fill();
-    b_maxCollM_SD->Fill();
+    TTree *tree = (TTree*)file->Get("Events");
+    if (!tree) {
+        std::cout << "Couldn't find Events tree." << std::endl;
+        file->Close();
+        return;
+    }
 
-    tree->Write("", TObject::kOverwrite); // save only the new version of the tree
+    float minCollM_SD = -999.99;
+    float maxCollM_SD = -999.99;
+    TBranch *b_minCollM_SD = tree->Branch("SDCM_min",&minCollM_SD,"SDCM_min/F");
+    TBranch *b_maxCollM_SD = tree->Branch("SDCM_max",&maxCollM_SD,"SDCM_max/F");
+
+    TTreeReader reader(tree);
+    TTreeReaderValue<bool> eTauCand(reader,"ETau_isCand");
+    TTreeReaderValue<int> eIdx(reader,"ETau_eIdx");
+    TTreeReaderArray<float> Electron_pt(reader,"Electron_pt");
+    TTreeReaderArray<float> Electron_eta(reader,"Electron_eta");
+    TTreeReaderArray<float> Electron_phi(reader,"Electron_phi");
+    TTreeReaderValue<int> eTauIdx(reader,"ETau_tauIdx");
+    TTreeReaderValue<bool> muTauCand(reader,"MuTau_isCand");
+    TTreeReaderValue<int> muIdx(reader,"MuTau_muIdx");
+    TTreeReaderValue<int> muTauIdx(reader,"MuTau_tauIdx");
+    TTreeReaderArray<float> Muon_pt(reader,"Muon_pt");
+    TTreeReaderArray<float> Muon_eta(reader,"Muon_eta");
+    TTreeReaderArray<float> Muon_phi(reader,"Muon_phi");
+    TTreeReaderValue<bool> tauTauCand(reader,"TauTau_isCand");
+    TTreeReaderValue<int> tau1Idx(reader,"TauTau_tau1Idx");
+    TTreeReaderValue<int> tau2Idx(reader,"TauTau_tau2Idx");
+    TTreeReaderArray<float> Tau_pt(reader,"Tau_pt");
+    TTreeReaderArray<float> Tau_eta(reader,"Tau_eta");
+    TTreeReaderArray<float> Tau_phi(reader,"Tau_phi");
+    TTreeReaderValue<float> Z_pt(reader,"Z_pt");
+    TTreeReaderValue<float> Z_eta(reader,"Z_eta");
+    TTreeReaderValue<float> Z_phi(reader,"Z_phi");
+    TTreeReaderValue<float> Z_mass(reader,"Z_mass");
+    TTreeReaderValue<int> Z_dm(reader,"Z_dm");
+    TTreeReaderValue<int> Z_jetIdxAK8(reader,"Z_jetIdxAK8");
+    TTreeReaderValue<float> MET_pt(reader,"MET_pt");
+    TTreeReaderValue<float> MET_phi(reader,"MET_phi");
+    TTreeReaderArray<float> FatJet_msoftdrop(reader,"FatJet_msoftdrop");
+
+
+    while (reader.Next())
+    {
+        minCollM_SD = -999.99;
+        maxCollM_SD = -999.99;
+
+        TLorentzVector theZ;
+
+        if (*Z_dm == 0)
+        {
+            if (*Z_jetIdxAK8 < 0 || *Z_jetIdxAK8 >= (int)FatJet_msoftdrop.GetSize())
+            {
+                b_minCollM_SD->Fill();
+                b_maxCollM_SD->Fill();
+                continue;
+            }
+
+            theZ.SetPtEtaPhiM(*Z_pt, *Z_eta, *Z_phi, FatJet_msoftdrop[*Z_jetIdxAK8]);
+        }
+        else if (*Z_dm == 1 || *Z_dm == 2)
+        {
+            theZ.SetPtEtaPhiM(*Z_pt, *Z_eta, *Z_phi, *Z_mass);
+        }
+        else
+        {
+            b_minCollM_SD->Fill();
+            b_maxCollM_SD->Fill();
+            continue;
+        }
+
+        TLorentzVector met;
+        met.SetPtEtaPhiM(*MET_pt,0.,*MET_phi,0.);
+
+        if (*eTauCand)
+        {
+            TLorentzVector el;
+            el.SetPtEtaPhiM(Electron_pt[*eIdx], Electron_eta[*eIdx], Electron_phi[*eIdx], 0.000511);
+
+            TLorentzVector tau;
+            tau.SetPtEtaPhiM(Tau_pt[*eTauIdx], Tau_eta[*eTauIdx], Tau_phi[*eTauIdx], 1.777);
+
+            calcCollM(tau, el, theZ, met, &minCollM_SD, &maxCollM_SD);
+        }
+        else if (*muTauCand)
+        {
+            TLorentzVector mu;
+            mu.SetPtEtaPhiM(Muon_pt[*muIdx], Muon_eta[*muIdx], Muon_phi[*muIdx], 0.1057);
+
+            TLorentzVector tau;
+            tau.SetPtEtaPhiM(Tau_pt[*muTauIdx], Tau_eta[*muTauIdx], Tau_phi[*muTauIdx], 1.777);
+
+            calcCollM(tau, mu, theZ, met, &minCollM_SD, &maxCollM_SD);
+        }
+        else if (*tauTauCand)
+        {
+            TLorentzVector tau1;
+            tau1.SetPtEtaPhiM(Tau_pt[*tau1Idx], Tau_eta[*tau1Idx], Tau_phi[*tau1Idx], 1.777);
+
+            TLorentzVector tau2;
+            tau2.SetPtEtaPhiM(Tau_pt[*tau2Idx], Tau_eta[*tau2Idx], Tau_phi[*tau2Idx], 1.777);
+
+            calcCollM(tau1, tau2, theZ, met, &minCollM_SD, &maxCollM_SD);
+        }
+
+        b_minCollM_SD->Fill();
+        b_maxCollM_SD->Fill();
+    }
+
+    tree->Write("", TObject::kOverwrite);
     file->Close();
-
 }
-
 
 void calcCollM(TLorentzVector& tau1, TLorentzVector& tau2, TLorentzVector& theZ, TLorentzVector& MET, float* minCM, float* maxCM)
 {
-    float cos_nuTau1_MET = TMath::cos(tau1.DeltaPhi(MET));
-    float cos_nuTau2_MET = TMath::cos(tau2.DeltaPhi(MET));
-    float cos_tau1_tau2 = TMath::cos(tau1.DeltaPhi(tau2));
+    float cos_nuTau1_MET = TMath::Cos(tau1.DeltaPhi(MET));
+    float cos_nuTau2_MET = TMath::Cos(tau2.DeltaPhi(MET));
+    float cos_tau1_tau2 = TMath::Cos(tau1.DeltaPhi(tau2));
     float cos_tau1_tau2_sqrd = cos_tau1_tau2 * cos_tau1_tau2;
     
     if (cos_tau1_tau2_sqrd > 0.999)
         cos_tau1_tau2_sqrd = 0.999;
     
     TLorentzVector nuTau1;
-    nuTau1Mag = MET.PT() * (cos_nuTau1_MET - (cos_nuTau2_MET * cos_tau1_tau2)) / (1. - cos_tau1_tau2_sqrd);
-    nuTau1.SetPtEtaPhiM(nuTau1_mag, tau1.eta, tau1.phi, 0.);
+    float nuTau1Mag = MET.Pt() * (cos_nuTau1_MET - (cos_nuTau2_MET * cos_tau1_tau2)) / (1. - cos_tau1_tau2_sqrd);
+    nuTau1.SetPtEtaPhiM(nuTau1Mag, tau1.Eta(), tau1.Phi(), 0.);
 
     TLorentzVector nuTau2;
-    nuTau2_mag = ((MET.PT() * cos_nuTau1_MET) - nuTau1_mag) / cos_tau1_tau2;
-    nuTau2.SetPtEtaPhiM(nuTau2_mag, tau2.eta, tau2.phi, 0.);
+    float nuTau2Mag = ((MET.Pt() * cos_nuTau1_MET) - nuTau1Mag) / cos_tau1_tau2;
+    nuTau2.SetPtEtaPhiM(nuTau2Mag, tau2.Eta(), tau2.Phi(), 0.);
     
     float collM_tau1Z = (tau1 + nuTau1 + theZ).M();
     float collM_tau2Z = (tau2 + nuTau2 + theZ).M();
