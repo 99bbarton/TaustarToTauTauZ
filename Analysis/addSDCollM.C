@@ -70,21 +70,21 @@ void addSDCollM(TString filename)
     TBranch *b_maxCollM_SD = tree->Branch("SDCM_max",&maxCollM_SD,"SDCM_max/F");
 
     TTreeReader reader(tree);
-    TTreeReaderValue<bool> eTauCand(reader,"ETau_isCand");
+    TTreeReaderArray<bool> eTauCand(reader,"ETau_isCand");
     TTreeReaderValue<int> eIdx(reader,"ETau_eIdx");
     TTreeReaderArray<float> Electron_pt(reader,"Electron_pt");
     TTreeReaderArray<float> Electron_eta(reader,"Electron_eta");
     TTreeReaderArray<float> Electron_phi(reader,"Electron_phi");
-    TTreeReaderValue<int> eTauIdx(reader,"ETau_tauIdx");
-    TTreeReaderValue<bool> muTauCand(reader,"MuTau_isCand");
+    TTreeReaderArray<int> eTauIdx(reader,"ETau_tauIdx");
+    TTreeReaderArray<bool> muTauCand(reader,"MuTau_isCand");
     TTreeReaderValue<int> muIdx(reader,"MuTau_muIdx");
-    TTreeReaderValue<int> muTauIdx(reader,"MuTau_tauIdx");
+    TTreeReaderArray<int> muTauIdx(reader,"MuTau_tauIdx");
     TTreeReaderArray<float> Muon_pt(reader,"Muon_pt");
     TTreeReaderArray<float> Muon_eta(reader,"Muon_eta");
     TTreeReaderArray<float> Muon_phi(reader,"Muon_phi");
-    TTreeReaderValue<bool> tauTauCand(reader,"TauTau_isCand");
-    TTreeReaderValue<int> tau1Idx(reader,"TauTau_tau1Idx");
-    TTreeReaderValue<int> tau2Idx(reader,"TauTau_tau2Idx");
+    TTreeReaderArray<bool> tauTauCand(reader,"TauTau_isCand");
+    TTreeReaderArray<int> tau1Idx(reader,"TauTau_tau1Idx");
+    TTreeReaderArray<int> tau2Idx(reader,"TauTau_tau2Idx");
     TTreeReaderArray<float> Tau_pt(reader,"Tau_pt");
     TTreeReaderArray<float> Tau_eta(reader,"Tau_eta");
     TTreeReaderArray<float> Tau_phi(reader,"Tau_phi");
@@ -131,33 +131,33 @@ void addSDCollM(TString filename)
         TLorentzVector met;
         met.SetPtEtaPhiM(*MET_pt,0.,*MET_phi,0.);
 
-        if (*eTauCand)
+        if (eTauCand[1])
         {
             TLorentzVector el;
             el.SetPtEtaPhiM(Electron_pt[*eIdx], Electron_eta[*eIdx], Electron_phi[*eIdx], 0.000511);
 
             TLorentzVector tau;
-            tau.SetPtEtaPhiM(Tau_pt[*eTauIdx], Tau_eta[*eTauIdx], Tau_phi[*eTauIdx], 1.777);
+            tau.SetPtEtaPhiM(Tau_pt[eTauIdx[1]], Tau_eta[eTauIdx[1]], Tau_phi[eTauIdx[1]], 1.777);
 
             calcCollM(tau, el, theZ, met, &minCollM_SD, &maxCollM_SD);
         }
-        else if (*muTauCand)
+        else if (muTauCand[1])
         {
             TLorentzVector mu;
             mu.SetPtEtaPhiM(Muon_pt[*muIdx], Muon_eta[*muIdx], Muon_phi[*muIdx], 0.1057);
 
             TLorentzVector tau;
-            tau.SetPtEtaPhiM(Tau_pt[*muTauIdx], Tau_eta[*muTauIdx], Tau_phi[*muTauIdx], 1.777);
+            tau.SetPtEtaPhiM(Tau_pt[muTauIdx[1]], Tau_eta[muTauIdx[1]], Tau_phi[muTauIdx[1]], 1.777);
 
             calcCollM(tau, mu, theZ, met, &minCollM_SD, &maxCollM_SD);
         }
-        else if (*tauTauCand)
+        else if (tauTauCand[1])
         {
             TLorentzVector tau1;
-            tau1.SetPtEtaPhiM(Tau_pt[*tau1Idx], Tau_eta[*tau1Idx], Tau_phi[*tau1Idx], 1.777);
+            tau1.SetPtEtaPhiM(Tau_pt[tau1Idx[1]], Tau_eta[tau1Idx[1]], Tau_phi[tau1Idx[1]], 1.777);
 
             TLorentzVector tau2;
-            tau2.SetPtEtaPhiM(Tau_pt[*tau2Idx], Tau_eta[*tau2Idx], Tau_phi[*tau2Idx], 1.777);
+            tau2.SetPtEtaPhiM(Tau_pt[tau2Idx[1]], Tau_eta[tau2Idx[1]], Tau_phi[tau2Idx[1]], 1.777);
 
             calcCollM(tau1, tau2, theZ, met, &minCollM_SD, &maxCollM_SD);
         }

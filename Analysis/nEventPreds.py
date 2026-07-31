@@ -162,6 +162,7 @@ def parseArgs():
     argparser.add_argument("--VR", action="store_true", help="If specified, will perform estim for the validation region instead of the signal region")
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
     argparser.add_argument("--setObs", type=float, default=1.0, help="When making datacards, what signal strength 'r' to use for Observed entries. if <0, will use real obs, otherwise bkgd+(r*sig)")
+    argparser.add_argument("--sd", action="store_true", help="Specify to use collinear mass calculated from soft drop Z jet masses instead of reclustered/reco.")
     argparser.add_argument("--extrap", type=float, default=1.0, help="A factor to multiply the measured yields. For use in extrapolating to to yields e.g. when 2024 is added")
     argparser.add_argument("--systStudy", action="store_true", help="If specified, will make a table")
     argparser.add_argument("--printLEdges", action="store_true", help="If specified, will printe the L-bin edges corresponding to the L half-widths")
@@ -280,7 +281,13 @@ def makeEvtPredHists(args):
         baseCutStrs.append(baseCuts + " && (CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE) )") #Bin 3
     else:
         baseCutStrs.append(baseCuts + " && ( (CHANNEL_maxCollM_TAUES_ < LOW_EDGE) || (CHANNEL_minCollM_TAUES_ > HIGH_EDGE) || ((CHANNEL_maxCollM_TAUES_ > HIGH_EDGE) && (CHANNEL_minCollM_TAUES_ < LOW_EDGE)) ) )") #Bin 1 (2-bin scheme)
-    
+
+    #If using soft drop Z->AK8 jet masses, replace the collinear mass variables
+    if args.sd:
+        for idx in range(len(baseCutStrs)):
+            baseCutStrs[idx] = baseCutStrs[idx].replace("CHANNEL_minCollM_TAUES_", "SDCM_min")
+            baseCutStrs[idx] = baseCutStrs[idx].replace("CHANNEL_maxCollM_TAUES_", "SDCM_max")
+        
     nBinSyst = args.nBins * nSystDicts
     # prepare histograms for each mass
     massBins = array("f", [float(m) for m in args.masses])
@@ -388,8 +395,9 @@ def makeEvtPredHists(args):
                 subProcs = procToSubProc_run2[proc]
 
             for subProc in subProcs:
-                if args.skims and isRun3:
-                    filePath = dirPath + "Skims/" + subProc + "_" + year + "_skim.root"
+                if args.skims and isRun3: #Redundant with V2p2 but kept for backwards compatibility
+                    #filePath = dirPath + "Skims/" + subProc + "_" + year + "_skim.root"
+                    filePath = dirPath + subProc + "_" + year + "_skim.root" 
                 else:
                     filePath = dirPath + subProc + "_" + year + ".root"
                 
