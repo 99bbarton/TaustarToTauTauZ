@@ -629,8 +629,29 @@ bkgdDatasets_mini = {
                 "/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/Run3Winter24MiniAOD-133X_mcRun3_2024_realistic_v8-v2/MINIAODSIM"
                 ]
     }
-
 }
+
+#Partial translation of bkgdDatasets_mini for 2024 nanoAOD only processing
+bkgdDatasets_nano = {
+    "2024" : {
+        "ZZ" : ["/ZZ_TuneCP5_13p6TeV_pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM"],
+        "WZ" : ["/WZ_TuneCP5_13p6TeV_pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM"],
+        "WW" : ["/WW_TuneCP5_13p6TeV_pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM"],
+        "DY" : ["/DYto2L-2Jets_MLL-50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM"],
+        "TT" : ["/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"],
+        "ST" : ["/TWminusto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TWminustoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TWminusto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+                "/TbarWplusto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TbarWplustoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Winter24NanoAOD-JMENanoV14_133X_mcRun3_2024_realistic_v10-v2/NANOAODSIM",
+                "/TbarWplusto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+                "/TBbarQto2Q-t-channel-4FS_TuneCP5_13p6TeV_powheg-madspin-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+                "/TBbarQtoLNu-t-channel-4FS_TuneCP5_13p6TeV_powheg-madspin-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"],
+    }
+}
+
 
 sigDatasets_mini = {
         "2016" : {
@@ -827,6 +848,18 @@ dataDatasets_mini = {
               "/Tau/Run2024H-MINIv6NANOv15-v1/MINIAOD",
               "/Tau/Run2024I-MINIv6NANOv15-v1/MINIAOD",
               "/Tau/Run2024I-MINIv6NANOv15_v2-v1/MINIAOD"]
+}
+
+dataDatasets_nano = {
+    "2024" : ["/Tau/Run2024C-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024D-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024E-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024F-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024G-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024H-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024I-MINIv6NANOv15-v1/NANOAOD",
+              "/Tau/Run2024I-MINIv6NANOv15_v2-v1/NANOAOD"]
+
 }
 
 #subprocess : [xs, xsErr] in pb
