@@ -100,6 +100,8 @@ def makeScripts(args, dateStr, hasSB):
 
         if era == 3:
             cmssw_pfNano = "CMSSW_13_0_13"
+            #cmssw_pfNano = "CMSSW_15_1_1" #TODO FIX ME. THIS IS ONLY FOR 2024 TEST
+            #cmssw_pfNano = "CMSSW_15_0_15"
             cmssw_nano = "CMSSW_14_1_1"
         else: 
             cmssw_pfNano = "CMSSW_10_6_29"
@@ -242,8 +244,8 @@ def makeScripts(args, dateStr, hasSB):
                             jdlFile.write('+ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"\n')
                         jdlFile.write('universe = vanilla\n')
                         jdlFile.write("Executable = run_" + subDataset + year + "_" + str(jobN) + ".sh\n")
-                        if era == 2:
-                            jdlFile.write('request_memory = 5000\n')
+                        if era == 2 or year == "2024":
+                            jdlFile.write('request_memory = 5000\n') 
                         jdlFile.write('should_transfer_files = YES\n')
                         jdlFile.write('when_to_transfer_output = ON_EXIT\n')
                         jdlFile.write('Output = condor_PFNano-Nano_$(Cluster)_$(Process).stdout\n')

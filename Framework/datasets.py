@@ -16,7 +16,7 @@ procToSubProc_run2 = {
     #"WW" : ["WWTo1L1Nu2Q_4f", "WWTo2L2Nu", "WWTo4Q_4f"],
     "WJets" : ["WJetsToLNu", "WJetsToQQ_HT-200to400", "WJetsToQQ_HT-400to600", "WJetsToQQ_HT-600to800", "WJetsToQQ_HT-800toInf"],
     "DY" : ["DYJetsToLL_M-10to50", "DYJetsToLL_M-50"],
-    "TT" : ["TTTo2L2Nu", "TTToHadronic", "TTToSemiLeptonic", "TTJets"], 
+    "TT" : ["TTTo2L2Nu", "TTToHadronic", "TTToSemiLeptonic", "TTJets"],
     "ST" : ["ST_tW_antitop_5f_inclusiveDecays", "ST_tW_top_5f_inclusiveDecays", "ST_s-channel_4f_hadronicDecays", "ST_s-channel_4f_leptonDecays", "ST_t-channel_antitop_4f_InclusiveDecays", "ST_t-channel_top_4f_InclusiveDecays"],
     "QCD" : ["QCD_Pt_80to120","QCD_Pt_120to170","QCD_Pt_170to300","QCD_Pt_300to470","QCD_Pt_470to600","QCD_Pt_600to800","QCD_Pt_800to1000","QCD_Pt_1000to1400","QCD_Pt_1400to1800","QCD_Pt_1800to2400","QCD_Pt_2400to3200","QCD_Pt_3200toInf"]
 }
@@ -29,7 +29,8 @@ procToSubProc_run3 = {
      "WJets" : ["WtoLNu-2Jets", "WtoLNu-4Jets", "Wto2Q-2Jets_PTQQ-100to200_1J", "Wto2Q-2Jets_PTQQ-200to400_1J", "Wto2Q-2Jets_PTQQ-400to600_1J", "Wto2Q-2Jets_PTQQ-600_1J", "Wto2Q-2Jets_PTQQ-100to200_2J", "Wto2Q-2Jets_PTQQ-200to400_2J", "Wto2Q-2Jets_PTQQ-400to600_2J", "Wto2Q-2Jets_PTQQ-600_2J"],
      "DY" : ["DYto2L-2Jets_MLL-10to50", "DYto2L-2Jets_MLL-50"],
      "TT" : ["TTto2L2Nu", "TTto4Q", "TTtoLNu2Q"], 
-     "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS", "TBbarQtoLNu-t-channel-4FS", "TBbarQto2Q-t-channel-4FS"],
+     #"ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS", "TBbarQtoLNu-t-channel-4FS", "TBbarQto2Q-t-channel-4FS"],
+    "ST" : ["TWminusto4Q", "TWminusto2L2Nu", "TWminustoLNu2Q", "TbarWplusto2L2Nu", "TbarWplustoLNu2Q",  "TbarWplusto4Q", "TBbarQ_t-channel_4FS", "TbarBQ_t-channel_4FS"],
      "QCD" : ["QCD_PT-120to170","QCD_PT-170to300","QCD_PT-300to470","QCD_PT-470to600","QCD_PT-600to800","QCD_PT-800to1000","QCD_PT-1000to1400","QCD_PT-1400to\
  1800","QCD_PT-1800to2400","QCD_PT-2400to3200","QCD_PT-3200"]
  }

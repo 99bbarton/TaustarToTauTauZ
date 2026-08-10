@@ -56,6 +56,8 @@ varToPlotParams = {
     "VIS_M"     : ["CHANNEL_visM", "Visible Mass [GeV]", 106, 200, 5500], 
     "MIN_COL_M" : ["CHANNEL_minCollM", "Min Collinear Mass [GeV]", 116, 200, 6000], #50 GeV/bin default
     "MAX_COL_M" : ["CHANNEL_maxCollM", "Max Collinear Mass [GeV]", 116, 200, 6000],
+    "SDCM_MIN"  : ["SDCM_min", "Min Collinear Mass (SD m_{Z_AK8} ) [GeV]", 116, 200, 6000],
+    "SDCM_MAX"  : ["SDCM_max", "Max Collinear Mass (SD m_{Z_AK8} ) [GeV]", 116, 200, 6000],
     "COS2DPHI"  : ["cos(CHANNEL_CHANNELDPhi)*cos(CHANNEL_CHANNELDPhi)", "cos^2(#Delta#phi)", 20, 0, 1],
     "COSDPHI"      : ["cos(CHANNEL_CHANNELDPhi)","cos(#Delta#phi)", 20, -1, 1],
     "SINDPHI"      : ["sin(CHANNEL_CHANNELDPhi)","sin(#Delta#phi)", 20, -1, 1],
@@ -268,7 +270,8 @@ def getFileList(args):
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                             if era == "3" and args.skims:
-                                filename += "Skims/" +subProc + "_" + year + "_skim.root"
+                                #filename += "Skims/" +subProc + "_" + year + "_skim.root"
+                                filename += subProc + "_" + year + "_skim.root"
                             else:
                                 filename += subProc + "_" + year + ".root"
                         else:
@@ -298,7 +301,8 @@ def getFileList(args):
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                             if era == "3" and args.skims:
-                                filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                                filename += subProc + "_" + year + "_skim.root"
+                                #filename += "Skims/" + subProc + "_" + year + "_skim.root"
                             else:
                                 filename += subProc + "_" + year + ".root"
                         else:
@@ -333,7 +337,8 @@ def getFileList(args):
                         if args.inDir == "DEF":
                             filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                             if era == "3" and args.skims:
-                                filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                                filename += subProc + "_" + year + "_skim.root"
+                                #filename += "Skims/" + subProc + "_" + year + "_skim.root"
                             else:
                                 filename += subProc + "_" + year + ".root"
                         else:
@@ -399,7 +404,8 @@ def getFileList(args):
                     if args.inDir == "DEF":
                         filename = "root://cmsxrootd.fnal.gov/" + str(os.environ["BKGD_" + year])
                         if era == "3" and args.skims:
-                            filename += "Skims/" + subProc + "_" + year + "_skim.root"
+                            filename += subProc + "_" + year + "_skim.root"
+                            #filename += "Skims/" + subProc + "_" + year + "_skim.root"
                         else:
                             filename += subProc + "_" + year + ".root"
                     else:
