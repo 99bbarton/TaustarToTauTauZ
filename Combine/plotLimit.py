@@ -160,9 +160,12 @@ def plotLimit(args):
         sigXS_mTaustar *= 1e12
         ax.plot(thMTaustar, sigXS_mTaustar, linestyle='-.', color = "blue", label=r"Theory $\Lambda=m_{\tau^*}$")
 
-    ax.set_xlabel(r"$m_{\tau^*}$ GeV")
-    ax.set_ylabel(r"$\sigma B(\tau^* \rightarrow \tau Z)   [fb]$")
-    hep.cms.label(ax=ax, lumi=args.intLumi, com="13 and 13.6")
+    ax.set_xlabel(r"$m_{\tau^*}$ [GeV]")
+    ax.set_ylabel(r"$\sigma B(\tau^*\!\rightarrow\!\tau Z)\text{ }[fb]$")
+    if args.observed: #Change from default "simulation" tp 
+        hep.cms.label(ax=ax, lumi=args.intLumi, com="13 and 13.6", label="Private work", data=True)
+    else:
+        hep.cms.label(ax=ax, lumi=args.intLumi, com="13 and 13.6")
 
     ax.set_yscale("log")
     ax.legend(loc="upper right", frameon=False)
