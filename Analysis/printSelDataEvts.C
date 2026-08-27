@@ -1,9 +1,14 @@
 //Print the details of events passing selection criteria
 
+#include "TFile.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
 #include "TTreeReaderArray.h"
 
+#include <fstream>
+
+int procFiles(string dirpath, string filelist);
+void printSelEvents(TString filename);
 
 
 int procFiles(string dirpath, string filelist)
@@ -23,7 +28,7 @@ int procFiles(string dirpath, string filelist)
     {
         std::cout << "Processing file: " << line << std::endl;
         filename = dirpath + "/" + line;
-        addSDCollM(TString(filename));
+        printSelEvents(TString(filename));
     }
 
     file.close();
@@ -101,23 +106,23 @@ void printSelEvents(TString filename)
     TTreeReaderValue<float> sdcmMax(reader,"SDCM_max");
     TTreeReaderValue<int> nBTags(reader, "ObjCnt_nBTags");
     TTreeReaderValue<bool> metTrig(reader, "Trig_MET");
-    TTreeReaderValue<int> run(reader, "run");
-    TTreeReaderValue<int> lumiBlock(reader, "luminosityBlock");
-    TTreeReaderValue<long> event(reader, "event");
+    TTreeReaderValue<unsigned int> run(reader, "run");
+    TTreeReaderValue<unsigned int> lumiBlock(reader, "luminosityBlock");
+    TTreeReaderValue<unsigned long long> event(reader, "event");
 
     while (reader.Next())
     {
         //Run 2 needs to check MET trigger but run 3 trigger is pre-checked
         bool trig;
-        if (filename.find("201") != std::string::npos)
-            trig = metTrig;
+        if (filename.Contains("201"))
+            trig = *metTrig;
         else
-            trig = True;
+            trig = true;
 
 
-        if (eTauCand)
+        if (eTauCand[1])
         {
-            if (nBTags < 2 && eTauSign[1] && abs(eTauDPhi[1]) < 2.8 && eTauDR[1] > 1.5 && MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && eTauVisM > 200 && trig)
+            if (*nBTags < 2 && eTauSign[1] < 0 && abs(eTauDPhi[1]) < 2.8 && eTauDR[1] > 1.5 && *MET_pt > 175 && *Z_pt > 400 && *Z_dauDR < 0.5 && eTauVisM[1] > 200 && trig && Tau_pt[eTauIdx[1]] > 100 && Electron_pt[*eIdx] > 50)
             {
                 for (int mN = 0; mN < nMasses; mN++)
                 {
@@ -126,44 +131,44 @@ void printSelEvents(TString filename)
                     if ((eTauMinCollM[1] > minBounds[mN] && eTauMinCollM[1] < maxBounds[mN]) || (eTauMaxCollM[1] > minBounds[mN] && eTauMaxCollM[1] < maxBounds[mN]))
                     {
                         std::cout<<"\nFound ETau channel event for m=" << masses[mN] << " in " << filename << std::endl;
-                        std::cout<<"Run = "<< run << " : LumiBlock = " << lumiBlock << " : event = " << event << std:endl; 
+                        std::cout<<"Run = "<< *run << " : LumiBlock = " << *lumiBlock << " : event = " << *event << std::endl; 
                         //NB: if using SDCM, need to swap the below lines
                         std::cout<<"\tMin Collinear Mass = " << eTauMinCollM[1] << " : Max Collinear Mass = " << eTauMaxCollM[1] << std::endl;
                         //std::cout<<"\tMin Collinear Mass = " << sdcmMin << " : Max Collinear Mass = " << sdcmMax << std::endl;
-                        std::cout<<"\tTau_pt =  " << Tau_pt[eTauIdx[1]] << " : Tau_eta = " << Tau_eta[eTauIdx[1]] << " : Tau_phi = " << Tau_phi[eTauIdx[1]] << std:endl;
-                        std::cout<<"\tEl_pt = " << Electron_pt[eIdx] << " : El_eta = " << Electron_eta[eIdx] << " : El_phi = " << Electron_phi[eIdx] << std:endl;
-                        std::cout<<"\tZ_dm = " << Z_dm << " : Z_pt = " << Z_pt << " : Z_eta = " << Z_eta << " : Z_phi = " << Z_phi << std:endl;
-                        std::cout<<"\tMET_pt = " << MET_pt << " : MET_phi = " << MET_phi << std:endl; 
+                        std::cout<<"\tTau_pt =  " << Tau_pt[eTauIdx[1]] << " : Tau_eta = " << Tau_eta[eTauIdx[1]] << " : Tau_phi = " << Tau_phi[eTauIdx[1]] << std::endl;
+                        std::cout<<"\tEl_pt = " << Electron_pt[*eIdx] << " : El_eta = " << Electron_eta[*eIdx] << " : El_phi = " << Electron_phi[*eIdx] << std::endl;
+                        std::cout<<"\tZ_dm = " << *Z_dm << " : Z_pt = " << *Z_pt << " : Z_eta = " << *Z_eta << " : Z_phi = " << *Z_phi << std::endl;
+                        std::cout<<"\tMET_pt = " << *MET_pt << " : MET_phi = " << *MET_phi << std::endl; 
                     }
                 }
             }
         }
-        else if (muTauCand)
+        else if (muTauCand[1])
         {
-            if (nBTags < 2 && muTauSign[1] && abs(muTauDPhi[1]) < 2.8 && muTauDR[1] > 1.5 && MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && eTauVisM > 200 && trig)
+            if (*nBTags < 2 && muTauSign[1] < 0 && abs(muTauDPhi[1]) < 2.8 && muTauDR[1] > 1.5 && *MET_pt > 175 && *Z_pt > 400 && *Z_dauDR < 0.5 && muTauVisM[1] > 200 && trig && Tau_pt[muTauIdx[1]] > 100 && Muon_pt[*muIdx] > 50)
             {
                 for (int mN = 0; mN < nMasses; mN++)
                     {
                         //NB: if using SDCM, need to swap the below lines
                         //if ((sdcmMin > minBounds[mN] && sdcmMin < maxBounds[mN]) || (sdcmMax > minBounds[mN] && sdcmMax < maxBounds[mN]))
                         if ((muTauMinCollM[1] > minBounds[mN] && muTauMinCollM[1] < maxBounds[mN]) || (muTauMaxCollM[1] > minBounds[mN] && muTauMaxCollM[1] < maxBounds[mN]))
-                        {s
+                        {
                             std::cout<<"\nFound MuTau channel event for m=" << masses[mN] << " in " << filename << std::endl;
-                            std::cout<<"Run = "<< run << " : LumiBlock = " << lumiBlock << " : event = " << event << std:endl; 
+			    std::cout<<"Run = "<< *run << " : LumiBlock = " << *lumiBlock << " : event = " << *event << std::endl; 
                             //NB: if using SDCM, need to swap the below lines
                             std::cout<<"\tMin Collinear Mass = " << muTauMinCollM[1] << " : Max Collinear Mass = " << muTauMaxCollM[1] << std::endl;
                             //std::cout<<"\tMin Collinear Mass = " << sdcmMin << " : Max Collinear Mass = " << sdcmMax << std::endl;
-                            std::cout<<"\tTau_pt =  " << Tau_pt[muTauIdx[1]] << " : Tau_eta = " << Tau_eta[muTauIdx[1]] << " : Tau_phi = " << Tau_phi[muTauIdx[1]] << std:endl;
-                            std::cout<<"\tMu_pt = " << Muon_pt[muIdx] << " : Mu_eta = " << Muon_eta[muIdx] << " : Mu_phi = " << Muon_phi[muIdx] << std:endl;
-                            std::cout<<"\tZ_dm = " << Z_dm << " : Z_pt = " << Z_pt << " : Z_eta = " << Z_eta << " : Z_phi = " << Z_phi << std:endl;
-                            std::cout<<"\tMET_pt = " << MET_pt << " : MET_phi = " << MET_phi << std:endl;   
+                            std::cout<<"\tTau_pt =  " << Tau_pt[muTauIdx[1]] << " : Tau_eta = " << Tau_eta[muTauIdx[1]] << " : Tau_phi = " << Tau_phi[muTauIdx[1]] << std::endl;
+                            std::cout<<"\tMu_pt = " << Muon_pt[*muIdx] << " : Mu_eta = " << Muon_eta[*muIdx] << " : Mu_phi = " << Muon_phi[*muIdx] << std::endl;
+                            std::cout<<"\tZ_dm = " << *Z_dm << " : Z_pt = " << *Z_pt << " : Z_eta = " << *Z_eta << " : Z_phi = " << *Z_phi << std::endl;
+                            std::cout<<"\tMET_pt = " << *MET_pt << " : MET_phi = " << *MET_phi << std::endl;   
                         }
                     }
             }
         }
-        else if (tauTauCand)
+        else if (tauTauCand[1])
         {
-            if (nBTags < 2 && tauTauSign[1] && abs(tauTauDPhi[1]) < 2.8 && tauTauDR[1] > 1.5 && MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && eTauVisM > 200 && trig)
+            if (*nBTags < 2 && tauTauSign[1] < 0 && abs(tauTauDPhi[1]) < 2.8 && tauTauDR[1] > 1.5 && *MET_pt > 175 && *Z_pt > 400 && *Z_dauDR < 0.5 && tauTauVisM[1] > 200 && trig && Tau_pt[tau1Idx[1]] > 100 && Tau_pt[tau2Idx[1]] > 100)
             {
                 for (int mN = 0; mN < nMasses; mN++)
                 {
@@ -172,14 +177,14 @@ void printSelEvents(TString filename)
                     if ((tauTauMinCollM[1] > minBounds[mN] && tauTauMinCollM[1] < maxBounds[mN]) || (tauTauMaxCollM[1] > minBounds[mN] && tauTauMaxCollM[1] < maxBounds[mN]))
                     {
                         std::cout<<"\nFound TauTau channel event for m=" << masses[mN] << " in " << filename << std::endl;
-                        std::cout<<"Run = "<< run << " : LumiBlock = " << lumiBlock << " : event = " << event << std:endl; 
+                        std::cout<<"Run = "<< *run << " : LumiBlock = " << *lumiBlock << " : event = " << *event << std::endl; 
                         //NB: if using SDCM, need to swap the below lines
                         std::cout<<"\tMin Collinear Mass = " << tauTauMinCollM[1] << " : Max Collinear Mass = " << tauTauMaxCollM[1] << std::endl;
                         //std::cout<<"\tMin Collinear Mass = " << sdcmMin << " : Max Collinear Mass = " << sdcmMax << std::endl;
-                        std::cout<<"\tTau1_pt =  " << Tau_pt[tau1Idx[1]] << " : Tau1_eta = " << Tau_eta[tau1Idx[1]] << " : Tau1_phi = " << Tau_phi[tau1Idx[1]] << std:endl;
-                        std::cout<<"\tTau2_pt =  " << Tau_pt[tau2Idx[1]] << " : Tau2_eta = " << Tau_eta[tau2Idx[1]] << " : Tau2_phi = " << Tau_phi[tau2Idx[1]] << std:endl;
-                        std::cout<<"\tZ_dm = " << Z_dm << " : Z_pt = " << Z_pt << " : Z_eta = " << Z_eta << " : Z_phi = " << Z_phi << std:endl;
-                        std::cout<<"\tMET_pt = " << MET_pt << " : MET_phi = " << MET_phi << std:endl; 
+                        std::cout<<"\tTau1_pt =  " << Tau_pt[tau1Idx[1]] << " : Tau1_eta = " << Tau_eta[tau1Idx[1]] << " : Tau1_phi = " << Tau_phi[tau1Idx[1]] << std::endl;
+                        std::cout<<"\tTau2_pt =  " << Tau_pt[tau2Idx[1]] << " : Tau2_eta = " << Tau_eta[tau2Idx[1]] << " : Tau2_phi = " << Tau_phi[tau2Idx[1]] << std::endl;
+                        std::cout<<"\tZ_dm = " << *Z_dm << " : Z_pt = " << *Z_pt << " : Z_eta = " << *Z_eta << " : Z_phi = " << *Z_phi << std::endl;
+                        std::cout<<"\tMET_pt = " << *MET_pt << " : MET_phi = " << *MET_phi << std::endl; 
                     }
                 }
             }

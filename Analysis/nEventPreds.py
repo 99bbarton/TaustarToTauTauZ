@@ -340,16 +340,16 @@ def makeEvtPredHists(args):
                         cutStr += " && " + metFilters
                     
                     if ch == "ETau":
-                        #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 50)"
-                        cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
                     elif ch == "MuTau":
-                        #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 50)"
-                        cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 100 && Muon_pt[MuTau_muIdx] > 50)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx_TAUES_] > 200 && Muon_pt[MuTau_muIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[MuTau_tauIdx] > RETAUPT && Muon_pt[MuTau_muIdx] > REMUPT)"
                     else:
-                        #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 100)"
-                        cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
+                        cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 100 && Tau_pt[TauTau_tau2Idx_TAUES_] > 100)"
+                        #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx_TAUES_] > 200 && Tau_pt[TauTau_tau2Idx_TAUES_] > 200)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[TauTau_tau1Idx] > RETAUPT && Tau_pt[TauTau_tau2Idx] > RETAUPT)"
 
                     cutStr = cutStr.replace("_TAUES_", args.tauES)
