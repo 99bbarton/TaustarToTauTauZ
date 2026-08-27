@@ -128,19 +128,21 @@ def makeScripts(args, dateStr, hasSB):
                     print("stderr when making eos output dirs:\n", stderr)
 
             if proc.startswith("M"):
-                print("ERROR: no SigDatasets_nano implemented"
+                print("ERROR: no SigDatasets_nano implemented")
                 exit(2)
                 #dataSets = [sigDatasets_nano[year][proc]]
             elif proc == "DATA":
                 dataSets = dataDatasets_nano[year]
             else:
                 dataSets = bkgdDatasets_nano[year][proc]
+
+
             for dataset in dataSets:
                 dasCommand = 'dasgoclient --query="file dataset=' + dataset + '"'
                 stdout, stderr  = subprocess.Popen(dasCommand, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
                 stdout = stdout.strip()
                 inpDsFiles = stdout.split("\n")
-                #print(inpDsFiles)
+
                 
                 if proc == "DATA":
                     subDataset = dataset.split("/")[-2] + "_"
@@ -163,6 +165,9 @@ def makeScripts(args, dateStr, hasSB):
                 print("Making", nJobs, "configs with", args.filesPerJob, "input files per job to handle", len(inpDsFiles), subDataset[:-1], "files")
                 if args.justCount:
                     continue
+
+                for fN in range(len(inpDsFiles)):
+                    inpDsFiles[fN] = "root://cmsxrootd.fnal.gov/" + inpDsFiles[fN]
                 
                 for jobN in range(nJobs):
                     if args.maxJobs > 0 and jobN >= args.maxJobs:
@@ -183,19 +188,20 @@ def makeScripts(args, dateStr, hasSB):
                         executable.write("tar -xf " + cmssw_nano + ".tgz\n")
                         executable.write("rm " + cmssw_nano + ".tgz\n")
                         executable.write("cd " + cmssw_nano + "/src/\n")
+                        executable.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
                         executable.write("scramv1 b ProjectRename # this handles linking the already compiled code - do NOT recompile\n")
                         executable.write("eval `scramv1 runtime -sh` # cmsenv is an alias not on the workers\n")
                         executable.write("cd PhysicsTools/NanoAODTools/condor/\n")
                         if era == 2: 
                             if proc == "DATA":
-                                executable.write("python condorScript.py " + year + " TRUE " + jobFiles)
+                                executable.write("python condorScript.py " + year + " TRUE " + str(jobFiles)[1:-1].replace(",","") + "\n")
                             else:
-                                executable.write("python condorScript.py " + year + " FALSE " + jobFiles)
+                                executable.write("python condorScript.py " + year + " FALSE " + str(jobFiles)[1:-1].replace(",","") + "\n")
                         else:
                             if proc == "DATA":
-                                executable.write("python3 condorScript.py " + year + " TRUE " + jobFiles)
+                                executable.write("python3 condorScript.py " + year + " TRUE " + str(jobFiles)[1:-1].replace(",","") + "\n")
                             else:
-                                executable.write("python3 condorScript.py " + year + " FALSE " + jobFiles)
+                                executable.write("python3 condorScript.py " + year + " FALSE " + str(jobFiles)[1:-1].replace(",","") + "\n")
                         executable.write("ls -ltrh $PWD/outputs/\n")
                         outFileName = subDataset + year + "_" + str(jobN) + ".root"
                         #executable.write("hadd -f9 " + outFileName + " " + "$PWD/outputs/" +subDataset+"*.root\n") #* was not being evalualted correctly in jobs (ok locally)
