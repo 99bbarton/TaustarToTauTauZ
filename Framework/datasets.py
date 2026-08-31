@@ -781,7 +781,26 @@ sigDatasets_mini = {
                 "M4000" : "/TaustarToTauZ_m4000_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixMiniAODv4-130X_mcRun3_2023_realistic_postBPix_v6-v2/MINIAODSIM",
                 "M4500" : "/TaustarToTauZ_m4500_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixMiniAODv4-130X_mcRun3_2023_realistic_postBPix_v6-v2/MINIAODSIM",
                 "M5000" : "/TaustarToTauZ_m5000_TuneCP5_13p6TeV_pythia8/Run3Summer23BPixMiniAODv4-130X_mcRun3_2023_realistic_postBPix_v6-v2/MINIAODSIM"
+        },
+        "2024" : {
+                "M250" : "/TauTauStar-TauStarToTauZ_Par-M-250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M500" : "/TauTauStar-TauStarToTauZ_Par-M-500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M750" : "/TauTauStar-TauStarToTauZ_Par-M-750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M1000" : "/TauTauStar-TauStarToTauZ_Par-M-1000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M1250" : "/TauTauStar-TauStarToTauZ_Par-M-1250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M1500" : "/TauTauStar-TauStarToTauZ_Par-M-1500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M1750" : "/TauTauStar-TauStarToTauZ_Par-M-1750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M2000" : "/TauTauStar-TauStarToTauZ_Par-M-2000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M2250" : "/TauTauStar-TauStarToTauZ_Par-M-2250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M2500" : "/TauTauStar-TauStarToTauZ_Par-M-2500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M2750" : "/TauTauStar-TauStarToTauZ_Par-M-2750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M3000" : "/TauTauStar-TauStarToTauZ_Par-M-3000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M3500" : "/TauTauStar-TauStarToTauZ_Par-M-3500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M4000" : "/TauTauStar-TauStarToTauZ_Par-M-4000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M4500" : "/TauTauStar-TauStarToTauZ_Par-M-4500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM",
+                "M5000" : "/TauTauStar-TauStarToTauZ_Par-M-5000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM"
         }
+
 }
 
 
@@ -861,6 +880,28 @@ dataDatasets_nano = {
               "/Tau/Run2024I-MINIv6NANOv15_v2-v1/NANOAOD"]
 
 }
+
+sigDatasets_nano = {
+    "2024" : {
+        "M250" : "/TauTauStar-TauStarToTauZ_Par-M-250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M500" : "/TauTauStar-TauStarToTauZ_Par-M-500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M750" : "/TauTauStar-TauStarToTauZ_Par-M-750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M1000" : "/TauTauStar-TauStarToTauZ_Par-M-1000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M1250" : "/TauTauStar-TauStarToTauZ_Par-M-1250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M1500" : "/TauTauStar-TauStarToTauZ_Par-M-1500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M1750" : "/TauTauStar-TauStarToTauZ_Par-M-1750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M2000" : "/TauTauStar-TauStarToTauZ_Par-M-2000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M2250" : "/TauTauStar-TauStarToTauZ_Par-M-2250_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M2500" : "/TauTauStar-TauStarToTauZ_Par-M-2500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M2750" : "/TauTauStar-TauStarToTauZ_Par-M-2750_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M3000" : "/TauTauStar-TauStarToTauZ_Par-M-3000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M3500" : "/TauTauStar-TauStarToTauZ_Par-M-3500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M4000" : "/TauTauStar-TauStarToTauZ_Par-M-4000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M4500" : "/TauTauStar-TauStarToTauZ_Par-M-4500_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
+        "M5000" : "/TauTauStar-TauStarToTauZ_Par-M-5000_TuneCP5_13p6TeV_pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+    }
+}
+
 
 #subprocess : [xs, xsErr] in pb
 #All values from XSDB
