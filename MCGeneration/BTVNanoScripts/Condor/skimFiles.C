@@ -14,14 +14,16 @@ void skimFiles(const char* fileList)
     }
 
     TString inputFileName;
-    const TString selection = "(ETau_isCand||MuTau_isCand||TauTau_isCand)";
+    //const TString selection = "(PDFWeights_varWeightsRMS == PDFWeights_varWeightsRMS)"; ////////////////////////////////////// FIX BACK TO CHANNEL_ISCAND OR
+    const TString selection = "(ETau_isCand || MuTau_isCand || TauTau_isCand)";
 
     while (infile >> inputFileName) {
 
         std::cout << "Processing: " << inputFileName << std::endl;
 
         // Open input file
-        TFile *inFile = TFile::Open("root://cmsxrootd.fnal.gov//store/user/bbarton/TaustarToTauTauZ/BackgroundMC/PFNano/JobOutputs/20Jan2026/2016/ST/" + inputFileName, "READ");
+        TFile *inFile = TFile::Open("root://cmsxrootd.fnal.gov//store/user/bbarton/TaustarToTauTauZ/Data/JobOutputs/28Aug2026/2024/" + inputFileName, "READ");
+	
         if (!inFile || inFile->IsZombie()) {
             std::cerr << "  Could not open input file!" << std::endl;
             delete inFile;
@@ -37,18 +39,39 @@ void skimFiles(const char* fileList)
             delete inFile;
             continue;
         }
+	if (inTree->GetEntries() == 0)
+	  {
+	    std::cerr << "No entries in " << inputFileName << std::endl;
+	    inFile->Close();
+            delete inFile;
+            continue;
+	  }
+	if (!inTree->GetBranch("ObjCnt_nBTags"))
+	  {
+	    std::cerr << "\t\tNo objcnt branch" <<std::endl;
+	    continue;
+	  }
 
 	inTree->AddBranchToCache("*", true);
 
         // Construct output file name
         TString outFileName = inputFileName;
-        outFileName.ReplaceAll(".root", "_skim.root");
+        //outFileName.ReplaceAll(".root", "_skim.root"); ////////////////////////////////////////////////////////////////////////// READDME FOR MC/DAT
 
         // Create output file
         TFile *outFile = TFile::Open("./Test/"+outFileName, "RECREATE");
 
+	TTree *outTree;
         // Skim the tree
-        TTree *outTree = inTree->CopyTree(selection);
+	try {
+	  outTree = inTree->CopyTree(selection);
+	}
+	catch(...)
+	  {
+	    std::cerr << "\t\tFailed!" <<std::endl;
+	    continue;
+	  }
+	  
 
 
 	/*Bool_t ETau_isCand, MuTau_isCand, TauTau_isCand;

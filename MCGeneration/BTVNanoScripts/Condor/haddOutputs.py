@@ -12,7 +12,7 @@ def haddFiles():
     argparser = argparse.ArgumentParser(description="Tool to hadd the outputs of the Condor jobs together")
     argparser.add_argument("-d", "--date", required=True, type=str, help="The date in the form e.g. 1Apr2025 that the jobs were created on")
     argparser.add_argument("-y", "--year", required=True, choices=["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"], help="What year the jobs correspond to")
-    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2500","M3000","M3500","M4000","M4500","M5000", "DATA"], help="Which samples to process")
+    argparser.add_argument("-p", "--processes", required=True, nargs="+", choices=["SIG", "BKGD", "BKDGDnoQCD", "ZZ", "WZ", "WW", "WJets", "DY", "TT", "ST", "QCD", "M250","M500","M750","M1000","M1250","M1500","M1750","M2000","M2250","M2500","M2750","M3000","M3500","M4000","M4500","M5000", "DATA"], help="Which samples to process")
     argparser.add_argument("-v", "--version", required=True, type=str, help="A unique string to denote the new file area on EOS.")
     argparser.add_argument("-l", "--legacy", required=False, action="store_true", help="If specified, uses old version of procToSubProc for Run3")
     args = argparser.parse_args()
@@ -26,7 +26,10 @@ def haddFiles():
         doBkgd = True
         doSig = False
     elif "SIG" in args.processes:
-        args.processes = ["M250","M500","M750","M1000","M1250", "M1500", "M1750", "M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
+        if args.year == "2024":
+            args.processes = ["M250","M500","M750","M1000","M1250", "M1500", "M1750", "M2000","M2250","M2500","M2750","M3000","M3500","M4000","M4500","M5000"]
+        else:
+            args.processes = ["M250","M500","M750","M1000","M1250", "M1500", "M1750", "M2000","M2500","M3000","M3500","M4000","M4500","M5000"]
         doSig = True
         doBkgd = False
     else:
@@ -74,7 +77,10 @@ def haddFiles():
         print("Starting " + args.year + " " + proc +  " samples...")
         
         if proc.startswith("M"):
-            command = "xrdfsls -u " + inDir + " | grep " + proc.lower() + "_"
+            if args.year == "2024":
+                command = "xrdfsls -u " + inDir + " | grep M-" + proc[1:] + "_"
+            else:
+                command = "xrdfsls -u " + inDir + " | grep " + proc.lower() + "_"
             stdout, stderr  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             if len(stdout) < 1:
                 print("WARNING: No input files for " + proc)

@@ -70,7 +70,7 @@ void pdfWeightAdder(TString year)
     for (int fN = 0; fN < 14; fN++)
     {
         //TString filename = "root://cmsxrootd.fnal.gov//store/user/bbarton/TaustarToTauTauZ/SignalMC/SigPFNano/"+year+"/V2/taustarToTauZ_"+masses[fN]+"_"+year+".root";
-        TString filename = "../Data/SignalMC/WithPDFWeights/"+year+"/V2p1/taustarToTauZ_"+masses[fN]+"_"+year+".root";
+        TString filename = "../Data/V2p2/taustarToTauZ_"+masses[fN]+"_"+year+".root";
         cout << "\tAdding weights to file:  " << filename << endl;
         addPDFWeights(filename, 0, nomPDF, varPDFs);
     }
@@ -157,9 +157,9 @@ void addPDFWeights(TString filename, int nQCD, PDF* nomPDF, PDF* varPDFs[])
         factWeightsRMSs[0] /= 100;
         factWeightsRMSs[1] /= 100;
 	if (factWeightsRMSs[0] < 0 || (factWeightsRMSs[0] != factWeightsRMSs[0]))
-	  factWeightsRMSs[0] = 1
+	  factWeightsRMSs[0] = 1;
 	if (factWeightsRMSs[1] < 0 || (factWeightsRMSs[1] != factWeightsRMSs[1]))
-          factWeightsRMSs[1] = 1
+          factWeightsRMSs[1] = 1;
         factWeightsRMSs[0] = sqrt(factWeightsRMSs[0]);
         factWeightsRMSs[1] = sqrt(factWeightsRMSs[1]);
         varWeightsRMS /= 100;

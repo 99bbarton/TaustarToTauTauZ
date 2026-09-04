@@ -147,7 +147,7 @@ pdfWeights = {
 
 def parseArgs():
     argparser = argparse.ArgumentParser(description="Make plots of the number of signal and background events in each of the 2D collinear mass bins")
-    argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "RUN3"], help="Which year's data to use")
+    argparser.add_argument("-y", "--years", nargs="+", choices=["ALL", "2016","2016post", "2017", "2018","RUN2", "2022post", "2022", "2023post", "2023", "2024", "RUN3"], help="Which year's data to use")
     argparser.add_argument("-m", "--masses", type=str, nargs= "+", choices = ["ALL","SIG_DEF","SIG_MID","SIG_SENS","250","500","750","1000","1250","1500","1750","2000","2500","3000","3500","4000","4500","5000"], default=["ALL"], help = "Which signal masses to use. Default is ALL")
     argparser.add_argument("-k", "--skims", action="store_true", help = "If specified, uses skimmed files for run3")
     argparser.add_argument("-p", "--processes", type=str, nargs="+", choices=allProcs.append("ALL"), default=["ALL"], help="Which bkgd processes to include.")
@@ -172,9 +172,9 @@ def parseArgs():
     args = argparser.parse_args()  
     
     if "ALL" in args.years:
-        args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
+        args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"]
     elif "RUN3" in args.years:
-        args.years = ["2022", "2022post", "2023", "2023post"]
+        args.years = ["2022", "2022post", "2023", "2023post", "2024"]
     elif "RUN2" in args.years:
         args.years = ["2016","2016post", "2017", "2018"]
     
@@ -314,7 +314,7 @@ def makeEvtPredHists(args):
     # --------------------------------------- Signal ------------------------------------------------ #
     for year in args.years:
         print(f"Processing year = {year}")
-        isRun3 = year in ["2022", "2022post", "2023", "2023post"]
+        isRun3 = year in ["2022", "2022post", "2023", "2023post", "2024"]
         metFilters = getMETFilters(year)
 
         for mass in args.masses:
@@ -389,7 +389,7 @@ def makeEvtPredHists(args):
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in args.processes:
             print(f"\tProcessing proc = {proc}")
-            if year in ["2022", "2022post", "2023", "2023post"]:
+            if year in ["2022", "2022post", "2023", "2023post", "2024"]:
                 subProcs = procToSubProc_run3_legacy[proc] if args.legacy else procToSubProc_run3[proc]
             else:
                 subProcs = procToSubProc_run2[proc]
