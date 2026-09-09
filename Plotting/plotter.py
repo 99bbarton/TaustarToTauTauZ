@@ -73,7 +73,8 @@ varToPlotParams = {
     "RECL_PT"   : ["ZReClJ_pt", "Reclustered Z Jet pT [GeV]]", 60, 0, 3000],
     "NBTAGS"    : ["ObjCnt_nBTags", "# of b-tagged jets in event", 5, -0.5, 5.5],
     "MET_PT"    : ["MET_pt", "MET pT [GeV]", 100, 0, 1000],
-    "MET_E"     : ["MET_sumEt", "MET Scalar Sum [GeV]", 100, 0, 1000]
+    "MET_E"     : ["MET_sumEt", "MET Scalar Sum [GeV]", 100, 0, 1000],
+    "MET_PHI"    : ["MET_phi", "#phi_{MET}", 10, -3.142, 3.142],
 }
 
 plotEachToLeg = {
@@ -146,9 +147,9 @@ def parseArgs():
         args.inDir += "/"
 
     if "ALL" in args.years:
-        args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post"]
+        args.years = ["2016", "2016post", "2017", "2018", "2022", "2022post", "2023", "2023post", "2024"]
     elif "RUN3" in args.years:
-        args.years = ["2022", "2022post", "2023", "2023post"]
+        args.years = ["2022", "2022post", "2023", "2023post", "2024"]
     elif "RUN2" in args.years:
         args.years = ["2016","2016post", "2017", "2018"]
 

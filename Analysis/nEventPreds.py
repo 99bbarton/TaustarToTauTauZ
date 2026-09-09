@@ -269,9 +269,13 @@ def makeEvtPredHists(args):
     #baseCuts = "(CHANNEL_isCand && MET_pt > REMETPT && Z_dauDR<0.5 && Z_pt>REZPT && ObjCnt_nBTags<2 && CHANNEL_CHANNELDR>1.5 && CHANNEL_visM > REVISM "
     if args.VR:
         #baseCuts += "&& ((MET_pt > 70 && MET_pt < 170) || Z_pt < 400 || Z_dauDR > 0.5 || CHANNEL_visM_TAUES_ < 200)"
-        baseCuts += "&& MET_pt < 175 && Z_pt < 400 && Z_dauDR > 0.5 && CHANNEL_visM_TAUES_ > 200"
+        #baseCuts += "&& MET_pt < 175 && Z_pt < 400 && Z_dauDR > 0.5 && CHANNEL_visM_TAUES_ > 200"
+        #Updated based on reviewer request
+        baseCuts += "&& MET_pt < 300 && Z_pt < 400 && Z_dauDR > 0.5 && CHANNEL_visM_TAUES_ > 200"
     else:
-        baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && CHANNEL_visM_TAUES_ > 200" 
+        #baseCuts += "&& MET_pt > 175 && Z_pt > 400 && Z_dauDR < 0.5 && CHANNEL_visM_TAUES_ > 200"
+        baseCuts += "&& MET_pt > 300 && Z_pt > 400 && Z_dauDR < 0.5 && CHANNEL_visM_TAUES_ > 200"
+        
     baseCutStrs = []
     baseCutStrs.append(baseCuts + " && ( (LOW_EDGE<=CHANNEL_minCollM_TAUES_ && CHANNEL_minCollM_TAUES_ <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM_TAUES_ && CHANNEL_maxCollM_TAUES_ <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
     #baseCutStrs.append("(CHANNEL_isCand && ( (LOW_EDGE<=CHANNEL_minCollM && CHANNEL_minCollM <= HIGH_EDGE ) || (LOW_EDGE<= CHANNEL_maxCollM && CHANNEL_maxCollM <= HIGH_EDGE) ))") #Bin 0, i.e. signal L-band
@@ -338,8 +342,21 @@ def makeEvtPredHists(args):
                         cutStr += " && " + metFilters + " && Trig_MET"
                     else: 
                         cutStr += " && " + metFilters
+
+                    if year == "2018":
+                        cutStr += " && !(Z_eta < -1.3 && Z_phi > -1.57 && Z_phi < -0.87) && !(MET_phi > -1.57 && MET_phi < -0.87)"
+                        if ch == "ETau":
+                            cutStr +=  " && !(Tau_eta[ETau_tauIdx_TAUES_] < -1.3 && Tau_phi[ETau_tauIdx_TAUES_] >-1.57 && Tau_phi[ETau_tauIdx_TAUES_] <-0.87) && !(Electron_eta[ETau_eIdx] && Electron_phi[ETau_eIdx] > -1.57 && Electron_phi[ETau_eIdx]<-0.87)"
+                        elif ch == "MuTau":
+                            cutStr +=  " && !(Tau_eta[MuTau_tauIdx_TAUES_] < -1.3 && Tau_phi[MuTau_tauIdx_TAUES_] >-1.57 && Tau_phi[MuTau_tauIdx_TAUES_] <-0.87) && !(Muon_eta[MuTau_muIdx] && Muon_phi[MuTau_muIdx] > -1.57 && Muon_phi[MuTau_muIdx]<-0.87)"
+                        else:
+                            cutStr +=  " && !(Tau_eta[TauTau_tau1Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau1Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau1Idx_TAUES_] <-0.87) && !(Tau_eta[TauTau_tau2Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau2Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau2Idx_TAUES_] <-0.87)" 
                     
                     if ch == "ETau":
+                        if isRun3:
+                            cutStr += "&& Tau_idDeepTau2018v2p5VSe[ETau_tauIdx_TAUES_] >= 6" #Apply tigher vs e WP in ETau at recommendation of tau obj reviewer
+                        else:
+                            cutStr+= " && Tau_idDeepTau2017v2p1VSe[ETau_tauIdx_TAUES_] & 32" 
                         cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
@@ -389,7 +406,7 @@ def makeEvtPredHists(args):
         dirPath = os.environ["ROOTURL"] + os.environ["BKGD_" + year]
         for proc in args.processes:
             print(f"\tProcessing proc = {proc}")
-            if year in ["2022", "2022post", "2023", "2023post", "2024"]:
+            if isRun3:
                 subProcs = procToSubProc_run3_legacy[proc] if args.legacy else procToSubProc_run3[proc]
             else:
                 subProcs = procToSubProc_run2[proc]
@@ -425,10 +442,24 @@ def makeEvtPredHists(args):
                             cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                             cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
+                            if year == "2018":
+                                cutStr += " && !(Z_eta < -1.3 && Z_phi > -1.57 && Z_phi < -0.87) && !(MET_phi > -1.57 && MET_phi < -0.87)"
+                                if ch == "ETau":
+                                    cutStr +=  " && !(Tau_eta[ETau_tauIdx_TAUES_] < -1.3 && Tau_phi[ETau_tauIdx_TAUES_] >-1.57 && Tau_phi[ETau_tauIdx_TAUES_] <-0.87) && !(Electron_eta[ETau_eIdx] && Electron_phi[ETau_eIdx] > -1.57 && Electron_phi[ETau_eIdx]<-0.87)"
+                                elif ch == "MuTau":
+                                    cutStr +=  " && !(Tau_eta[MuTau_tauIdx_TAUES_] < -1.3 && Tau_phi[MuTau_tauIdx_TAUES_] >-1.57 && Tau_phi[MuTau_tauIdx_TAUES_] <-0.87) && !(Muon_eta[MuTau_muIdx] && Muon_phi[MuTau_muIdx] > -1.57 && Muon_phi[MuTau_muIdx]<-0.87)"
+                                else:
+                                    cutStr +=  " && !(Tau_eta[TauTau_tau1Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau1Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau1Idx_TAUES_] <-0.87) && !(Tau_eta[TauTau_tau2Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau2Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau2Idx_TAUES_] <-0.87)"
+                                    
                             if not isRun3:
                                 cutStr = "(" + cutStr + " && Trig_MET)"
                             
                             if ch == "ETau":
+                                if isRun3:
+                                    cutStr += " && Tau_idDeepTau2018v2p5VSe[ETau_tauIdx_TAUES_] >= 6" #Apply tigher vs e WP in ETau at recommendation of tau obj reviewer
+                                else:
+                                    cutStr+= " && Tau_idDeepTau2017v2p1VSe[ETau_tauIdx_TAUES_] & 32"
+                                
                                 cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                                 #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx] > RETAUPT && Electron_pt[ETau_eIdx] > REEPT)"
@@ -496,10 +527,23 @@ def makeEvtPredHists(args):
                         cutStr = cutStr.replace("LOW_EDGE", str(lBinEdges[0]))
                         cutStr = cutStr.replace("HIGH_EDGE", str(lBinEdges[1]))
 
+                        if year == "2018":
+                            cutStr += " && !(Z_eta < -1.3 && Z_phi > -1.57 && Z_phi < -0.87) && !(MET_phi > -1.57 && MET_phi < -0.87)"
+                            if ch == "ETau":
+                                cutStr +=  " && !(Tau_eta[ETau_tauIdx_TAUES_] < -1.3 && Tau_phi[ETau_tauIdx_TAUES_] >-1.57 && Tau_phi[ETau_tauIdx_TAUES_] <-0.87) && !(Electron_eta[ETau_eIdx] && Electron_phi[ETau_eIdx] > -1.57 && Electron_phi[ETau_eIdx]<-0.87)"
+                            elif ch == "MuTau":
+                                cutStr +=  " && !(Tau_eta[MuTau_tauIdx_TAUES_] < -1.3 && Tau_phi[MuTau_tauIdx_TAUES_] >-1.57 && Tau_phi[MuTau_tauIdx_TAUES_] <-0.87) && !(Muon_eta[MuTau_muIdx] && Muon_phi[MuTau_muIdx] > -1.57 && Muon_phi[MuTau_muIdx]<-0.87)"
+                            else:
+                                cutStr +=  " && !(Tau_eta[TauTau_tau1Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau1Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau1Idx_TAUES_] <-0.87) && !(Tau_eta[TauTau_tau2Idx_TAUES_] < -1.3 && Tau_phi[TauTau_tau2Idx_TAUES_] >-1.57 && Tau_phi[TauTau_tau2Idx_TAUES_] <-0.87)"
+                        
                         if not isRun3:
                             cutStr = "(" + cutStr + " && Trig_MET)"
                         
                         if ch == "ETau":
+                            if isRun3:
+                                cutStr += " && Tau_idDeepTau2018v2p5VSe[ETau_tauIdx_TAUES_] >= 6" #Apply tigher vs e WP in ETau at recommendation of tau obj reviewer
+                            else:
+                                cutStr+= " && Tau_idDeepTau2017v2p1VSe[ETau_tauIdx_TAUES_] & 32"
                             cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 100 && Electron_pt[ETau_eIdx] > 50)"
                             #cutStr = "("+cutStr+ "&& Tau_pt[ETau_tauIdx_TAUES_] > 200 && Electron_pt[ETau_eIdx] > 100)"
                         elif ch == "MuTau":
