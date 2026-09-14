@@ -51,7 +51,7 @@ varToPlotParams = {
     "VISINVDR"      : [["Gen_tau_visInvDR", "Gen_tsTau_visInvDR"], "#DeltaR(#tau_{vis}, #tau_{inv})", 10, 0, 0.1],      
     #"Z_AK4M_GEN"    : ["Jet_mass[Gen_zRecAK4Idx]", "Rec AK4 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120], # Redundant with Z_AK*M with cut requiring match
     #"Z_AK8M_GEN"    : ["FatJet_mass[Gen_zRecAK8Idx]", "Rec AK8 Jet Mass of GEN-Matched Jet [GeV]", 30, 60, 120],
-    "Z_PN_SCORE": ["FatJet_particleNetWithMass_ZvsQCD[Z_jetIdxPN]", "Particle Net ZvsQCD Score", 20, 0.9, 1.0],
+    "Z_PN_SCORE": ["FatJet_particleNetWithMass_ZvsQCD[Z_jetIdxAK8]", "Particle Net ZvsQCD Score", 20, 0.9, 1.0],
     #"N_Z"       : [""], #TODO
     "VIS_M"     : ["CHANNEL_visM", "Visible Mass [GeV]", 106, 200, 5500], 
     "MIN_COL_M" : ["CHANNEL_minCollM", "Min Collinear Mass [GeV]", 116, 200, 6000], #50 GeV/bin default
@@ -783,6 +783,8 @@ def plot1D(filelist, dataFileDict, args):
                 
     if not args.effCut:
         maxVal = max(maxVal*1.1, bkgdStack.GetMaximum()*1.1)
+        if args.normalize:
+            maxVal = 1.1
         for hN, hist in enumerate(hists):
             if hN in bHistNums:
                 continue
