@@ -717,7 +717,7 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 def makeDatacards(evPerMass, shapeVarPerMass, args):
-    cmsProcNames = {"TT":"ttbar", "ST": "tW_tbarW"}
+    cmsProcNames = {"TT":"ttbar", "ST": "tW_tbarW", "SIG": "taustar"}
 
 
     nSystDicts = len(evPerMass[0]["SIG"]) // args.nBins
