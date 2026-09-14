@@ -162,6 +162,8 @@ def parseArgs():
     argparser.add_argument("--VR", action="store_true", help="If specified, will perform estim for the validation region instead of the signal region")
     argparser.add_argument("--makeDC", action="store_true", help="If specified, will make Combine datacards out of the results")
     argparser.add_argument("--setObs", type=float, default=1.0, help="When making datacards, what signal strength 'r' to use for Observed entries. if <0, will use real obs, otherwise bkgd+(r*sig)")
+    argparser.add_argument("--shpEnv", type=float, default=1.3, help="The value to use for the shape systematic envelope parameter in datacards. Defaults to 1.3")
+    argparser.add_argument("--cmsNames", action="store_true", help="Specify to use much longer official CMS process and systematics naming")
     argparser.add_argument("--sd", action="store_true", help="Specify to use collinear mass calculated from soft drop Z jet masses instead of reclustered/reco.")
     argparser.add_argument("--extrap", type=float, default=1.0, help="A factor to multiply the measured yields. For use in extrapolating to to yields e.g. when 2024 is added")
     argparser.add_argument("--systStudy", action="store_true", help="If specified, will make a table")
@@ -715,6 +717,8 @@ def printExpEvtsTable(event_dicts, event_err_dicts, args):
 #----------------------------------------------------------------------------------------------------------------------------------------------#
 
 def makeDatacards(evPerMass, shapeVarPerMass, args):
+    cmsProcNames = {"TT":"ttbar", "ST": "tW_tbarW"}
+
 
     nSystDicts = len(evPerMass[0]["SIG"]) // args.nBins
     nomOffset = 1 if nSystDicts > 1 else 0
@@ -732,24 +736,37 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
     xsUncs = {}
     xsLines = {}
     for proc in args.processes:
-        xsLines[proc] = f"xs_{proc}\tlnN"
+        if args.cmsNames:
+            xsLines[proc] = f"cross_section_{cmsProcNames[proc]}\tlnN"
+        else:
+            xsLines[proc] = f"xs_{proc}\tlnN"
         xsUncs[proc] = f"{1+getCombXSPercUnc(args.years, proc):.3f}"
         
     cardProcs = ["SIG"]
     cardProcs.extend(args.processes)
 
     lumiUnc = f"{1+getCombLumiPercUnc(args.years):.3f}"
-    lumiLine = "lumi\tlnN"
-    extSyst = "1.300" #30% additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise
+    if args.cmsNames:
+        lumiLine = "lumi_13TeV_161718_13p6TeV_222324\tlnN"
+    else:
+        lumiLine = "lumi\tlnN"
     
-    extLine = "shpEnv\tlnN"
+    extSyst = str(args.shpEnv) #additional uncertainty added to cover JECs, etc. which were not measured/applied otherwise (30% default)
+
+    if args.cmsNames:
+        extLine = "CMS_EXO26018_shpSystEnv\tlnN"
+    else:
+        extLine = "shpEnv\tlnN"
     for bN in range(args.nBins*len(cardProcs)):
         lumiLine += "\t"+ lumiUnc
         extLine += "\t" + extSyst
 
     for mN, mass in enumerate(args.masses):
         sigXSUnc = f"{1+getCombXSPercUnc(args.years, 'M'+mass):.3f}"
-        sigXSLine = "xs_SIG\tlnN"
+        if args.cmsNames:
+            sigXSLine = "cross_section_taustar\tlnN"
+        else:
+            sigXSLine = "xs_SIG\tlnN"
         varWLine = "varW\tlnN"
         factWLine = "factW\tlnN"
 
@@ -785,7 +802,10 @@ def makeDatacards(evPerMass, shapeVarPerMass, args):
                 idx = binN * nSystDicts + nomOffset
                 for procN, proc in enumerate(cardProcs):
                     binLabelLine += "\t" + binStr.ljust(5)
-                    procNameLine += "\t" + proc.ljust(5)
+                    if args.cmsNames:
+                        procNameLine += "\t" + cmsProcNames[proc].ljust(5)
+                    else:
+                        procNameLine += "\t" + proc.ljust(5)
                     procNumLine += "\t" + str(procN).ljust(5)
                     
                     rate = evPerMass[mN][proc][idx]
